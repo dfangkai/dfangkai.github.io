@@ -270,7 +270,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
   <dl class="defs">
     <dt>静态网站<small>static site</small></dt>
     <dd><p>网站就是一堆文件：HTML（内容和结构）、CSS（样式）、JavaScript（交互）。"静态"的意思是服务器只负责把这些文件<strong>原样</strong>发给浏览器，不在服务器上运行任何程序。</p>
-      <p>这个网站就是静态网站：两个 <code>index.html</code>，样式和脚本都写在文件里面。好处是简单、免费、几乎不会出故障；代价是没有登录、数据库、评论这类需要服务器运行程序的功能。</p></dd>
+      <p>这个网站就是静态网站：几个 <code>index.html</code>，样式和脚本都写在文件里面。好处是简单、免费、几乎不会出故障；代价是没有登录、数据库、评论这类需要服务器运行程序的功能。</p></dd>
 
     <dt>git<small>版本管理工具</small></dt>
     <dd><p>装在你电脑上的程序，用来记录文件的每一次改动，像游戏存档一样可以随时回到过去的任意版本。几个术语：</p>
@@ -299,16 +299,17 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
       <p>免费账号需要用公开仓库；私有仓库发布 Pages 需要付费计划（以 GitHub 当前文档为准）。</p></dd>
 
     <dt>gh<small>GitHub CLI</small></dt>
-    <dd><p>GitHub 官方的<strong>命令行工具</strong>。GitHub 网页上能做的大部分事情（建仓库、看部署状态、改设置），都能在终端里用 gh 完成。它还负责帮你登录 GitHub，并把登录信息提供给 git 用。</p>
+    <dd><p>GitHub 官方的<strong>命令行工具</strong>。GitHub 网页上能做的大部分事情（建仓库、看部署状态、改设置），都能在终端里用 gh 完成。它还负责帮你登录 GitHub。</p>
       <p>没有 gh 也能用 GitHub，只是这些操作要去网页上点。这次用 gh，是为了让整个流程都能在终端里一步步完成，并把每一步的结果记录下来。</p></dd>
 
     <dt>GitHub Actions<small>自动化</small></dt>
     <dd><p>GitHub 的自动化流水线：仓库里发生某件事（比如有新提交）时，自动在 GitHub 的服务器上执行一系列任务。GitHub Pages 就是用它来部署的：每次你推送，都会自动运行一个叫 <code>pages build and deployment</code> 的任务，把新文件发布出去。你不需要自己配置它。</p></dd>
   </dl>
 
-  <div class="note"><span class="tag">还有两个会碰到的词</span>
-    <p><strong>token（令牌）</strong>：登录 GitHub 后得到的一串"通行证"，gh 和 git 用它代表你操作 GitHub，这样就不用每次都输入密码。</p>
+  <div class="note"><span class="tag">还有三个会碰到的词</span>
+    <p><strong>token（令牌）</strong>：登录 GitHub 后得到的一串"通行证"，gh 用它代表你操作 GitHub，这样就不用每次都输入密码。</p>
     <p><strong>钥匙串（Keychain）</strong>：macOS 自带的密码保险箱。登录后的 token 就保存在这里，而不是明文写在某个文件里。</p>
+    <p><strong>SSH 密钥</strong>：git 推送时用来证明"我是 dfangkai"的一对文件。私钥 <code>~/.ssh/id_ed25519</code> 只留在自己电脑上，绝不外传；公钥 <code>id_ed25519.pub</code> 登记在 GitHub 账号里。GitHub 用公钥核对私钥，对得上就放行，全程不用输密码。</p>
   </div>
 </section>
 
@@ -321,7 +322,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
       <tr><td>记录改动（存档）</td><td>git</td><td><code>git add</code>、<code>git commit</code></td></tr>
       <tr><td>上传到 GitHub</td><td>git</td><td><code>git push</code></td></tr>
       <tr><td>登录 GitHub</td><td>gh</td><td><code>gh auth login</code></td></tr>
-      <tr><td>让 git 用上 gh 的登录信息</td><td>gh</td><td><code>gh auth setup-git</code></td></tr>
+      <tr><td>推送时证明身份</td><td>SSH 密钥</td><td>不用命令；<code>ssh -T git@github.com</code> 可以测试</td></tr>
       <tr><td>在 GitHub 上建仓库</td><td>gh</td><td><code>gh repo create</code></td></tr>
       <tr><td>查看、修改仓库设置（比如 Pages）</td><td>gh</td><td><code>gh api</code></td></tr>
       <tr><td>查看部署进度</td><td>gh</td><td><code>gh run list</code>、<code>gh run watch</code></td></tr>
@@ -409,6 +410,7 @@ credential.https://github.com.helper !~/.local/bin/gh auth git-credential
 credential.https://gist.github.com.helper
 credential.https://gist.github.com.helper !~/.local/bin/gh auth git-credential</pre></div>
       <p class="why"><b>作用：</b>以后 git 访问 github.com 需要身份验证时（比如 push），会去问 gh 要 token，而 gh 从钥匙串里取出来交给它。所以你推送时<strong>不用输入任何密码</strong>。另外，GitHub 早就不接受用账号密码推送了，不配置这一步的话，就得手动生成 token 并粘贴。</p>
+      <p class="why"><b>后来：</b>9 月 26 日改用了 SSH 推送（SSH 密钥之前就配好了）：仓库地址换成 <code>git@github.com:dfangkai/dfangkai.github.io.git</code>，上面这几项设置也删掉了。现在的用法见第三部分的<a href="#newmac">换电脑</a>和第四部分的<a href="#trouble">常见问题</a>。</p>
     </div></li>
 
     <li class="step"><div>
@@ -554,11 +556,15 @@ To https://github.com/dfangkai/dfangkai.github.io.git
   <p class="intro">网站的全部内容和历史都在 GitHub 上，本地文件夹只是一个副本。在新电脑上恢复：</p>
   <div class="code"><div class="label"><span>在新电脑上</span><button class="copy" type="button">复制</button></div><pre><span class="c"># 1. 安装 gh（新电脑如果是正式版 macOS，Homebrew 一般就能装）</span>
 <span class="p">$ </span>brew install gh
-<span class="c"># 2. 登录，并让 git 用上登录信息</span>
-<span class="p">$ </span>gh auth login --hostname github.com --git-protocol https --web
-<span class="p">$ </span>gh auth setup-git
-<span class="c"># 3. 把仓库下载到本地（clone = 克隆，连同全部历史一起下载）</span>
+<span class="c"># 2. 登录 GitHub。过程中 gh 会问要不要上传 SSH 公钥，选 Yes</span>
+<span class="c">#    （新电脑上还没有密钥的话，它会提出帮你生成一个）</span>
+<span class="p">$ </span>gh auth login --hostname github.com --git-protocol ssh --web
+<span class="c"># 3. 测试 SSH 能否连上。第一次连接会问 continue connecting，输入 yes</span>
+<span class="p">$ </span>ssh -T git@github.com
+Hi dfangkai! You've successfully authenticated, but GitHub does not provide shell access.
+<span class="c"># 4. 把仓库下载到本地（clone = 克隆，连同全部历史一起下载）</span>
 <span class="p">$ </span>gh repo clone dfangkai/dfangkai.github.io ~/code/dfangkai.github.io</pre></div>
+  <p>也可以把旧电脑上的 <code>~/.ssh/id_ed25519</code> 和 <code>id_ed25519.pub</code> 拷过来继续用，这样第 2 步就不用上传新公钥。私钥相当于密码，拷贝时不要经过网盘或聊天软件。</p>
   <p>别忘了在新电脑上设置 git 的作者信息：<code>git config --global user.name "dfangkai"</code> 和 <code>git config --global user.email "你的邮箱"</code>。</p>
 </section>
 
@@ -649,11 +655,15 @@ To https://github.com/dfangkai/dfangkai.github.io.git
     <p>gh 装在 <code>~/.local/bin</code>，靠 <code>~/.zshrc</code> 里的 PATH 设置才能找到。可以关掉终端重新打开，或者运行 <code>source ~/.zshrc</code>。如果还不行，检查文件是否还在：<code>ls ~/.local/bin/gh</code>。</p>
   </div></details>
 
-  <details class="faq"><summary>推送时要求输入用户名和密码，或者提示认证失败</summary><div class="body">
-    <p>通常是 gh 的登录失效了，或者 git 没有配置使用 gh：</p>
-    <div class="code"><pre><span class="p">$ </span>gh auth status            <span class="c"># 看看是否还处于登录状态</span>
-<span class="p">$ </span>gh auth login --hostname github.com --git-protocol https --web   <span class="c"># 失效了就重新登录</span>
-<span class="p">$ </span>gh auth setup-git         <span class="c"># 重新让 git 使用 gh 的登录信息</span></pre></div>
+  <details class="faq"><summary>推送时提示 Permission denied (publickey)，或者要求输入密码</summary><div class="body">
+    <p>说明 GitHub 没认出你的 SSH 密钥，或者仓库地址不是 SSH 形式。依次检查：</p>
+    <div class="code"><pre><span class="p">$ </span>ssh -T git@github.com     <span class="c"># 成功会显示 Hi dfangkai!</span>
+<span class="p">$ </span>ls ~/.ssh                 <span class="c"># 私钥 id_ed25519 还在不在</span>
+<span class="p">$ </span>git remote -v             <span class="c"># 地址应该以 git@github.com: 开头</span></pre></div>
+    <p>如果地址是 <code>https://</code> 开头，用 <code>git remote set-url origin git@github.com:dfangkai/dfangkai.github.io.git</code> 改回来。如果密钥丢了，用 <code>ssh-keygen -t ed25519</code> 生成一对新的（一路回车即可），再把公钥加到 GitHub：</p>
+    <div class="code"><pre><span class="p">$ </span>gh auth refresh -h github.com -s admin:public_key   <span class="c"># 给 gh 加上管理公钥的权限，会打开浏览器确认</span>
+<span class="p">$ </span>gh ssh-key add ~/.ssh/id_ed25519.pub --title "MacBook"</pre></div>
+    <p>另一种情况是 <code>ssh -T</code> 一直卡住没反应：有些校园网或公司网络会封掉 SSH 用的 22 端口。GitHub 在 443 端口也提供 SSH，可以用 <code>ssh -T -p 443 git@ssh.github.com</code> 试试，能通的话让 Claude 帮你改配置。</p>
   </div></details>
 
   <details class="faq"><summary>不小心把密钥提交并推送了</summary><div class="body">
@@ -676,6 +686,8 @@ To https://github.com/dfangkai/dfangkai.github.io.git
     <div><code>git pull --rebase</code><span>先拉取远程的新提交</span></div>
     <div><code>git log --oneline</code><span>看历史</span></div>
     <div><code>git revert HEAD</code><span>撤销上一次提交（再 push）</span></div>
+    <div><code>git remote -v</code><span>看远程仓库地址</span></div>
+    <div><code>ssh -T git@github.com</code><span>测试 SSH 能否连上 GitHub</span></div>
   </div>
   <div class="cheat-h">GitHub 相关（gh）</div>
   <div class="cheat">
@@ -691,7 +703,7 @@ To https://github.com/dfangkai/dfangkai.github.io.git
     <p>仓库：<code>https://github.com/dfangkai/dfangkai.github.io</code></p>
     <p>本地：<code>~/code/dfangkai.github.io</code></p>
   </div>
-  <footer>记录于 2026 年 9 月 25 日。gh 2.101.0，macOS 27 预览版，Apple 芯片。步骤里的命令输出都是当时实际运行的结果，个人路径和邮箱有省略；GitHub Pages 的限制数据来自 GitHub 官方文档。</footer>
+  <footer>记录于 2026 年 9 月 25 日，9 月 26 日改用 SSH 推送后更新了相关部分。gh 2.101.0，macOS 27 预览版，Apple 芯片。步骤里的命令输出都是当时实际运行的结果，个人路径和邮箱有省略；GitHub Pages 的限制数据来自 GitHub 官方文档。</footer>
 </section>
 </main>
 </div>
