@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="这个网站是怎么上线的：git、GitHub、GitHub Pages、gh 分别是什么，12 个步骤的完整记录，以及日常更新与排错。">
+<meta property="og:title" content="网站上线手记">
+<meta property="og:description" content="这个网站是怎么上线的：git、GitHub、GitHub Pages、gh 分别是什么，12 个步骤的完整记录，以及日常更新与排错。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://dfangkai.github.io/site-launch/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='44' height='52' rx='6' fill='%230E7466'/%3E%3Crect x='10' y='6' width='9' height='52' rx='3' fill='%230A5A4F'/%3E%3Cpath d='M27 22h19M27 31h19M27 40h12' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>网站上线手记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap">
+<style>
+:root{
+  --bg:#F2F4F1; --grid:#E1E7E3; --surface:#FFFFFF; --surface-2:#E8EEEA; --ink:#16201C; --muted:#56645E; --line:#D3DCD7;
+  --accent:#0E7466; --accent-ink:#FFFFFF; --accent-soft:#D6EDE8;
+  --warn:#9E5218; --warn-soft:#F5E5D5; --ok:#276F38; --ok-soft:#DCEFE0; --no:#9F3434; --no-soft:#F3DEDB;
+  --z-local:#0E7466; --z-local-soft:#D6EDE8; --z-gh:#3456A6; --z-gh-soft:#E0E7F7; --z-web:#955A0C; --z-web-soft:#F6E8D2;
+  --code-bg:#14201C; --code-line:#22302B; --code-ink:#DCE7E2; --code-muted:#7D948A; --code-accent:#6FD8C4; --code-str:#E6BF7B; --code-err:#FF9C8F; --code-ok:#8FDB9E;
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1412; --grid:#161E1B; --surface:#151D1A; --surface-2:#1C2622; --ink:#E1E9E5; --muted:#98A7A0; --line:#2A3632;
+    --accent:#47C4AF; --accent-ink:#0B1411; --accent-soft:#15322D;
+    --warn:#E39D60; --warn-soft:#382818; --ok:#6FC983; --ok-soft:#18301F; --no:#E68181; --no-soft:#3A1E1E;
+    --z-local:#47C4AF; --z-local-soft:#15322D; --z-gh:#93ADF2; --z-gh-soft:#1D2743; --z-web:#E3A955; --z-web-soft:#3A2C14;
+    --code-bg:#0A0F0D; --code-line:#1A2420;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1412; --grid:#161E1B; --surface:#151D1A; --surface-2:#1C2622; --ink:#E1E9E5; --muted:#98A7A0; --line:#2A3632;
+  --accent:#47C4AF; --accent-ink:#0B1411; --accent-soft:#15322D;
+  --warn:#E39D60; --warn-soft:#382818; --ok:#6FC983; --ok-soft:#18301F; --no:#E68181; --no-soft:#3A1E1E;
+  --z-local:#47C4AF; --z-local-soft:#15322D; --z-gh:#93ADF2; --z-gh-soft:#1D2743; --z-web:#E3A955; --z-web-soft:#3A2C14;
+  --code-bg:#0A0F0D; --code-line:#1A2420;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.8;padding-inline:20px;padding-block:0 80px}
+body,body *{font-variant-ligatures:none}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+code,kbd{font-family:var(--f-mono);font-size:.88em}
+p code,li code,td code,dd code,summary code,.note code{background:var(--surface-2);padding:.1em .38em;border-radius:4px}
+td code{white-space:nowrap}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.3;margin:0}
+h2{font-size:1.8rem;font-weight:900}
+h3{font-size:1.18rem;font-weight:600;margin-top:2.3rem}
+p{margin:.9rem 0}
+ul,ol{padding-left:1.3rem}
+li{margin:.3rem 0}
+
+.progress{position:fixed;left:0;right:0;top:0;height:calc(3px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);z-index:10;pointer-events:none}
+.progress i{display:block;height:3px;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+
+.wrap{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:210px minmax(0,1fr);gap:56px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;padding-top:36px;font-size:.86rem;max-height:calc(100vh - 40px);overflow-y:auto}
+.toc-part{font-size:.72rem;letter-spacing:.1em;color:var(--muted);margin:1rem 0 .3rem .5rem}
+.toc-part:first-child{margin-top:0}
+.toc ol{list-style:none;padding:0;margin:0;display:grid;gap:1px}
+.toc li{margin:0}
+.toc a{display:block;padding:.25rem .5rem;border-radius:6px;color:var(--muted);text-decoration:none;line-height:1.5}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.toc a.active{color:var(--accent);background:var(--accent-soft)}
+.toc-mobile{display:none}
+main{min-width:0;max-width:800px}
+
+/* hero */
+header.hero{padding-block:52px 32px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;color:var(--accent)}
+.hero h1{font-size:clamp(2.3rem,6vw,3.4rem);font-weight:900;margin:.4rem 0 .8rem}
+.lede{font-size:1.08rem;color:var(--muted);max-width:40em}
+.lede a{font-family:var(--f-mono);font-size:.92em}
+.hero-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.3rem;font-size:.84rem;color:var(--muted);margin-top:1rem}
+.hero-meta b{color:var(--ink);font-weight:500}
+
+/* big picture diagram */
+.map{margin-top:28px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:stretch}
+.zone{border-radius:14px;padding:14px 16px;background:var(--zs);border:1px solid transparent;display:flex;flex-direction:column;gap:6px;min-width:0}
+.zone .zt{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;color:var(--zc);font-weight:600}
+.zone .zn{font-family:var(--f-display);font-weight:900;font-size:1.1rem}
+.zone .zi{background:var(--surface);border-radius:8px;padding:7px 10px;font-size:.8rem;line-height:1.5}
+.zone .zi b{display:block;font-family:var(--f-mono);font-size:.76rem;color:var(--zc);font-weight:600;overflow-wrap:anywhere}
+.z-local{--zc:var(--z-local);--zs:var(--z-local-soft)} .z-gh{--zc:var(--z-gh);--zs:var(--z-gh-soft)} .z-web{--zc:var(--z-web);--zs:var(--z-web-soft)}
+.hop{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;font-family:var(--f-mono);font-size:.7rem;color:var(--muted);text-align:center;min-width:64px}
+.hop b{color:var(--accent);font-size:1.3rem;font-weight:400;line-height:1}
+.map-note{font-size:.84rem;color:var(--muted);margin-top:10px}
+
+.part{margin-top:84px;padding:20px 0 0;border-top:3px solid var(--ink);display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem 1rem}
+.part .pn{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;color:var(--bg);background:var(--ink);padding:2px 10px;border-radius:4px;align-self:center}
+.part .pt{font-family:var(--f-display);font-weight:900;font-size:clamp(1.5rem,3.4vw,1.9rem)}
+.part .pd{font-size:.95rem;color:var(--muted);flex-basis:100%}
+section{padding-block:56px 8px;scroll-margin-top:16px}
+h3[id]{scroll-margin-top:16px}
+.intro{font-size:1.04rem;color:var(--muted)}
+
+/* definitions */
+dl.defs{display:grid;grid-template-columns:10em minmax(0,1fr);margin:1.2rem 0;border-top:1px solid var(--line)}
+dl.defs dt,dl.defs dd{padding:14px 0;border-bottom:1px solid var(--line);margin:0}
+dl.defs dt{font-weight:700;padding-right:1rem}
+dl.defs dt small{display:block;font-weight:400;color:var(--muted);font-family:var(--f-mono);font-size:.74rem}
+dl.defs dd p{margin:0 0 .45rem}
+dl.defs dd p:last-child{margin-bottom:0}
+
+/* code */
+.code{position:relative;background:var(--code-bg);color:var(--code-ink);border-radius:10px;margin:1rem 0;overflow:hidden}
+.code pre{margin:0;padding:14px 18px;overflow-x:auto;font-family:var(--f-mono);font-size:.82rem;line-height:1.7}
+.code .label{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px 0 18px;font-family:var(--f-mono);font-size:.72rem;color:var(--code-muted)}
+.code .copy{font:inherit;font-size:.72rem;background:transparent;color:var(--code-muted);border:1px solid #2F403A;border-radius:5px;padding:2px 8px;cursor:pointer;flex:none}
+.code .copy:hover{color:var(--code-ink);border-color:var(--code-muted)}
+.c{color:var(--code-muted)} .p{color:var(--code-accent);user-select:none} .s{color:var(--code-str)} .e{color:var(--code-err)} .g{color:var(--code-ok)}
+
+/* notes */
+.note{border-radius:10px;padding:13px 17px;margin:1.2rem 0;background:var(--accent-soft);font-size:.95rem}
+.note.warn{background:var(--warn-soft)}
+.note .tag{font-weight:700;margin-right:.4rem;color:var(--accent)}
+.note.warn .tag{color:var(--warn)}
+.note p{margin:.35rem 0}
+
+/* tables */
+.tbl{overflow-x:auto;margin:1.1rem 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:520px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:.8rem;background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+
+/* timeline of steps */
+.steps{list-style:none;margin:1.4rem 0 0;padding:0;counter-reset:st}
+.step{counter-increment:st;display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;position:relative}
+.step::before{content:counter(st);grid-column:1;grid-row:1;width:36px;height:36px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:.9rem;display:flex;align-items:center;justify-content:center;z-index:1;margin-top:2px}
+.step::after{content:"";position:absolute;left:18px;top:40px;bottom:0;width:2px;background:var(--line)}
+.step:last-child::after{display:none}
+.step.fail::before{border-color:var(--warn);color:var(--warn)}
+.step>div{grid-column:2;padding-bottom:34px;min-width:0}
+.step h3{margin:0 0 .2rem;font-size:1.15rem}
+.who{display:inline-block;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:4px;margin-right:.5rem;vertical-align:.12em;font-family:var(--f-body)}
+.who.me{background:var(--accent-soft);color:var(--accent)}
+.who.you{background:var(--warn-soft);color:var(--warn)}
+.why{font-size:.93rem;color:var(--muted);border-left:0;margin:.5rem 0}
+.why b{color:var(--ink)}
+
+/* flag table in step */
+.flags{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);font-size:.9rem;margin:.8rem 0}
+.flags dt,.flags dd{margin:0;padding:8px 12px;border-bottom:1px solid var(--line)}
+.flags dt{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);background:var(--surface-2);white-space:nowrap}
+.flags dt:nth-last-of-type(1),.flags dd:last-child{border-bottom:0}
+
+/* url mapping */
+.urlmap{display:grid;gap:8px;margin:1rem 0}
+.urlmap div{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:var(--f-mono);font-size:.8rem}
+.urlmap span:nth-child(1){color:var(--z-local);overflow-wrap:anywhere}
+.urlmap span:nth-child(2){color:var(--muted)}
+.urlmap span:nth-child(3){color:var(--z-web);overflow-wrap:anywhere}
+
+/* faq */
+details.faq{border-bottom:1px solid var(--line)}
+details.faq>summary{cursor:pointer;padding:14px 0;font-weight:500;list-style:none;display:grid;grid-template-columns:1rem minmax(0,1fr);gap:.7rem}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::before{content:"+";font-family:var(--f-mono);color:var(--accent)}
+details.faq[open]>summary::before{content:"−"}
+details.faq .body{padding:0 0 14px 1.7rem}
+
+/* cheat */
+.cheat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);margin:1.2rem 0}
+.cheat div{padding:12px 16px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);min-width:0}
+.cheat div:nth-child(2n){border-right:0}
+.cheat div:nth-last-child(-n+2){border-bottom:0}
+.cheat code{display:block;font-weight:600;color:var(--accent);overflow-wrap:anywhere}
+.cheat span{font-size:.86rem;color:var(--muted)}
+.cheat-h{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.1em;color:var(--muted);margin-top:1.6rem}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+
+@media (max-width:920px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  .toc{display:none}
+  .toc-mobile{display:block;margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.9rem}
+  .toc-mobile summary{cursor:pointer;font-weight:500}
+  .toc-mobile a{color:var(--ink)}
+}
+@media (max-width:760px){
+  .map{grid-template-columns:minmax(0,1fr)}
+  .hop{flex-direction:row;gap:8px;min-width:0;padding:2px 0}
+  .hop b{transform:rotate(90deg)}
+}
+@media (max-width:640px){
+  body{font-size:15px}
+  h2{font-size:1.5rem}
+  dl.defs{grid-template-columns:minmax(0,1fr)}
+  dl.defs dt{border-bottom:0;padding-bottom:0}
+  .step{grid-template-columns:36px minmax(0,1fr);gap:0 12px}
+  .step::before{width:30px;height:30px;font-size:.8rem}
+  .step::after{left:14px;top:34px}
+  .flags{grid-template-columns:minmax(0,1fr)}
+  .flags dt{border-bottom:0}
+  .urlmap div{grid-template-columns:minmax(0,1fr)}
+  .urlmap span:nth-child(2){transform:rotate(90deg);justify-self:start}
+  .cheat{grid-template-columns:minmax(0,1fr)}
+  .cheat div{border-right:0}
+  .cheat div:nth-last-child(2){border-bottom:1px solid var(--line)}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* site navigation (website version) */
+.sitebar{max-width:1160px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:18px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.sitebar a{color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+.sitebar a:hover{color:var(--accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+<nav class="sitebar" aria-label="网站导航"><a href="../">← 学习笔记</a><span>dfangkai.github.io</span></nav>
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+<div class="wrap">
+<nav class="toc" id="toc" aria-label="目录">
+  <div class="toc-part">一 · 先认识它们</div>
+  <ol><li><a href="#concepts">六个概念</a></li><li><a href="#division">谁负责什么</a></li></ol>
+  <div class="toc-part">二 · 这次做了什么</div>
+  <ol><li><a href="#steps">12 个步骤</a></li></ol>
+  <div class="toc-part">三 · 以后怎么用</div>
+  <ol><li><a href="#update">更新网站</a></li><li><a href="#newpage">加一篇新笔记</a></li><li><a href="#status">查看部署状态</a></li><li><a href="#newmac">换电脑</a></li><li><a href="#undo">撤销改动</a></li><li><a href="#upgrade">升级 gh</a></li><li><a href="#safety">安全须知</a></li><li><a href="#later">以后可能用到</a></li></ol>
+  <div class="toc-part">四 · 出问题怎么办</div>
+  <ol><li><a href="#trouble">常见问题</a></li></ol>
+  <div class="toc-part">五 · 速查</div>
+  <ol><li><a href="#cheat">命令速查表</a></li></ol>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">GIT · GITHUB · GITHUB PAGES · GH · 2026 年 9 月</div>
+  <h1>网站上线手记</h1>
+  <p class="lede">从一个本地的 HTML 文件，到任何人都能打开的 <a href="https://dfangkai.github.io/">dfangkai.github.io</a>：这次具体做了哪些事、每一步为什么这样做，以及以后怎么自己维护这个网站。写给之前没接触过 git、GitHub Pages 和 gh 的人。</p>
+  <div class="hero-meta"><span>网站 <b>dfangkai.github.io</b></span><span>本地文件夹 <b>~/code/dfangkai.github.io</b></span><span>gh <b>2.101.0</b></span><span>上线日期 <b>2026-09-25</b></span></div>
+
+  <div class="map" role="img" aria-label="全景图：本地文件夹通过 git push 送到 GitHub 仓库，GitHub Actions 自动部署到 GitHub Pages，访客用浏览器访问">
+    <div class="zone z-local"><span class="zt">本地电脑</span><span class="zn">本地文件夹</span>
+      <div class="zi"><b>~/code/dfangkai.github.io</b>网站的源文件，在这里编辑</div>
+      <div class="zi"><b>git</b>记录每次改动，负责上传</div>
+      <div class="zi"><b>gh</b>在终端里操作 GitHub 网站</div>
+    </div>
+    <div class="hop"><b>→</b>git push</div>
+    <div class="zone z-gh"><span class="zt">GITHUB</span><span class="zn">仓库</span>
+      <div class="zi"><b>dfangkai/dfangkai.github.io</b>源文件和全部历史，公开可见</div>
+      <div class="zi"><b>Actions</b>收到新提交后自动部署</div>
+    </div>
+    <div class="hop"><b>→</b>自动部署</div>
+    <div class="zone z-web"><span class="zt">互联网</span><span class="zn">网站</span>
+      <div class="zi"><b>https://dfangkai.github.io/</b>GitHub Pages 托管，任何人可访问</div>
+    </div>
+  </div>
+  <p class="map-note">以后更新网站就是走一遍这条路：在本地改文件 → 用 git 提交并推送 → GitHub 自动部署 → 一两分钟后网站更新。</p>
+
+  <details class="toc-mobile"><summary>目录</summary>
+    <p><a href="#concepts">一、先认识它们</a><br><a href="#steps">二、这次做了什么（12 步）</a><br><a href="#update">三、以后怎么用</a><br><a href="#trouble">四、出问题怎么办</a><br><a href="#cheat">五、命令速查表</a></p>
+  </details>
+</header>
+
+<!-- ============ 一 ============ -->
+<div class="part"><span class="pn">第一部分</span><span class="pt">先认识它们</span><span class="pd">git、GitHub、GitHub Pages、gh 名字很像，其实是四样不同的东西。先弄清楚各自是什么。</span></div>
+
+<section id="concepts">
+  <h2>六个概念</h2>
+  <dl class="defs">
+    <dt>静态网站<small>static site</small></dt>
+    <dd><p>网站就是一堆文件：HTML（内容和结构）、CSS（样式）、JavaScript（交互）。"静态"的意思是服务器只负责把这些文件<strong>原样</strong>发给浏览器，不在服务器上运行任何程序。</p>
+      <p>这个网站就是静态网站：两个 <code>index.html</code>，样式和脚本都写在文件里面。好处是简单、免费、几乎不会出故障；代价是没有登录、数据库、评论这类需要服务器运行程序的功能。</p></dd>
+
+    <dt>git<small>版本管理工具</small></dt>
+    <dd><p>装在你电脑上的程序，用来记录文件的每一次改动，像游戏存档一样可以随时回到过去的任意版本。几个术语：</p>
+      <ul>
+        <li><strong>仓库（repository）</strong>：被 git 管理的文件夹。里面有个隐藏的 <code>.git</code> 目录，存着全部历史。</li>
+        <li><strong>提交（commit）</strong>：一次存档。每次提交都有一个编号（比如 <code>e6aad1f</code>）和一句说明。</li>
+        <li><strong>分支（branch）</strong>：一条独立的存档线。这个网站只用一条，叫 <code>main</code>。</li>
+        <li><strong>远程（remote）</strong>：同一个仓库在别处的副本。这个网站的远程叫 <code>origin</code>，指向 GitHub 上的仓库。</li>
+        <li><strong>推送（push）/ 拉取（pull）</strong>：把本地的新提交上传到远程 / 把远程的新提交下载到本地。</li>
+      </ul></dd>
+
+    <dt>GitHub<small>github.com</small></dt>
+    <dd><p>一个存放 git 仓库的网站（公司），外加协作功能：在网页上浏览代码、看改动历史、讨论问题等。git 和 GitHub 的关系，类似"文档"和"网盘"：git 是工具，GitHub 是放仓库的地方。</p>
+      <p>仓库分<strong>公开（public）</strong>和<strong>私有（private）</strong>两种。公开仓库的所有内容，包括每一次提交的历史，任何人都能看到。</p></dd>
+
+    <dt>GitHub Pages<small>网站托管</small></dt>
+    <dd><p>GitHub 提供的免费静态网站托管：你把 HTML 文件放进仓库，它就把这些文件发布成一个网站。有两种站点：</p>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>用户站点（本站用的这种）</th><th>项目站点</th></tr></thead>
+        <tbody>
+          <tr><td>仓库名</td><td>必须是 <code>用户名.github.io</code></td><td>任意仓库</td></tr>
+          <tr><td>网址</td><td><code>https://用户名.github.io/</code></td><td><code>https://用户名.github.io/仓库名/</code></td></tr>
+          <tr><td>数量</td><td>每个账号只能有一个</td><td>每个仓库都可以有一个</td></tr>
+        </tbody>
+      </table></div>
+      <p>免费账号需要用公开仓库；私有仓库发布 Pages 需要付费计划（以 GitHub 当前文档为准）。</p></dd>
+
+    <dt>gh<small>GitHub CLI</small></dt>
+    <dd><p>GitHub 官方的<strong>命令行工具</strong>。GitHub 网页上能做的大部分事情（建仓库、看部署状态、改设置），都能在终端里用 gh 完成。它还负责帮你登录 GitHub，并把登录信息提供给 git 用。</p>
+      <p>没有 gh 也能用 GitHub，只是这些操作要去网页上点。这次用 gh，是为了让整个流程都能在终端里一步步完成，并把每一步的结果记录下来。</p></dd>
+
+    <dt>GitHub Actions<small>自动化</small></dt>
+    <dd><p>GitHub 的自动化流水线：仓库里发生某件事（比如有新提交）时，自动在 GitHub 的服务器上执行一系列任务。GitHub Pages 就是用它来部署的：每次你推送，都会自动运行一个叫 <code>pages build and deployment</code> 的任务，把新文件发布出去。你不需要自己配置它。</p></dd>
+  </dl>
+
+  <div class="note"><span class="tag">还有两个会碰到的词</span>
+    <p><strong>token（令牌）</strong>：登录 GitHub 后得到的一串"通行证"，gh 和 git 用它代表你操作 GitHub，这样就不用每次都输入密码。</p>
+    <p><strong>钥匙串（Keychain）</strong>：macOS 自带的密码保险箱。登录后的 token 就保存在这里，而不是明文写在某个文件里。</p>
+  </div>
+</section>
+
+<section id="division">
+  <h2>谁负责什么</h2>
+  <p class="intro">最容易搞混的是 git 和 gh。简单说：<strong>git 管文件，gh 管 GitHub 网站上的东西。</strong></p>
+  <div class="tbl"><table>
+    <thead><tr><th>要做的事</th><th>用什么</th><th>这次用到的命令</th></tr></thead>
+    <tbody>
+      <tr><td>记录改动（存档）</td><td>git</td><td><code>git add</code>、<code>git commit</code></td></tr>
+      <tr><td>上传到 GitHub</td><td>git</td><td><code>git push</code></td></tr>
+      <tr><td>登录 GitHub</td><td>gh</td><td><code>gh auth login</code></td></tr>
+      <tr><td>让 git 用上 gh 的登录信息</td><td>gh</td><td><code>gh auth setup-git</code></td></tr>
+      <tr><td>在 GitHub 上建仓库</td><td>gh</td><td><code>gh repo create</code></td></tr>
+      <tr><td>查看、修改仓库设置（比如 Pages）</td><td>gh</td><td><code>gh api</code></td></tr>
+      <tr><td>查看部署进度</td><td>gh</td><td><code>gh run list</code>、<code>gh run watch</code></td></tr>
+      <tr><td>把文件发布成网站</td><td>GitHub Pages（自动）</td><td>不需要命令，推送后自动发生</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 二 ============ -->
+<div class="part"><span class="pn">第二部分</span><span class="pt">这次做了什么</span><span class="pd">按实际发生的顺序记录。这个网站是我在 AI 编程助手 Claude 的帮助下搭建的。标签 <span class="who me">Claude</span> 表示由 Claude 执行，<span class="who you">我</span> 表示由我亲自操作。命令输出都是当时的原样（个人路径和邮箱有省略）。</span></div>
+
+<section id="steps">
+  <h2>12 个步骤</h2>
+  <ol class="steps">
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>把教程包装成完整网页</h3>
+      <p>uv 教程原本是 Artifact 页面。Artifact 平台在显示时会自动给页面套上一层外壳（<code>&lt;!doctype html&gt;</code>、<code>&lt;head&gt;</code>、<code>&lt;body&gt;</code>，还有几行基础样式），所以原文件里并没有这些。GitHub Pages 不会自动加，所以要先补上：</p>
+      <div class="code"><div class="label"><span>补上的外壳（节选）</span></div><pre>&lt;!doctype html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;                  <span class="c">&lt;!-- 否则中文可能乱码 --&gt;</span>
+&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;  <span class="c">&lt;!-- 手机上正常缩放 --&gt;</span>
+&lt;style&gt;body{margin:0} …&lt;/style&gt;       <span class="c">&lt;!-- 平台原本提供的基础样式 --&gt;</span>
+…原来的页面内容…
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+      <p class="why"><b>要记住的：</b>Artifact 版和网站版是两份独立的文件。改了其中一份，另一份不会自动同步。</p>
+    </div></li>
+
+    <li class="step fail"><div>
+      <h3><span class="who me">Claude</span>用 Homebrew 装 gh：失败了</h3>
+      <p>Homebrew 是 macOS 上最常用的软件安装工具，通常 <code>brew install gh</code> 一条命令就能装好。但这次：</p>
+      <div class="code"><pre><span class="p">$ </span>brew install gh
+Warning: You are using macOS 27.
+We do not provide support for this pre-release version.
+<span class="e">Error: gh: no bottle available!</span></pre></div>
+      <p class="why"><b>原因：</b>我用的 macOS 27 是预览版。Homebrew 的"bottle"是为每个系统版本预先编译好的安装包，它还没有为 macOS 27 准备。虽然可以从源代码自己编译，但要额外装 Go 语言编译环境，太重了，所以换了个办法。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>改用 GitHub 官方安装包，并核对校验和</h3>
+      <p>gh 的开发者在 <a href="https://github.com/cli/cli/releases">github.com/cli/cli/releases</a> 发布了编译好的安装包，适用于所有 macOS 版本。步骤是：查到最新版本号 → 下载 Apple 芯片版的压缩包 → 同时下载官方公布的校验和清单 → 核对：</p>
+      <div class="code"><pre><span class="p">$ </span>curl -fsSLO https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_macOS_arm64.zip
+<span class="p">$ </span>curl -fsSL  https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_checksums.txt -o gh_checksums.txt
+<span class="p">$ </span>grep " gh_2.101.0_macOS_arm64.zip$" gh_checksums.txt &gt; gh_expected.txt   <span class="c"># 从清单里取出这个文件的那一行</span>
+<span class="p">$ </span>shasum -a 256 -c gh_expected.txt                                          <span class="c"># 自己算一遍，和清单对比</span>
+gh_2.101.0_macOS_arm64.zip: <span class="g">OK</span></pre></div>
+      <p class="why"><b>校验和是什么：</b>每个文件都能算出一个唯一的"指纹"（SHA-256 值）。下载后自己算一遍，和官方公布的对比，一致就说明文件完整，没有在下载途中损坏或被篡改。从网上下载可执行程序时，这是一个好习惯。</p>
+      <p>然后解压，把 <code>gh</code> 程序复制到 <code>~/.local/bin/</code>：</p>
+      <div class="code"><pre><span class="p">$ </span>cp gh_unz/*/bin/gh ~/.local/bin/gh
+<span class="p">$ </span>which gh
+~/.local/bin/gh
+<span class="p">$ </span>gh --version
+gh version 2.101.0 (2026-09-15)</pre></div>
+      <p class="why"><b>为什么放在 ~/.local/bin：</b>终端只会在 <code>PATH</code> 环境变量列出的几个文件夹里找命令。我的 <code>~/.zshrc</code> 里有一句 <code>export PATH="$HOME/.local/bin:$PATH"</code>，把这个文件夹加进了 PATH（uv 也装在这里）。放进去之后，在任何位置输入 <code>gh</code> 都能找到它，而且不需要管理员密码。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who you">我</span>登录 GitHub</h3>
+      <p>登录必须由账号主人在浏览器里授权，所以这一步是我自己在新终端窗口里完成的：</p>
+      <div class="code"><pre><span class="p">$ </span>gh auth login --hostname github.com --git-protocol https --web</pre></div>
+      <dl class="flags">
+        <dt>--hostname github.com</dt><dd>登录的是 github.com（而不是公司自建的 GitHub）</dd>
+        <dt>--git-protocol https</dt><dd>git 用 HTTPS 方式和 GitHub 通信（另一种是 SSH）</dd>
+        <dt>--web</dt><dd>用浏览器授权：终端显示一个一次性验证码，你在网页上输入它，确认"是我本人"</dd>
+      </dl>
+      <p>登录后的状态（token 已被遮住）：</p>
+      <div class="code"><pre><span class="p">$ </span>gh auth status
+github.com
+  ✓ Logged in to github.com account dfangkai (keyring)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: gho_************************************
+  - Token scopes: 'gist', 'read:org', 'repo', 'workflow'</pre></div>
+      <p class="why"><b>怎么读：</b><code>(keyring)</code> 表示 token 存在 macOS 钥匙串里。<code>Token scopes</code> 是这个 token 被允许做的事：<code>repo</code> 可以读写你的仓库，<code>workflow</code> 可以改 Actions 配置，<code>read:org</code> 能读取组织信息，<code>gist</code> 能管理代码片段。建仓库、推送、开 Pages 主要靠 <code>repo</code>。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>让 git 使用 gh 的登录信息</h3>
+      <div class="code"><pre><span class="p">$ </span>gh auth setup-git</pre></div>
+      <p>它在 git 全局配置（<code>~/.gitconfig</code>）里加了几项设置，用 <code>git config --global --get-regexp credential</code> 可以看到：</p>
+      <div class="code"><pre>credential.https://github.com.helper
+credential.https://github.com.helper !~/.local/bin/gh auth git-credential
+credential.https://gist.github.com.helper
+credential.https://gist.github.com.helper !~/.local/bin/gh auth git-credential</pre></div>
+      <p class="why"><b>作用：</b>以后 git 访问 github.com 需要身份验证时（比如 push），会去问 gh 要 token，而 gh 从钥匙串里取出来交给它。所以你推送时<strong>不用输入任何密码</strong>。另外，GitHub 早就不接受用账号密码推送了，不配置这一步的话，就得手动生成 token 并粘贴。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>建网站文件夹和文件</h3>
+      <div class="code"><div class="label"><span>~/code/dfangkai.github.io</span></div><pre>.
+├── .nojekyll            <span class="c"># 空文件：告诉 GitHub Pages 不要用 Jekyll 处理</span>
+├── index.html           <span class="c"># 首页 → https://dfangkai.github.io/</span>
+└── uv-guide/
+    └── index.html       <span class="c"># 教程 → https://dfangkai.github.io/uv-guide/</span></pre></div>
+      <p class="why"><b>为什么都叫 index.html：</b>网址指向一个文件夹时，服务器默认返回里面的 <code>index.html</code>。所以 <code>/uv-guide/</code> 打开的就是 <code>uv-guide/index.html</code>，网址里不用写文件名。</p>
+      <p class="why"><b>.nojekyll 是什么：</b>Jekyll 是一个网站生成器，GitHub Pages 默认会先用它处理仓库里的文件（比如把 Markdown 转成网页）。这个网站是写好的 HTML，不需要这一步。加一个名为 <code>.nojekyll</code> 的空文件就会跳过它，部署更快，也避免 Jekyll 意外忽略以下划线开头的文件。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>初始化 git 仓库，做第一次提交</h3>
+      <div class="code"><pre><span class="p">$ </span>git init -b main          <span class="c"># 把这个文件夹变成 git 仓库，主分支叫 main</span>
+<span class="p">$ </span>git add -A                <span class="c"># 把所有文件放进"待提交"区</span>
+<span class="p">$ </span>git status --short        <span class="c"># 看看准备提交什么</span>
+A  .nojekyll                  <span class="c"># A = Added，新增的文件</span>
+A  index.html
+A  uv-guide/index.html
+<span class="p">$ </span>git commit -m "Add homepage and uv guide"
+<span class="p">$ </span>git log --oneline
+e6aad1f Add homepage and uv guide</pre></div>
+      <p class="why"><b>add 和 commit 为什么分两步：</b><code>git add</code> 是挑选"这次存档要包含哪些改动"，<code>git commit</code> 才是真正存档。分开是为了让你可以只提交一部分改动。日常用 <code>git add -A</code>（全部）就行。</p>
+      <p class="why"><b>提交者是谁：</b>git 用全局配置里的 <code>user.name</code> 和 <code>user.email</code> 标记每次提交的作者，我之前已经设置过（名字是 dfangkai）。这些信息会随仓库公开。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>在 GitHub 上建仓库并推送</h3>
+      <p>一条 gh 命令完成三件事：在 GitHub 上建仓库、把它登记为本地仓库的远程、推送：</p>
+      <div class="code"><pre><span class="p">$ </span>gh repo create dfangkai/dfangkai.github.io --public --source=. --remote=origin --push --description "dfangkai 的学习笔记"
+https://github.com/dfangkai/dfangkai.github.io
+To https://github.com/dfangkai/dfangkai.github.io.git
+ * [new branch]      HEAD -&gt; main
+branch 'main' set up to track 'origin/main'.</pre></div>
+      <dl class="flags">
+        <dt>dfangkai/dfangkai.github.io</dt><dd>"所有者/仓库名"。仓库名是用户名 + .github.io，GitHub 才会把它当作用户站点</dd>
+        <dt>--public</dt><dd>公开仓库（免费账号的 Pages 需要）</dd>
+        <dt>--source=.</dt><dd>用当前文件夹（<code>.</code>）作为这个仓库的内容</dd>
+        <dt>--remote=origin</dt><dd>在本地把 GitHub 上的仓库登记为名叫 origin 的远程</dd>
+        <dt>--push</dt><dd>建好后立刻把本地提交推送上去</dd>
+      </dl>
+      <p class="why"><b>输出怎么读：</b><code>[new branch] HEAD -&gt; main</code> 表示 GitHub 上新建了 main 分支，内容是本地当前的提交；<code>set up to track</code> 表示本地 main 和远程 main 关联好了，以后直接 <code>git push</code> 就知道往哪推。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>确认 Pages 已开启</h3>
+      <p>用户站点仓库一推送，GitHub 通常会自动开启 Pages。用 <code>gh api</code> 查询 Pages 设置：</p>
+      <div class="code"><pre><span class="p">$ </span>gh api repos/dfangkai/dfangkai.github.io/pages
+{"https":true,"source":{"branch":"main","path":"/"},"status":"building","url":"https://dfangkai.github.io/"}</pre></div>
+      <p class="why"><b>怎么读：</b>从 <code>main</code> 分支的根目录（<code>/</code>）发布；强制使用 HTTPS；状态 <code>building</code> 表示正在部署。如果查询结果是"未开启"，就用同一个接口发一个开启请求（<code>gh api -X POST …/pages</code>），这次不需要。</p>
+      <p class="why"><b>gh api 是什么：</b>GitHub 网页上的所有功能背后都有对应的 API（程序接口）。<code>gh api</code> 让你带着登录身份直接调用它们，适合 gh 没有专门命令的操作。等价的网页操作是：仓库 → Settings → Pages。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>等待部署完成</h3>
+      <div class="code"><pre><span class="p">$ </span>gh run list --limit 1          <span class="c"># 找到最新的部署任务</span>
+<span class="p">$ </span>gh run watch 36155490862       <span class="c"># 盯着它，直到结束</span>
+…
+<span class="c"># 结束后查询结果：pages build and deployment → completed，结论 <span class="g">success</span></span></pre></div>
+      <p>部署过程中还出现了两条提示：</p>
+      <div class="code"><pre>! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24 …
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026 …"</pre></div>
+      <p class="why"><b>要不要管：</b>不用。这是 GitHub 自己的部署任务在提醒它内部使用的软件版本要升级，和网站文件无关，也不影响部署结果。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>验证网站可以访问</h3>
+      <div class="code"><pre><span class="p">$ </span>curl -s -o /dev/null -w "%{http_code}" https://dfangkai.github.io/
+<span class="g">200</span>                     <span class="c"># 200 = 访问成功（404 = 找不到）</span>
+<span class="p">$ </span>curl -s https://dfangkai.github.io/uv-guide/ | cmp -s - uv-guide/index.html &amp;&amp; echo "一致"
+一致                    <span class="c"># 线上的教程和本地文件逐字节相同</span></pre></div>
+      <p class="why"><b>curl</b> 是一个在终端里访问网址的工具，相当于没有界面的浏览器。<b>cmp</b> 逐字节比较两个文件。这样验证比"打开看一眼"更可靠：能确认线上确实是最新版本，而不是浏览器缓存里的旧页面。</p>
+    </div></li>
+
+    <li class="step"><div>
+      <h3><span class="who me">Claude</span>更新首页：第一次"日常更新"</h3>
+      <p>后来重新设计了首页。这次的流程，就是以后每次更新网站要走的流程：</p>
+      <div class="code"><pre><span class="p">$ </span>git add index.html
+<span class="p">$ </span>git commit -m "Redesign homepage as a learning notebook"
+<span class="p">$ </span>git push
+To https://github.com/dfangkai/dfangkai.github.io.git
+   e6aad1f..1eb91a4  main -&gt; main        <span class="c"># 远程的 main 从 e6aad1f 前进到 1eb91a4</span>
+<span class="p">$ </span>gh run watch …
+<span class="c"># 部署记录：<span class="g">success</span>，开始 15:50:24，结束 15:51:59（UTC），从推送到上线约 1.5 分钟</span></pre></div>
+      <p class="why">注意这次只需要 <code>git push</code>，不用再写 origin 和 main，因为第 8 步已经把两边关联好了。</p>
+    </div></li>
+  </ol>
+</section>
+
+<!-- ============ 三 ============ -->
+<div class="part"><span class="pn">第三部分</span><span class="pt">以后怎么用</span><span class="pd">日常维护网站需要的所有操作。所有命令都在网站文件夹里运行，先 <code>cd ~/code/dfangkai.github.io</code>。</span></div>
+
+<section id="update">
+  <h2>更新网站：四步</h2>
+  <div class="code"><div class="label"><span>每次更新都是这四步</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>cd ~/code/dfangkai.github.io
+<span class="c"># 1. 用编辑器修改文件（比如 VS Code：code .）</span>
+<span class="p">$ </span>git status                          <span class="c"># 2. 看看改了哪些文件</span>
+<span class="p">$ </span>git add -A                          <span class="c"># 3. 挑选全部改动 …</span>
+<span class="p">$ </span>git commit -m "说明这次改了什么"      <span class="c">#    … 存档</span>
+<span class="p">$ </span>git push                            <span class="c"># 4. 推送，一两分钟后网站自动更新</span></pre></div>
+  <p>三个帮你"看清楚"的命令，改动之前、之后都可以随时用：</p>
+  <div class="tbl"><table>
+    <thead><tr><th>命令</th><th>告诉你什么</th></tr></thead>
+    <tbody>
+      <tr><td><code>git status</code></td><td>哪些文件被改了、哪些还没提交、本地是否领先于 GitHub</td></tr>
+      <tr><td><code>git diff</code></td><td>具体改了哪几行（按 <kbd>q</kbd> 退出）</td></tr>
+      <tr><td><code>git log --oneline</code></td><td>历史提交列表，最新的在最上面</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><span class="tag">提交说明怎么写</span>写清楚"做了什么"，比如"修正 uv 教程第 9 课的错别字""新增 git 入门笔记"。以后翻历史时，这句话是你唯一的线索。</div>
+</section>
+
+<section id="newpage">
+  <h2>加一篇新笔记</h2>
+  <p class="intro">每篇笔记一个文件夹，文件夹里放一个 <code>index.html</code>。文件夹名就是网址的一部分：</p>
+  <div class="urlmap">
+    <div><span>index.html</span><span>→</span><span>https://dfangkai.github.io/</span></div>
+    <div><span>uv-guide/index.html</span><span>→</span><span>https://dfangkai.github.io/uv-guide/</span></div>
+    <div><span>git-basics/index.html</span><span>→</span><span>https://dfangkai.github.io/git-basics/</span></div>
+  </div>
+  <ol>
+    <li>新建文件夹，比如 <code>git-basics/</code>，把网页存成里面的 <code>index.html</code>。文件夹名用小写英文和连字符，不要用空格和中文，网址会更干净。</li>
+    <li>如果网页来自 Artifact，记得像第 1 步那样补上完整的外壳。</li>
+    <li>在新页面顶部加上返回首页的导航条（每篇笔记只放这一个返回入口）：从 <code>uv-guide/index.html</code> 里复制 <code>&lt;nav class="sitebar"&gt;</code> 那一行和对应的样式。链接写 <code>href="../"</code>，意思是"上一级文件夹"，也就是首页。</li>
+    <li>在首页 <code>index.html</code> 的"笔记"列表里加一项：复制已有的那个 <code>&lt;li&gt;</code>，改掉标题、简介、标签、日期和链接（写 <code>href="git-basics/"</code>，相对路径，不用写完整网址）。再把"笔记"旁边的数字加一，在"学习日志"最上面加一行。</li>
+    <li>在浏览器里直接打开本地的 <code>index.html</code> 检查一遍，然后按上面的四步提交、推送。</li>
+  </ol>
+  <p>这些步骤也可以直接交给 Claude："把这个页面加到我的网站上"。</p>
+</section>
+
+<section id="status">
+  <h2>查看部署状态</h2>
+  <div class="code"><div class="label"><span>在终端里</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>gh run list --limit 5       <span class="c"># 最近 5 次部署：✓ 成功，X 失败，* 进行中</span>
+<span class="p">$ </span>gh run watch                <span class="c"># 挑一个进行中的任务，实时跟踪到结束</span>
+<span class="p">$ </span>gh browse                   <span class="c"># 在浏览器里打开这个仓库的 GitHub 页面</span></pre></div>
+  <p>在网页上看：打开仓库页面，点顶部的 <strong>Actions</strong> 标签，每次推送对应一条 <code>pages build and deployment</code> 记录。绿色对勾表示成功，红色叉号表示失败，点进去能看到详细日志。</p>
+</section>
+
+<section id="newmac">
+  <h2>换电脑、重装系统</h2>
+  <p class="intro">网站的全部内容和历史都在 GitHub 上，本地文件夹只是一个副本。在新电脑上恢复：</p>
+  <div class="code"><div class="label"><span>在新电脑上</span><button class="copy" type="button">复制</button></div><pre><span class="c"># 1. 安装 gh（新电脑如果是正式版 macOS，Homebrew 一般就能装）</span>
+<span class="p">$ </span>brew install gh
+<span class="c"># 2. 登录，并让 git 用上登录信息</span>
+<span class="p">$ </span>gh auth login --hostname github.com --git-protocol https --web
+<span class="p">$ </span>gh auth setup-git
+<span class="c"># 3. 把仓库下载到本地（clone = 克隆，连同全部历史一起下载）</span>
+<span class="p">$ </span>gh repo clone dfangkai/dfangkai.github.io ~/code/dfangkai.github.io</pre></div>
+  <p>别忘了在新电脑上设置 git 的作者信息：<code>git config --global user.name "dfangkai"</code> 和 <code>git config --global user.email "你的邮箱"</code>。</p>
+</section>
+
+<section id="undo">
+  <h2>撤销改动</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>情况</th><th>怎么办</th><th>效果</th></tr></thead>
+    <tbody>
+      <tr><td>改乱了一个文件，还没提交</td><td><code>git restore 文件名</code></td><td>文件回到上次提交时的样子（这次的修改会丢失）</td></tr>
+      <tr><td>已经 <code>git add</code>，但还没提交</td><td><code>git restore --staged 文件名</code></td><td>从"待提交"区撤出来，文件内容不变</td></tr>
+      <tr><td>已经推送上线，想退回上一个版本</td><td><code>git revert HEAD</code>，然后 <code>git push</code></td><td>新建一个"反向"提交，抵消上一次的改动，网站回到之前的样子</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><span class="tag">为什么用 revert 而不是删除历史</span><code>git revert</code> 不改写历史，只是再加一个提交，最安全。网上有些教程会教 <code>git reset --hard</code> 加 <code>git push --force</code>，那会改写已经公开的历史，容易出问题，初学阶段不要用。</div>
+</section>
+
+<section id="upgrade">
+  <h2>升级 gh</h2>
+  <p>gh 发现有新版本时，会在命令输出的最后提示你。因为它是手动安装的，升级就是重复第 3 步：下载新版本的安装包，核对校验和，覆盖 <code>~/.local/bin/gh</code>。也可以直接让 Claude 来做。</p>
+  <p>等 Homebrew 开始支持 macOS 27 后，可以改用 Homebrew 管理：先删掉手动装的版本 <code>rm ~/.local/bin/gh</code>，再 <code>brew install gh</code>，以后用 <code>brew upgrade gh</code> 升级。</p>
+  <div class="code"><pre><span class="p">$ </span>gh --version          <span class="c"># 查看当前版本</span></pre></div>
+</section>
+
+<section id="safety">
+  <h2>安全须知</h2>
+  <ul>
+    <li><strong>公开仓库的一切都是公开的，包括历史。</strong>一个文件即使后来删掉了，之前的提交里仍然能找到它。所以 API Key、密码、<code>.env</code> 这类东西<strong>永远不要</strong>放进这个仓库，放进去之后再删掉也不算安全。</li>
+    <li><strong>token 等同于你的账号权限。</strong>它保存在 macOS 钥匙串里，不要把 <code>gh auth token</code> 的输出发给任何人或贴到任何地方。</li>
+    <li><strong>不用了可以退出登录：</strong><code>gh auth logout</code>。</li>
+    <li><strong>彻底撤销授权：</strong>在 GitHub 网页上进入 Settings → Applications → Authorized OAuth Apps，找到 GitHub CLI，点 Revoke。</li>
+    <li><strong>GitHub Pages 的使用规则：</strong>不能用来经营网店、提供商业服务，也不能处理密码、信用卡号这类敏感信息。个人笔记、作品展示完全没问题。</li>
+  </ul>
+  <p>免费额度对个人笔记网站绰绰有余（来自 GitHub 官方文档）：</p>
+  <div class="tbl"><table>
+    <thead><tr><th>项目</th><th>限制</th></tr></thead>
+    <tbody>
+      <tr><td>发布的网站大小</td><td>不超过 1 GB（仓库建议也不超过 1 GB）</td></tr>
+      <tr><td>流量</td><td>每月 100 GB（软限制）</td></tr>
+      <tr><td>部署次数</td><td>每小时 10 次（软限制）</td></tr>
+      <tr><td>单次部署时间</td><td>超过 10 分钟会失败</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="later">
+  <h2>以后可能用到</h2>
+  <dl class="defs">
+    <dt>自定义域名</dt><dd><p>买了自己的域名（比如 <code>dfangkai.com</code>）后，可以让它指向这个网站：在仓库 Settings → Pages → Custom domain 填写域名，再到域名服务商那里添加 DNS 记录。GitHub 会自动配置 HTTPS。</p></dd>
+    <dt>自定义 404 页面</dt><dd><p>在仓库根目录放一个 <code>404.html</code>，访客打开不存在的网址时就会看到它，而不是 GitHub 默认的错误页。</p></dd>
+    <dt>项目站点</dt><dd><p>其他仓库也能开 Pages，网址是 <code>dfangkai.github.io/仓库名/</code>。比如以后给某个项目写文档，可以放在那个项目自己的仓库里，而不用塞进这个笔记网站。</p></dd>
+    <dt>直接在网页上改</dt><dd><p>在 GitHub 仓库页面点开文件，再点铅笔图标，可以直接在线编辑并提交，同样会触发部署。之后回到电脑上，记得先 <code>git pull</code> 把这次改动拉下来（见下方常见问题）。</p></dd>
+  </dl>
+</section>
+
+<!-- ============ 四 ============ -->
+<div class="part"><span class="pn">第四部分</span><span class="pt">出问题怎么办</span><span class="pd">按症状查找。</span></div>
+
+<section id="trouble">
+  <h2>常见问题</h2>
+
+  <details class="faq" open><summary>git push 被拒绝，提示 rejected … (fetch first)</summary><div class="body">
+    <p><strong>原因：</strong>GitHub 上有你本地没有的提交，比如你在网页上直接改过文件，或者在另一台电脑上推送过。git 为了不覆盖它们，拒绝了这次推送。</p>
+    <p><strong>解决：</strong>先把远程的提交拉下来，接到你的提交之前，再推送：</p>
+    <div class="code"><pre><span class="p">$ </span>git pull --rebase
+<span class="p">$ </span>git push</pre></div>
+  </div></details>
+
+  <details class="faq"><summary>推送成功了，但网站上看到的还是旧内容</summary><div class="body">
+    <ol>
+      <li>等一两分钟，部署需要时间。用 <code>gh run list --limit 1</code> 看看最新一次部署是否已经成功。</li>
+      <li>浏览器可能用了缓存。按 <kbd>⌘ ⇧ R</kbd> 强制刷新，或者用无痕窗口打开。</li>
+      <li>确认改的是网站文件夹里的文件，而不是别处的副本（比如 Artifact 版）。</li>
+    </ol>
+  </div></details>
+
+  <details class="faq"><summary>打开网址显示 404</summary><div class="body">
+    <p>检查三点：文件名是不是 <code>index.html</code>（全小写）；文件夹名和网址是否<strong>完全一致</strong>（GitHub Pages 区分大小写）；链接末尾有没有少写 <code>/</code>。刚推送的新页面也可能只是还没部署完。</p>
+  </div></details>
+
+  <details class="faq"><summary>部署失败（Actions 里是红色叉号）</summary><div class="body">
+    <p>查看失败原因：</p>
+    <div class="code"><pre><span class="p">$ </span>gh run list --limit 3                  <span class="c"># 找到失败的那次，记下编号</span>
+<span class="p">$ </span>gh run view 编号 --log-failed          <span class="c"># 只看出错部分的日志</span></pre></div>
+    <p>纯 HTML 网站很少失败。偶尔是 GitHub 自身的临时故障，这种情况下再推送一次（或者在 Actions 页面点 Re-run）通常就好了。</p>
+  </div></details>
+
+  <details class="faq"><summary>终端提示 command not found: gh</summary><div class="body">
+    <p>gh 装在 <code>~/.local/bin</code>，靠 <code>~/.zshrc</code> 里的 PATH 设置才能找到。可以关掉终端重新打开，或者运行 <code>source ~/.zshrc</code>。如果还不行，检查文件是否还在：<code>ls ~/.local/bin/gh</code>。</p>
+  </div></details>
+
+  <details class="faq"><summary>推送时要求输入用户名和密码，或者提示认证失败</summary><div class="body">
+    <p>通常是 gh 的登录失效了，或者 git 没有配置使用 gh：</p>
+    <div class="code"><pre><span class="p">$ </span>gh auth status            <span class="c"># 看看是否还处于登录状态</span>
+<span class="p">$ </span>gh auth login --hostname github.com --git-protocol https --web   <span class="c"># 失效了就重新登录</span>
+<span class="p">$ </span>gh auth setup-git         <span class="c"># 重新让 git 使用 gh 的登录信息</span></pre></div>
+  </div></details>
+
+  <details class="faq"><summary>不小心把密钥提交并推送了</summary><div class="body">
+    <p><strong>第一件事是去对应平台作废这个密钥，重新生成一个新的。</strong>比如 TypeSafe 的 API Key，就去它的控制台删除旧 key。因为仓库是公开的，推送的那一刻就应该当作已经泄露；从历史里删除记录比较复杂，而且无法保证期间没有人看到过。</p>
+  </div></details>
+</section>
+
+<!-- ============ 五 ============ -->
+<div class="part"><span class="pn">第五部分</span><span class="pt">速查</span></div>
+
+<section id="cheat">
+  <h2>命令速查表</h2>
+  <div class="cheat-h">日常更新（git）</div>
+  <div class="cheat">
+    <div><code>git status</code><span>看改了什么、有没有没提交的</span></div>
+    <div><code>git diff</code><span>看具体改了哪几行</span></div>
+    <div><code>git add -A</code><span>挑选全部改动</span></div>
+    <div><code>git commit -m "说明"</code><span>存档</span></div>
+    <div><code>git push</code><span>上传到 GitHub，触发部署</span></div>
+    <div><code>git pull --rebase</code><span>先拉取远程的新提交</span></div>
+    <div><code>git log --oneline</code><span>看历史</span></div>
+    <div><code>git revert HEAD</code><span>撤销上一次提交（再 push）</span></div>
+  </div>
+  <div class="cheat-h">GitHub 相关（gh）</div>
+  <div class="cheat">
+    <div><code>gh auth status</code><span>看登录状态</span></div>
+    <div><code>gh auth login --web</code><span>登录</span></div>
+    <div><code>gh run list --limit 5</code><span>最近的部署记录</span></div>
+    <div><code>gh run watch</code><span>实时跟踪部署</span></div>
+    <div><code>gh browse</code><span>在浏览器打开仓库页面</span></div>
+    <div><code>gh repo clone dfangkai/dfangkai.github.io</code><span>在新电脑上下载仓库</span></div>
+  </div>
+  <div class="note"><span class="tag">三个地址</span>
+    <p>网站：<code>https://dfangkai.github.io/</code></p>
+    <p>仓库：<code>https://github.com/dfangkai/dfangkai.github.io</code></p>
+    <p>本地：<code>~/code/dfangkai.github.io</code></p>
+  </div>
+  <footer>记录于 2026 年 9 月 25 日。gh 2.101.0，macOS 27 预览版，Apple 芯片。步骤里的命令输出都是当时实际运行的结果，个人路径和邮箱有省略；GitHub Pages 的限制数据来自 GitHub 官方文档。</footer>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  function each(l,f){ Array.prototype.forEach.call(l,f); }
+  function selectPre(pre){ try{ var r=document.createRange(); r.selectNodeContents(pre); var s=getSelection(); s.removeAllRanges(); s.addRange(r);}catch(e){} }
+  each(document.querySelectorAll(".code .copy"), function(btn){
+    btn.addEventListener("click", function(){
+      var pre = btn.closest(".code").querySelector("pre");
+      var text = pre.textContent.split("\n").filter(function(l){ return l.indexOf("$ ")===0; })
+        .map(function(l){ return l.slice(2).replace(/\s+#.*$/, "").trim(); }).join("\n");
+      function done(ok){ btn.textContent = ok ? "已复制" : "请手动复制"; setTimeout(function(){ btn.textContent="复制"; }, 1500); }
+      try { navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ selectPre(pre); done(false); }); }
+      catch(e){ selectPre(pre); done(false); }
+    });
+  });
+  var links = document.querySelectorAll("#toc a");
+  if ("IntersectionObserver" in window){
+    var map = {}; each(links, function(a){ map[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ each(links, function(a){ a.classList.remove("active"); }); var a = map[e.target.id]; if (a) a.classList.add("active"); } });
+    }, { rootMargin:"-20% 0px -70% 0px" });
+    Object.keys(map).forEach(function(id){ var s=document.getElementById(id); if (s) io.observe(s); });
+  }
+  var bar = document.getElementById("bar"), t=false;
+  function upd(){ var d=document.documentElement, m=d.scrollHeight-d.clientHeight; bar.style.transform="scaleX("+(m>0?Math.min(1,d.scrollTop/m):0)+")"; t=false; }
+  addEventListener("scroll", function(){ if(!t){ t=true; requestAnimationFrame(upd); } }, {passive:true});
+  upd();
+})();
+</script>
+</body>
+</html>
