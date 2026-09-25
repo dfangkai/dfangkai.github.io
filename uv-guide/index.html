@@ -396,13 +396,24 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
   .quiz .ans{padding-left:16px}
 }
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* site navigation (added for the website version) */
+.sitebar{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:18px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.sitebar a{color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+.sitebar a:hover{color:var(--accent);border-color:var(--accent)}
+.toc-home{display:block;font-size:.8rem;color:var(--muted);text-decoration:none;padding:.3rem .5rem;margin-bottom:.4rem}
+.toc a.toc-home::before{content:none}
+.toc-home:hover{color:var(--accent)}
+.home-link{display:inline-block;margin-top:.6rem}
 </style>
 </head>
 <body>
+<nav class="sitebar" aria-label="网站导航"><a href="../">← 学习笔记</a><span>dfangkai.github.io</span></nav>
 <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
 
 <div class="wrap">
 <nav class="toc" aria-label="目录" id="toc">
+  <a class="toc-home" href="../">← 返回首页</a>
   <a class="toc-ex" href="#example">示例项目 jev-cli</a>
   <div class="toc-part">一 · 基础</div>
   <ol><li><a href="#concepts">基础概念</a></li><li><a href="#model">三层心智模型</a></li><li><a href="#why">uv 是什么</a></li></ol>
@@ -1703,7 +1714,7 @@ hint: To update the lockfile, run `uv lock`.</pre></div>
     <p>3. 提交 pyproject.toml 和 uv.lock；不提交 .venv 和 .env。</p>
   </div>
 
-  <footer>写于 2026 年 9 月，基于 uv 0.12.3（macOS，Apple 芯片）。文中的命令输出都是当时实际运行得到的快照（路径有缩写），命令的行为用 <code>uv help</code> 核实过。uv 更新较快，以后的输出细节可能不同；遇到不一致时，以 <code>uv help 命令</code> 和 <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv 官方文档</a>为准。</footer>
+  <footer>写于 2026 年 9 月，基于 uv 0.12.3（macOS，Apple 芯片）。文中的命令输出都是当时实际运行得到的快照（路径有缩写），命令的行为用 <code>uv help</code> 核实过。uv 更新较快，以后的输出细节可能不同；遇到不一致时，以 <code>uv help 命令</code> 和 <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv 官方文档</a>为准。<br><a class="home-link" href="../">← 返回学习笔记首页</a></footer>
 </section>
 </main>
 </div>
