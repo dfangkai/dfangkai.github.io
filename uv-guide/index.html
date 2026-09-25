@@ -1,0 +1,1920 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="写给零基础的 uv 教程：三层模型、易混淆命令对比、命令手册、报错解读与自测。">
+<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>从零读懂 uv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap">
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --surface-2:#E8EEEA; --ink:#17211D; --muted:#56645E; --line:#D3DCD7;
+  --accent:#0E7466; --accent-ink:#FFFFFF; --accent-soft:#D6EDE8;
+  --warn:#9E5218; --warn-soft:#F5E5D5;
+  --ok:#276F38; --ok-soft:#DCEFE0; --no:#9F3434; --no-soft:#F3DEDB;
+  --code-bg:#14201C; --code-line:#22302B; --code-ink:#DCE7E2; --code-muted:#7D948A; --code-accent:#6FD8C4; --code-str:#E6BF7B; --code-key:#9FC3FF; --code-err:#FF9C8F;
+  --l1:#0E7466; --l1-soft:#D6EDE8; --l2:#955A0C; --l2-soft:#F6E8D2; --l3:#3456A6; --l3-soft:#E0E7F7;
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1412; --surface:#151D1A; --surface-2:#1C2622; --ink:#E1E9E5; --muted:#98A7A0; --line:#2A3632;
+    --accent:#47C4AF; --accent-ink:#0B1411; --accent-soft:#15322D;
+    --warn:#E39D60; --warn-soft:#382818;
+    --ok:#6FC983; --ok-soft:#18301F; --no:#E68181; --no-soft:#3A1E1E;
+    --code-bg:#0A0F0D; --code-line:#1A2420;
+    --l1:#47C4AF; --l1-soft:#15322D; --l2:#E3A955; --l2-soft:#3A2C14; --l3:#93ADF2; --l3-soft:#1D2743;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1412; --surface:#151D1A; --surface-2:#1C2622; --ink:#E1E9E5; --muted:#98A7A0; --line:#2A3632;
+  --accent:#47C4AF; --accent-ink:#0B1411; --accent-soft:#15322D;
+  --warn:#E39D60; --warn-soft:#382818;
+  --ok:#6FC983; --ok-soft:#18301F; --no:#E68181; --no-soft:#3A1E1E;
+  --code-bg:#0A0F0D; --code-line:#1A2420;
+  --l1:#47C4AF; --l1-soft:#15322D; --l2:#E3A955; --l2-soft:#3A2C14; --l3:#93ADF2; --l3-soft:#1D2743;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.8;padding-inline:20px;padding-block:0 80px}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+code,kbd{font-family:var(--f-mono);font-size:.88em}
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+p code,li code,td code,dd code,.inline code,summary code{background:var(--surface-2);padding:.1em .38em;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.3;margin:0}
+h2{font-size:1.85rem;font-weight:900}
+h3{font-size:1.2rem;font-weight:600;margin-top:2.4rem}
+p{margin:.9rem 0}
+ul,ol{padding-left:1.3rem}
+li{margin:.3rem 0}
+strong{font-weight:700}
+
+/* progress */
+.progress{position:fixed;left:0;right:0;top:0;height:calc(3px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);z-index:10;pointer-events:none}
+.progress i{display:block;height:3px;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:56px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;padding-top:36px;font-size:.86rem;max-height:calc(100vh - 40px);overflow-y:auto;counter-reset:toc}
+.toc-part{font-size:.72rem;letter-spacing:.1em;color:var(--muted);margin:1rem 0 .3rem .5rem}
+.toc-part:first-child{margin-top:0}
+.toc-ex{display:block;font-family:var(--f-mono);font-size:.8rem;color:var(--muted);text-decoration:none;padding:.3rem .5rem;margin-bottom:.6rem;border:1px dashed var(--line);border-radius:6px}
+.toc a.toc-ex::before{content:none}
+.toc-ex:hover,.toc-ex.active{color:var(--accent);border-color:var(--accent)}
+.toc ol{list-style:none;padding:0;margin:0;display:grid;gap:1px}
+.toc li{margin:0;counter-increment:toc}
+.toc a{display:flex;gap:.6rem;padding:.25rem .5rem;border-radius:6px;color:var(--muted);text-decoration:none;line-height:1.5}
+.toc a::before{content:counter(toc);font-family:var(--f-mono);font-size:.78em;min-width:1.4em;opacity:.7;padding-top:.12em}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.toc a.active{color:var(--accent);background:var(--accent-soft)}
+.toc-mobile{display:none}
+
+main{min-width:0;max-width:820px}
+header.hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;color:var(--accent)}
+.hero h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:900;margin:.4rem 0 .8rem}
+.lede{font-size:1.1rem;color:var(--muted);max-width:40em}
+.lede code{white-space:nowrap}
+.hero-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;font-size:.85rem;color:var(--muted);margin-top:1.2rem}
+.hero-meta span b{color:var(--ink);font-weight:500}
+.route{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-top:28px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.route a{display:flex;flex-direction:column;gap:2px;padding:12px 14px;text-decoration:none;color:var(--ink);border-right:1px solid var(--line);min-width:0}
+.route a:last-child{border-right:0}
+.route a:hover{background:var(--surface-2)}
+.route .rn{font-family:var(--f-mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em}
+.route .rt{font-weight:700;font-size:.95rem}
+.route .rd{font-size:.76rem;color:var(--muted);line-height:1.5}
+
+.part{margin-top:88px;padding:22px 0 0;border-top:3px solid var(--ink);display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem 1rem}
+.part .pn{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;color:var(--bg);background:var(--ink);padding:2px 10px;border-radius:4px;align-self:center}
+.part .pt{font-family:var(--f-display);font-weight:900;font-size:clamp(1.5rem,3.4vw,2rem);line-height:1.3}
+.part .pd{font-size:.95rem;color:var(--muted);flex-basis:100%;max-width:40em}
+
+section{padding-block:64px 8px;scroll-margin-top:16px}
+.lesson{font-family:var(--f-mono);font-size:.78rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.4rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.badge{font-family:var(--f-body);font-size:.7rem;letter-spacing:0;padding:1px 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
+.intro{font-size:1.05rem;color:var(--muted)}
+
+/* code */
+.code{position:relative;background:var(--code-bg);color:var(--code-ink);border-radius:10px;margin:1.1rem 0;overflow:hidden}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--f-mono);font-size:.84rem;line-height:1.7}
+.code .label{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px 0 18px;font-family:var(--f-mono);font-size:.72rem;color:var(--code-muted)}
+.code .copy{font:inherit;font-size:.72rem;background:transparent;color:var(--code-muted);border:1px solid #2F403A;border-radius:5px;padding:2px 8px;cursor:pointer;flex:none}
+.code .copy:hover{color:var(--code-ink);border-color:var(--code-muted)}
+.c{color:var(--code-muted)} .p{color:var(--code-accent);user-select:none} .s{color:var(--code-str)} .k{color:var(--code-key)} .e{color:var(--code-err)} .hl{background:rgba(111,216,196,.14);border-radius:3px}
+
+/* callouts */
+.note{border-radius:10px;padding:14px 18px;margin:1.3rem 0;background:var(--accent-soft);font-size:.95rem}
+.note.warn{background:var(--warn-soft)}
+.note .tag{font-weight:700;margin-right:.4rem;color:var(--accent)}
+.note.warn .tag{color:var(--warn)}
+.note p{margin:.4rem 0}
+.keys{margin:2.4rem 0 .5rem;border:1px solid var(--line);border-radius:12px;padding:14px 18px 12px;background:var(--surface)}
+.keys .kt{display:inline-block;font-size:.72rem;letter-spacing:.1em;color:var(--accent);background:var(--accent-soft);font-weight:700;padding:1px 9px;border-radius:4px}
+.keys ul{list-style:none;margin:.6rem 0 0;padding:0;font-size:.94rem;display:grid;grid-template-columns:minmax(0,1fr);gap:.25rem}
+.keys li{position:relative;padding-left:1.5rem;margin:0}
+.keys li::before{content:"✓";position:absolute;left:.1rem;top:0;color:var(--accent);font-weight:700}
+
+/* tables */
+.tbl{overflow-x:auto;margin:1.1rem 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:520px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:.8rem;letter-spacing:.04em;background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:.85rem}
+td .old{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--no)}
+
+/* definition list */
+dl.defs{display:grid;grid-template-columns:11.5em minmax(0,1fr);gap:0;margin:1.2rem 0;border-top:1px solid var(--line)}
+dl.defs dt,dl.defs dd{padding:14px 0;border-bottom:1px solid var(--line);margin:0}
+dl.defs dt{font-weight:700;padding-right:1rem}
+dl.defs dt code{white-space:nowrap}
+dl.defs dt small{display:block;font-weight:400;color:var(--muted);font-family:var(--f-mono);font-size:.75rem}
+dl.defs dd p{margin:0 0 .4rem}
+dl.defs dd .code{margin:.6rem 0}
+
+/* three-layer colour coding */
+.l1{--lc:var(--l1);--ls:var(--l1-soft)} .l2{--lc:var(--l2);--ls:var(--l2-soft)} .l3{--lc:var(--l3);--ls:var(--l3-soft)}
+.chip.l1,.chip.l2,.chip.l3{background:var(--ls);color:var(--lc)}
+th.l1,th.l2,th.l3{color:var(--lc)}
+.layer.l1 .fn,.layer.l2 .fn,.layer.l3 .fn{color:var(--lc)}
+.layer.l1 .ex,.layer.l2 .ex,.layer.l3 .ex{background:var(--ls)}
+.col.l1 .col-h b,.col.l2 .col-h b,.col.l3 .col-h b{color:var(--lc)}
+.col-h b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--lc,var(--accent));margin-right:6px;vertical-align:.05em}
+.hero-layers{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:1.1rem;font-size:.84rem;color:var(--muted)}
+.hero-layers .chip{font-family:var(--f-mono);font-size:.8rem;padding:3px 11px}
+.hero-layers i{font-style:normal;color:var(--muted)}
+
+/* three-layer diagram */
+.layers{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:10px;margin:1.6rem 0}
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.layer .fn{font-family:var(--f-mono);font-size:.85rem;font-weight:600;color:var(--accent)}
+.layer .an{font-family:var(--f-display);font-size:1.15rem;font-weight:600;margin:.2rem 0 .4rem}
+.layer p{margin:0;font-size:.86rem;color:var(--muted);line-height:1.65}
+.layer .ex{margin-top:.6rem;font-family:var(--f-mono);font-size:.76rem;background:var(--surface-2);border-radius:6px;padding:6px 8px;color:var(--ink)}
+.arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-align:center;gap:2px}
+.arrow b{font-size:1.3rem;color:var(--accent);font-weight:400;line-height:1}
+
+/* simulator */
+.sim{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;margin:1.4rem 0}
+.sim-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sim-head .st{font-weight:700;font-size:.95rem}
+.sim-nav{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.sim-nav button{font:inherit;font-family:var(--f-body);font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:4px 12px;cursor:pointer}
+.sim-nav button:hover:not(:disabled){background:var(--surface-2)}
+.sim-nav button:disabled{opacity:.4;cursor:default}
+.sim-nav button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.sim-dots{display:flex;gap:4px;padding:10px 16px 0;flex-wrap:wrap}
+.sim-dots button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-family:var(--f-mono);font-size:.72rem;cursor:pointer;padding:0}
+.sim-dots button[aria-current="step"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sim-term{margin:12px 16px 0;background:var(--code-bg);border-radius:10px;color:var(--code-ink);font-family:var(--f-mono);font-size:.8rem;overflow:hidden}
+.sim-term .cmdline{padding:10px 14px;border-bottom:1px solid var(--code-line);overflow-x:auto;white-space:pre}
+.sim-term pre{margin:0;padding:10px 14px;max-height:190px;overflow:auto;line-height:1.6;color:#B9CCC3;font-family:inherit}
+.sim-why{margin:12px 16px 0;font-size:.93rem;line-height:1.75}
+.sim-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px 16px 16px}
+.col{border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;background:var(--bg)}
+.col-h{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.col-h b{font-family:var(--f-mono);font-size:.8rem;color:var(--accent)}
+.stt{font-size:.68rem;padding:1px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.stt.chg{background:var(--accent-soft);color:var(--accent)} .stt.new{background:var(--ok-soft);color:var(--ok)} .stt.stale{background:var(--warn-soft);color:var(--warn)} .stt.none{background:transparent;border:1px dashed var(--line)}
+.items{display:flex;flex-wrap:wrap;gap:4px}
+.it{font-family:var(--f-mono);font-size:.7rem;padding:1px 7px;border-radius:5px;background:var(--surface);border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.it.add{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.it.add::before{content:"+ "}
+.it.del{background:var(--no-soft);border-color:transparent;color:var(--no);text-decoration:line-through}
+.it.del::before{content:"− "}
+.empty{font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* explorer */
+.explorer{display:grid;grid-template-columns:230px minmax(0,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);margin:1.4rem 0}
+.tree{background:var(--surface-2);padding:12px 8px;font-family:var(--f-mono);font-size:.84rem;border-right:1px solid var(--line)}
+.tree .root{padding:4px 10px;color:var(--muted);font-size:.78rem}
+.tree button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;background:none;border:0;color:var(--ink);font:inherit;text-align:left;padding:6px 10px 6px 22px;border-radius:6px;cursor:pointer}
+.tree button:hover{background:var(--surface)}
+.tree button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;display:inline-block}
+.dot.git-yes{background:var(--ok)} .dot.git-no{background:var(--no)}
+.tree button[aria-selected="true"] .dot{outline:2px solid var(--accent-ink)}
+.tree .legend{margin-top:12px;padding:8px 10px 0;border-top:1px solid var(--line);font-family:var(--f-body);font-size:.74rem;color:var(--muted);display:grid;gap:4px}
+.tree .legend span{display:flex;align-items:center;gap:6px}
+.panel{padding:18px 22px;min-width:0}
+.panel h4{font-family:var(--f-mono);font-size:1.05rem;margin:0}
+.panel h4.l1,.panel h4.l2,.panel h4.l3{color:var(--lc)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:.6rem 0}
+.chip{font-size:.74rem;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.chip.yes{background:var(--ok-soft);color:var(--ok)} .chip.no{background:var(--no-soft);color:var(--no)} .chip.hand{background:var(--accent-soft);color:var(--accent)} .chip.auto{background:var(--warn-soft);color:var(--warn)}
+.panel .what{margin:.4rem 0 .2rem}
+.panel .code{margin:.8rem 0 0}
+.panel .code pre{max-height:300px}
+
+/* annotated toml */
+.annot{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:1.3rem 0;background:var(--surface)}
+.annot .row{display:contents}
+.annot .src{background:var(--code-bg);color:var(--code-ink);font-family:var(--f-mono);font-size:.8rem;padding:10px 16px;white-space:pre;overflow-x:auto;border-bottom:1px solid var(--code-line);line-height:1.7}
+.annot .exp{padding:10px 16px;font-size:.88rem;border-bottom:1px solid var(--line);line-height:1.65}
+.annot .row:last-child .src,.annot .row:last-child .exp{border-bottom:0}
+
+/* semver */
+.semver{display:flex;justify-content:center;gap:4px;font-family:var(--f-mono);font-size:2rem;font-weight:600;margin:1.4rem 0 .4rem;flex-wrap:wrap}
+.semver span{padding:4px 14px;border-radius:8px}
+.semver .ma{background:var(--no-soft);color:var(--no)} .semver .mi{background:var(--warn-soft);color:var(--warn)} .semver .pa{background:var(--ok-soft);color:var(--ok)} .semver i{font-style:normal;color:var(--muted);padding:4px 0}
+.semver-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;font-size:.86rem;margin-bottom:1rem}
+.semver-legend div{border-top:3px solid;padding-top:6px}
+.semver-legend div:nth-child(1){border-color:var(--no)} .semver-legend div:nth-child(2){border-color:var(--warn)} .semver-legend div:nth-child(3){border-color:var(--ok)}
+.semver-legend b{display:block}
+.semver-legend span{color:var(--muted)}
+
+/* flow (resolution / download) */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:1.4rem 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.flow div{padding:12px 14px;border-right:1px solid var(--line);font-size:.84rem;color:var(--muted);line-height:1.6;position:relative}
+.flow div:last-child{border-right:0}
+.flow b{display:block;color:var(--ink);font-size:.92rem;margin-bottom:2px}
+.flow code{font-size:.78em}
+.flow .fx{font-family:var(--f-mono);font-size:.7rem;color:var(--accent)}
+
+/* steps */
+ol.steps{list-style:none;padding:0;counter-reset:st;margin:1.3rem 0;display:grid;gap:0}
+ol.steps>li{counter-increment:st;display:grid;grid-template-columns:2.4rem minmax(0,1fr);gap:.4rem 1rem;padding:12px 0;border-bottom:1px dashed var(--line);margin:0}
+ol.steps>li::before{content:counter(st);width:2rem;height:2rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+ol.steps>li>div>b{display:block}
+ol.steps>li>div>span{color:var(--muted);font-size:.93rem}
+
+/* example project card */
+.example{margin-top:40px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px 8px;scroll-margin-top:16px}
+.ex-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem .8rem}
+.ex-head h2{font-family:var(--f-mono);font-size:1.4rem;font-weight:600;color:var(--ink)}
+.ex-tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);background:var(--accent);border-radius:4px;padding:1px 8px;align-self:center}
+.ex-when{font-size:.82rem;color:var(--muted)}
+.example>p{font-size:.95rem}
+.facts{display:grid;grid-template-columns:6em minmax(0,1fr);margin:.8rem 0 1rem;border-top:1px solid var(--line);font-size:.9rem}
+.facts dt,.facts dd{margin:0;padding:8px 0;border-bottom:1px solid var(--line)}
+.facts dt{color:var(--muted)}
+.facts dd.files{display:flex;flex-wrap:wrap;gap:6px}
+.example td code{white-space:normal;overflow-wrap:anywhere}
+.example td:first-child{width:42%}
+.example .snap{font-size:.9rem;color:var(--muted)}
+.example .tbl table{min-width:0}
+.hero-meta a{color:var(--accent);text-decoration:none;font-weight:500}
+
+/* comparisons */
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.95rem}
+.verdict>span{display:inline-block;margin-right:.6rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);background:var(--accent);border-radius:4px;padding:0 7px;vertical-align:.08em}
+table.wide{min-width:780px}
+td code{white-space:nowrap}
+th{white-space:nowrap}
+td.y{color:var(--ok)} td.n{color:var(--no)} td.m{color:var(--warn)}
+.minitoc{display:flex;flex-wrap:wrap;gap:6px;margin:1.2rem 0 .4rem}
+.minitoc a{font-size:.82rem;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 12px}
+.minitoc a:hover{border-color:var(--accent);color:var(--accent)}
+h3[id]{scroll-margin-top:16px}
+
+/* error cards */
+.errcase{margin:1.6rem 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.errcase .eh{padding:10px 16px;font-weight:700;font-size:.95rem;border-bottom:1px solid var(--line);display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.errcase .eh small{font-weight:400;color:var(--muted);font-size:.8rem}
+.errcase .code{margin:0;border-radius:0}
+.errcase dl{display:grid;grid-template-columns:5em minmax(0,1fr);margin:0;font-size:.92rem}
+.errcase dt,.errcase dd{padding:10px 16px;border-top:1px solid var(--line);margin:0}
+.errcase dt{color:var(--muted);font-size:.82rem;padding-right:0}
+.errcase dd p{margin:0 0 .3rem}
+
+/* commands */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:1.2rem 0}
+.filters button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 14px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cmds{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+details.cmd,details.cmd .body,.happen{min-width:0}
+details.cmd{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.cmd>summary{list-style:none;cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;align-items:start}
+details.cmd>summary::-webkit-details-marker{display:none}
+details.cmd>summary .name{font-family:var(--f-mono);font-weight:600;font-size:.92rem;color:var(--accent)}
+details.cmd>summary .one{grid-column:1/2;font-size:.9rem;color:var(--muted)}
+details.cmd>summary .touch{grid-column:2/3;grid-row:1/3;display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:260px}
+details.cmd>summary .touch .chip{font-family:var(--f-mono);font-size:.68rem}
+.chip.w{background:var(--warn-soft);color:var(--warn)}
+details.cmd[open]>summary{border-bottom:1px solid var(--line)}
+details.cmd .body{padding:4px 16px 14px;font-size:.93rem}
+details.cmd .body .code{margin:.7rem 0}
+details.cmd .body .code pre{padding-right:72px}
+.happen{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:.7rem 0;font-size:.92rem}
+.happen ol{margin:.3rem 0 0;padding-left:1.3rem}
+.happen li{margin:.15rem 0}
+.happen .not{margin:.5rem 0 0;color:var(--muted)}
+.see{font-size:.86rem;color:var(--muted);margin:.4rem 0 0}
+.touch-legend{font-size:.82rem;color:var(--muted)}
+.touch-legend .chip{font-family:var(--f-mono);font-size:.68rem}
+
+/* faq + quiz */
+details.faq{border-bottom:1px solid var(--line)}
+details.faq>summary{cursor:pointer;padding:14px 0;font-weight:500;list-style:none;display:flex;gap:.7rem}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq .qt{min-width:0}
+details.faq>summary::before{content:"+";font-family:var(--f-mono);color:var(--accent);width:1rem;flex:none}
+details.faq[open]>summary::before{content:"−"}
+details.faq .body{padding:0 0 14px 1.7rem}
+.quiz{counter-reset:q}
+.quiz details{counter-increment:q;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin:8px 0}
+.quiz summary{cursor:pointer;list-style:none;padding:12px 16px;display:grid;grid-template-columns:2rem minmax(0,1fr) auto;gap:10px;align-items:baseline}
+.quiz summary::-webkit-details-marker{display:none}
+.quiz .qt{min-width:0}
+.quiz summary::before{content:"Q" counter(q);font-family:var(--f-mono);font-size:.78rem;color:var(--accent);font-weight:600}
+.quiz summary::after{content:"看答案";font-size:.74rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 8px;white-space:nowrap}
+.quiz details[open] summary::after{content:"收起"}
+.quiz .ans{padding:0 16px 12px calc(2rem + 26px);font-size:.93rem;color:var(--muted)}
+.quiz .ans b{color:var(--ink)}
+
+/* cheat sheet */
+.cheat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);margin:1.3rem 0}
+.cheat div{padding:12px 16px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.cheat div:nth-child(2n){border-right:0}
+.cheat code{display:block;font-weight:600;color:var(--accent);white-space:normal}
+.cheat span{font-size:.86rem;color:var(--muted)}
+.cheat div:nth-last-child(-n+2){border-bottom:0}
+
+/* shared storage diagram */
+.share{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;margin:1.4rem 0}
+.share .projs{grid-column:1/-1;background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;font-size:.84rem;color:var(--muted)}
+.share .store{background:var(--accent-soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;font-size:.84rem;color:var(--muted);line-height:1.55}
+.share .fn{font-family:var(--f-mono);font-weight:600;font-size:.82rem;color:var(--accent);overflow-wrap:anywhere}
+.share .an{font-family:var(--f-display);font-weight:600;font-size:1.05rem;color:var(--ink)}
+.share .link{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.8rem;color:var(--muted);text-align:center}
+.share .link b{font-size:1.2rem;color:var(--accent);font-weight:400}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+
+@media (max-width:920px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  .toc{display:none}
+  .toc-mobile{display:block;margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.9rem}
+  .toc-mobile summary{cursor:pointer;font-weight:500}
+  .toc-mobile ol{margin:.5rem 0 0}
+  .toc-mobile a{color:var(--ink)}
+  .route{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .route a{border-bottom:1px solid var(--line)}
+  .route a:nth-child(2n){border-right:0}
+  .route a:last-child{grid-column:1/-1;border-bottom:0}
+}
+@media (max-width:680px){
+  body{font-size:15px}
+  h2{font-size:1.55rem}
+  .layers{grid-template-columns:minmax(0,1fr)}
+  .arrow{flex-direction:row;gap:8px;padding:2px 0}
+  .arrow b{transform:rotate(90deg)}
+  .explorer{grid-template-columns:minmax(0,1fr)}
+  .tree{border-right:0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px}
+  .tree .root{width:100%}
+  .tree button{width:auto;padding:5px 10px}
+  .tree .legend{width:100%}
+  .annot{grid-template-columns:minmax(0,1fr)}
+  .annot .src{border-bottom:0}
+  dl.defs{grid-template-columns:minmax(0,1fr)}
+  dl.defs dt{border-bottom:0;padding-bottom:0}
+  details.cmd>summary{grid-template-columns:minmax(0,1fr)}
+  details.cmd>summary .touch{grid-column:1;grid-row:auto;justify-content:flex-start;max-width:none}
+  .cheat{grid-template-columns:minmax(0,1fr)}
+  .cheat div{border-right:0}
+  .cheat div:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .sim-grid{grid-template-columns:minmax(0,1fr)}
+  .flow{grid-template-columns:minmax(0,1fr)}
+  .flow div{border-right:0;border-bottom:1px solid var(--line)}
+  .flow div:last-child{border-bottom:0}
+  .semver-legend{grid-template-columns:minmax(0,1fr)}
+  .errcase dl{grid-template-columns:minmax(0,1fr)}
+  .facts{grid-template-columns:minmax(0,1fr)}
+  .facts dt{border-bottom:0;padding-bottom:0;font-size:.8rem}
+  .facts dd{padding-top:2px}
+  .example{padding-inline:16px}
+  .errcase dt{border-bottom:0;padding-bottom:0}
+  .errcase dd{border-top:0;padding-top:2px}
+  .quiz .ans{padding-left:16px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
+
+<div class="wrap">
+<nav class="toc" aria-label="目录" id="toc">
+  <a class="toc-ex" href="#example">示例项目 jev-cli</a>
+  <div class="toc-part">一 · 基础</div>
+  <ol><li><a href="#concepts">基础概念</a></li><li><a href="#model">三层心智模型</a></li><li><a href="#why">uv 是什么</a></li></ol>
+  <div class="toc-part">二 · 项目里的文件</div>
+  <ol><li><a href="#tree">项目结构</a></li><li><a href="#pyproject">pyproject.toml</a></li><li><a href="#lock">uv.lock 与依赖解析</a></li><li><a href="#venv">.venv 虚拟环境</a></li></ol>
+  <div class="toc-part">三 · 日常使用</div>
+  <ol><li><a href="#run">uv run 做了什么</a></li><li><a href="#compare">易混淆的命令</a></li><li><a href="#commands">命令手册</a></li><li><a href="#recipes">常见场景</a></li></ol>
+  <div class="toc-part">四 · 进阶</div>
+  <ol><li><a href="#scripts">单文件脚本</a></li><li><a href="#package">应用与包</a></li></ol>
+  <div class="toc-part">五 · 排错与复习</div>
+  <ol><li><a href="#errors">读懂报错</a></li><li><a href="#review">自测与速查</a></li></ol>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">PYTHON 项目管理 · 基于 uv 0.12.3 · 写于 2026 年 9 月</div>
+  <h1>从零读懂 uv</h1>
+  <p class="lede">写给完全没接触过 uv、也不熟悉 Python 项目规范的人。全程用一个真实的小项目 <code>jev-cli</code> 做示例：每个文件为什么存在，每条命令改动了什么，底层到底发生了什么，出了问题怎么排查。</p>
+  <div class="hero-layers" aria-label="贯穿全文的三层">
+    <span>贯穿全文的三样东西（后文用这三种颜色区分）：</span>
+    <span class="chip l1">pyproject.toml · 清单</span><i>→</i>
+    <span class="chip l2">uv.lock · 小票</span><i>→</i>
+    <span class="chip l3">.venv · 冰箱</span>
+  </div>
+  <div class="hero-meta">
+    <span>示例项目 <b>jev-cli</b></span>
+    <span>uv <b>0.12.3</b></span>
+    <span>Python <b>3.12.13</b></span>
+    <span>macOS · Apple 芯片</span>
+    <span>快照时间 <b>2026 年 9 月</b></span>
+    <a href="#example">示例项目介绍 ↓</a>
+  </div>
+  <nav class="route" aria-label="学习路线">
+    <a href="#concepts"><span class="rn">一 · 第 1–3 课</span><span class="rt">基础</span><span class="rd">概念与三层模型</span></a>
+    <a href="#tree"><span class="rn">二 · 第 4–7 课</span><span class="rt">项目里的文件</span><span class="rd">每个文件的作用与原理</span></a>
+    <a href="#run"><span class="rn">三 · 第 8–11 课</span><span class="rt">日常使用</span><span class="rd">命令区别与常见场景</span></a>
+    <a href="#scripts"><span class="rn">四 · 第 12–13 课</span><span class="rt">进阶</span><span class="rd">可以先跳过</span></a>
+    <a href="#errors"><span class="rn">五 · 第 14–15 课</span><span class="rt">排错与复习</span><span class="rd">报错解读与自测</span></a>
+  </nav>
+  <details class="toc-mobile">
+    <summary>完整目录</summary>
+    <p style="margin:.5rem 0 0"><a href="#example">示例项目 jev-cli</a></p>
+    <ol>
+      <li><a href="#concepts">基础概念</a></li><li><a href="#model">三层心智模型</a></li><li><a href="#why">uv 是什么</a></li><li><a href="#tree">项目结构</a></li><li><a href="#pyproject">pyproject.toml</a></li><li><a href="#lock">uv.lock 与依赖解析</a></li><li><a href="#venv">.venv 虚拟环境</a></li><li><a href="#run">uv run 做了什么</a></li><li><a href="#compare">易混淆的命令</a></li><li><a href="#commands">命令手册</a></li><li><a href="#recipes">常见场景</a></li><li><a href="#scripts">单文件脚本</a></li><li><a href="#package">应用与包</a></li><li><a href="#errors">读懂报错</a></li><li><a href="#review">自测与速查</a></li>
+    </ol>
+  </details>
+</header>
+
+<aside class="example" id="example" aria-label="示例项目介绍">
+  <div class="ex-head"><span class="ex-tag">示例项目</span><h2>jev-cli</h2><span class="ex-when">2026 年 9 月的快照</span></div>
+  <p>全文用这个小项目举例。它是一个极简的命令行工具：从 <code>.env</code> 文件读取 API Key，用 <code>typesafe-sdk</code> 调用 TypeSafe 的 Jev 模型，把结果显示在终端里。它具体做什么并不重要，重要的是它是一个<strong>典型的 uv 项目</strong>：有依赖、有锁文件、有虚拟环境，还有一个需要保密的 .env。</p>
+  <dl class="facts">
+    <dt>项目文件</dt><dd class="files"><code>main.py</code><code>pyproject.toml</code><code>uv.lock</code><code>.python-version</code><code>.venv/</code><code>.env</code><code>.env.example</code><code>.gitignore</code></dd>
+    <dt>直接依赖</dt><dd><code>python-dotenv 1.2.3</code>（读取 .env）、<code>typesafe-sdk 0.7.1</code>（调用 API）</dd>
+    <dt>实际安装</dt><dd>14 个包（2 个直接依赖 + 12 个间接依赖）</dd>
+    <dt>Python</dt><dd>3.12.13，由 uv 管理；这台 Mac 自带的是 3.9.6</dd>
+    <dt>环境</dt><dd>uv 0.12.3 · macOS · Apple 芯片</dd>
+  </dl>
+  <p class="snap">文中标着"示例项目"或"写作时"的输出，都是这个时间点的快照。项目以后可能改了，uv 也会升级，你再看到的版本号和输出细节可能不同，但道理不变。想查看<strong>你自己项目</strong>的对应信息，用这些命令：</p>
+  <div class="tbl"><table>
+    <thead><tr><th>想看什么</th><th>命令</th></tr></thead>
+    <tbody>
+      <tr><td>项目声明了哪些直接依赖</td><td><code>cat pyproject.toml</code></td></tr>
+      <tr><td>实际装了哪些包、谁依赖谁</td><td><code>uv tree</code></td></tr>
+      <tr><td>电脑上有哪些 Python 版本</td><td><code>uv python list --only-installed</code></td></tr>
+      <tr><td>uv 的版本</td><td><code>uv --version</code></td></tr>
+      <tr><td>缓存在哪、占了多少空间</td><td><code>uv cache dir</code>、<code>du -sh "$(uv cache dir)"</code></td></tr>
+    </tbody>
+  </table></div>
+</aside>
+
+<!-- ================= 第一部分 ================= -->
+<div class="part"><span class="pn">第一部分</span><span class="pt">基础</span><span class="pd">先把词汇和最重要的心智模型建立起来。后面所有内容都建立在这里。</span></div>
+
+<section id="concepts">
+  <div class="lesson">第 1 课</div>
+  <h2>先认识几个基础概念</h2>
+  <p class="intro">uv 本身不难，难的是它背后的几个 Python 概念。先把这些词弄懂，后面的内容就会顺很多。</p>
+
+  <dl class="defs">
+    <dt>Python 解释器<small>interpreter</small></dt>
+    <dd><p>真正"运行" <code>.py</code> 文件的那个程序。你输入 <code>python3 main.py</code> 时，<code>python3</code> 就是解释器。</p>
+      <p>一台电脑上常常同时装着好几个版本的解释器。写作时用的这台 Mac 上就有三个，见下表。</p></dd>
+
+    <dt>模块与包<small>module / package</small></dt>
+    <dd><p><strong>模块</strong>就是一个 <code>.py</code> 文件；<strong>包</strong>是一个装着模块的文件夹。<code>import dotenv</code> 就是在找一个叫 <code>dotenv</code> 的模块或包。</p>
+      <p>日常说"装一个包"，指的是<strong>发行包</strong>（distribution）：别人打包好、发布出来的代码，比如 <code>python-dotenv</code>。注意：发行包的名字和 import 时用的名字<strong>不一定相同</strong>，第 7 课会讲原因。</p></dd>
+
+    <dt>PyPI</dt>
+    <dd><p>Python 官方的公共包仓库，网址是 <a href="https://pypi.org" target="_blank" rel="noopener">pypi.org</a>。<code>uv add</code> 默认就是从这里下载包。</p></dd>
+
+    <dt>依赖<small>dependency</small></dt>
+    <dd><p>一个项目需要用到的包。分两种：</p>
+      <ul>
+        <li><strong>直接依赖</strong>：你亲自要求安装的，比如 <code>typesafe-sdk</code>。</li>
+        <li><strong>间接依赖</strong>（也叫传递依赖）：依赖的依赖。<code>typesafe-sdk</code> 自己又需要 <code>pydantic</code>、<code>httpx2</code> 等，它们会被自动装上。示例项目只加了 2 个包，实际却装了 14 个，原因就在这里。</li>
+      </ul></dd>
+
+    <dt>虚拟环境<small>virtual environment</small></dt>
+    <dd><p>项目专属的一个独立文件夹（就是项目里的 <code>.venv</code>），里面装着这个项目需要的所有包，并指向一个特定版本的解释器。</p>
+      <p>为什么需要它？假设项目 A 需要 <code>pydantic</code> 1.x，项目 B 需要 2.x。如果都装到系统里，二者必然冲突。给每个项目一个自己的虚拟环境，就互不干扰了。</p></dd>
+
+    <dt>锁文件<small>lockfile</small></dt>
+    <dd><p>一份记录"每个包（包括间接依赖）的精确版本号"的清单，uv 项目里的 <code>uv.lock</code> 就是。它保证今天、明天、在你或别人的电脑上装出来的东西完全一样。</p></dd>
+  </dl>
+
+  <div class="tbl"><table>
+    <thead><tr><th>解释器</th><th>版本</th><th>位置</th><th>谁装的</th></tr></thead>
+    <tbody>
+      <tr><td>cpython-3.13</td><td class="num">3.13.15</td><td><code>~/.local/share/uv/python/…</code></td><td>uv 自动下载</td></tr>
+      <tr><td>cpython-3.12</td><td class="num">3.12.13</td><td><code>~/.local/share/uv/python/…</code></td><td>uv 自动下载 · <strong>示例项目在用</strong></td></tr>
+      <tr><td>cpython-3.9</td><td class="num">3.9.6</td><td><code>/usr/bin/python3</code></td><td>macOS 自带</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:-.4rem">上表整理自写作时 <code>uv python list --only-installed</code> 的输出。在你的电脑上运行它，就能看到你自己有哪些版本。</p>
+
+  <div class="note"><span class="tag">为什么示例项目不用系统自带的 3.9？</span>因为 <code>typesafe-sdk</code> 要求 Python ≥ 3.10。uv 发现系统版本不够，就用了自己管理的 3.12。你不需要手动安装任何 Python，uv 会处理。另外，macOS 自带的 Python 是给系统用的，最好别往里面装东西。</div>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>解释器运行代码，包提供可复用的代码，PyPI 是包的仓库。</li>
+    <li>依赖分直接和间接两种；你只声明直接依赖，间接依赖由工具自动计算。</li>
+    <li>虚拟环境让每个项目拥有独立的包集合，锁文件让安装结果可以复现。</li>
+  </ul></div>
+</section>
+
+<section id="model">
+  <div class="lesson">第 2 课</div>
+  <h2>最重要的心智模型：三层</h2>
+  <p class="intro">理解 uv 最关键的一点：你的依赖信息存在三个地方，各自扮演不同的角色。用"买菜"来类比：</p>
+
+  <div class="layers" role="img" aria-label="pyproject.toml 经 uv lock 生成 uv.lock，再经 uv sync 装进 .venv">
+    <div class="layer l1">
+      <div class="fn">pyproject.toml</div>
+      <div class="an">购物清单</div>
+      <p>写你<strong>想要什么</strong>，允许一个范围。由你（或 <code>uv add</code>）来写。</p>
+      <div class="ex">typesafe-sdk&gt;=0.7.1</div>
+    </div>
+    <div class="arrow"><b>→</b>uv lock</div>
+    <div class="layer l2">
+      <div class="fn">uv.lock</div>
+      <div class="an">购物小票</div>
+      <p>记录<strong>具体买到了什么</strong>：每个包的精确版本，包括间接依赖。由 uv 自动生成。</p>
+      <div class="ex">typesafe-sdk 0.7.1<br>pydantic 2.13.5 …</div>
+    </div>
+    <div class="arrow"><b>→</b>uv sync</div>
+    <div class="layer l3">
+      <div class="fn">.venv/</div>
+      <div class="an">冰箱里的菜</div>
+      <p><strong>真正装好</strong>、代码可以 <code>import</code> 的包。由 uv 按小票安装。</p>
+      <div class="ex">.venv/lib/python3.12/<br>site-packages/…</div>
+    </div>
+  </div>
+
+  <p>几乎所有 uv 命令都可以归结为"让这三层保持一致"：</p>
+  <ul>
+    <li><code>uv add 包名</code>：写进清单 → 更新小票 → 放进冰箱，三层一起更新。</li>
+    <li><code>uv lock</code>：只根据清单重新生成小票。</li>
+    <li><code>uv sync</code>：按小票把冰箱整理成<strong>完全一致</strong>的状态，缺的补上，多的扔掉。</li>
+    <li><code>uv run</code>：运行前先更新小票、<strong>补上</strong>冰箱里缺的东西，然后运行。注意，它默认<strong>只补不扔</strong>。</li>
+  </ul>
+
+  <h3>动手看一看：三层状态模拟器</h3>
+  <p>下面是在一个全新项目里<strong>实际执行</strong>的 9 个操作，终端输出原样保留。一步步点下去，观察每一层怎么变化：绿色是新增，红色划线是删除。</p>
+
+  <div class="sim" id="sim">
+    <div class="sim-head">
+      <span class="st" id="sim-title"></span>
+      <div class="sim-nav">
+        <button type="button" id="sim-prev">上一步</button>
+        <span id="sim-count"></span>
+        <button type="button" id="sim-next" class="primary">下一步</button>
+      </div>
+    </div>
+    <div class="sim-dots" id="sim-dots" aria-label="跳到某一步"></div>
+    <div class="sim-term"><div class="cmdline" id="sim-cmd"></div><pre id="sim-out"></pre></div>
+    <p class="sim-why" id="sim-why"></p>
+    <div class="sim-grid">
+      <div class="col l1"><div class="col-h"><b>pyproject.toml</b><span class="stt" id="st-pp"></span></div><div class="items" id="it-pp"></div></div>
+      <div class="col l2"><div class="col-h"><b>uv.lock</b><span class="stt" id="st-lock"></span></div><div class="items" id="it-lock"></div></div>
+      <div class="col l3"><div class="col-h"><b>.venv</b><span class="stt" id="st-venv"></span></div><div class="items" id="it-venv"></div></div>
+    </div>
+  </div>
+
+  <div class="note"><span class="tag">记住这一句</span>清单（pyproject.toml）由你来改；小票（uv.lock）和冰箱（.venv）交给 uv 维护，永远不要手改，也不要用 pip 往冰箱里塞东西。</div>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>pyproject.toml 写意图（范围），uv.lock 写结果（精确版本），.venv 是实际安装。</li>
+    <li><code>uv add</code>/<code>uv remove</code> 三层一起改；<code>uv sync</code> 严格同步；<code>uv run</code> 只补不删。</li>
+    <li>绕过 uv 的改动（手改 pyproject、pip 安装）会让三层不一致，uv 会在下一次 sync 或 run 时纠正。</li>
+  </ul></div>
+</section>
+
+<section id="why">
+  <div class="lesson">第 3 课</div>
+  <h2>uv 是什么，替代了什么</h2>
+  <p class="intro">uv 是一个用 Rust 编写的 Python 项目管理工具。过去做同样的事要组合好几个工具，uv 把它们合成了一个，而且快很多。</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>要做的事</th><th>以前常用的工具</th><th>在 uv 里</th></tr></thead>
+    <tbody>
+      <tr><td>安装、切换 Python 版本</td><td>pyenv、官网安装包</td><td><code>uv python install</code> / <code>uv python pin</code></td></tr>
+      <tr><td>创建虚拟环境</td><td><code>python -m venv</code>、virtualenv</td><td>自动完成（或 <code>uv venv</code>）</td></tr>
+      <tr><td>安装包</td><td>pip</td><td><code>uv add</code></td></tr>
+      <tr><td>锁定精确版本</td><td>pip-tools、Poetry</td><td><code>uv lock</code>（自动）</td></tr>
+      <tr><td>运行项目</td><td>先 <code>source activate</code> 再 <code>python</code></td><td><code>uv run</code></td></tr>
+      <tr><td>安装命令行工具</td><td>pipx</td><td><code>uv tool install</code> / <code>uvx</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>网上的旧教程，在 uv 项目里怎么写</h3>
+  <p>很多教程还是 pip 时代写的。遇到时照这张表翻译即可：</p>
+  <div class="tbl"><table>
+    <thead><tr><th>旧教程里写的</th><th>在 uv 项目里写成</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>python -m venv venv</code><br><code>source venv/bin/activate</code></td><td>不需要</td><td><code>uv run</code> 会自动创建和使用 .venv</td></tr>
+      <tr><td><code>pip install requests</code></td><td><code>uv add requests</code></td><td>同时记录到 pyproject.toml 和 uv.lock</td></tr>
+      <tr><td><code>pip uninstall requests</code></td><td><code>uv remove requests</code></td><td></td></tr>
+      <tr><td><code>pip install -r requirements.txt</code></td><td><code>uv add -r requirements.txt</code></td><td>把旧依赖一次性迁入 pyproject.toml</td></tr>
+      <tr><td><code>pip freeze &gt; requirements.txt</code></td><td><code>uv export --format requirements-txt</code></td><td>一般不需要，uv.lock 已经起到这个作用</td></tr>
+      <tr><td><code>pip install --upgrade requests</code></td><td><code>uv lock --upgrade-package requests</code></td><td>然后 <code>uv sync</code> 或直接 <code>uv run</code></td></tr>
+      <tr><td><code>python main.py</code></td><td><code>uv run main.py</code></td><td>这是最容易忘的一条</td></tr>
+      <tr><td><code>pipx install ruff</code></td><td><code>uv tool install ruff</code></td><td>见第 9 课</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>它为什么快</h3>
+  <p>除了 Rust 本身快，uv 还有一个<strong>全局缓存</strong>：下载过的包都存在 <code>~/.cache/uv</code>（可用 <code>uv cache dir</code> 查看）。第二个项目再用同一个包时，直接从缓存里克隆过去，几乎不用等，也不会多占磁盘空间。原理见 <a href="#venv">第 7 课</a>。</p>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>uv 一个工具覆盖了 Python 版本、虚拟环境、装包、锁定、运行、命令行工具。</li>
+    <li>看到 <code>pip install</code> 就换成 <code>uv add</code>，看到 <code>python xxx.py</code> 就换成 <code>uv run xxx.py</code>。</li>
+  </ul></div>
+</section>
+
+<!-- ================= 第二部分 ================= -->
+<div class="part"><span class="pn">第二部分</span><span class="pt">项目里的文件</span><span class="pd">逐个认识项目里的文件：它们长什么样、为什么这样设计、背后的机制是什么。</span></div>
+
+<section id="tree">
+  <div class="lesson">第 4 课</div>
+  <h2>一个 uv 项目的结构，逐个文件看</h2>
+  <p class="intro">点击文件列表里的文件名，看每个文件是谁创建的、做什么用、能不能手动修改、要不要提交到 git。以示例项目 jev-cli 为例，内容是写作时的真实文件。</p>
+
+  <div class="explorer">
+    <div class="tree" role="tablist" aria-label="项目文件" id="file-tree">
+      <div class="root">jev-cli/</div>
+    </div>
+    <div class="panel" id="panel" role="tabpanel" aria-live="polite"></div>
+  </div>
+
+  <p>对照一下：刚执行完 <code>uv init</code> 时，只有 <code>pyproject.toml</code>、<code>.python-version</code>、<code>.gitignore</code>、<code>README.md</code> 和 <code>.git/</code>。<code>uv.lock</code> 和 <code>.venv/</code> 要等你第一次执行 <code>uv add</code>、<code>uv sync</code> 或 <code>uv run</code> 时才会出现。<code>.env</code>、<code>.env.example</code> 和 <code>main.py</code> 是项目自己加的，与 uv 无关。</p>
+
+  <h3>关于 git：提交什么，不提交什么</h3>
+  <p>规则很简单：<strong>可以重新生成的，或者含有秘密的，不提交</strong>；描述项目本身的，提交。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>提交到 git</th><th>不提交（已写进 .gitignore）</th></tr></thead>
+    <tbody><tr>
+      <td><code>pyproject.toml</code>、<code>uv.lock</code>、<code>.python-version</code>、<code>main.py</code>、<code>.gitignore</code>、<code>.env.example</code></td>
+      <td><code>.venv/</code>（可以用 <code>uv sync</code> 重建）、<code>.env</code>（含 API Key）、<code>__pycache__/</code>（Python 自动生成的缓存）</td>
+    </tr></tbody>
+  </table></div>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>uv 自己的文件只有四个：<code>pyproject.toml</code>、<code>uv.lock</code>、<code>.python-version</code>、<code>.venv/</code>。</li>
+    <li>提交"描述"（清单和小票），不提交"产物"（.venv）和"秘密"（.env）。</li>
+  </ul></div>
+</section>
+
+<section id="pyproject">
+  <div class="lesson">第 5 课</div>
+  <h2>pyproject.toml：项目的身份证</h2>
+  <p class="intro">这是现代 Python 项目的标准配置文件。它不是 uv 独有的，而是由 PEP 621 规范定义的。任何工具看到它，就知道"这是一个 Python 项目，叫什么，需要什么"。</p>
+
+  <h3>先看懂 TOML 语法</h3>
+  <p>TOML 是一种配置文件格式，只需要知道三条规则：</p>
+  <ul>
+    <li>用方括号括起来的 <code>[project]</code> 是一个<strong>段落</strong>（TOML 里叫"表"），下面的内容都属于它。<code>[tool.uv]</code> 这种带点的写法表示嵌套：<code>tool</code> 表里的 <code>uv</code> 表。</li>
+    <li><code>name = "jev-cli"</code> 是<strong>键 = 值</strong>，字符串要加双引号。</li>
+    <li><code>[ "a", "b" ]</code> 是<strong>列表</strong>，可以跨行写，最后一项后面的逗号可有可无。</li>
+  </ul>
+
+  <h3>逐行解读你的文件</h3>
+  <div class="annot">
+    <div class="row"><div class="src"><span class="k">[project]</span></div><div class="exp">项目基本信息段。PEP 621 规定的标准字段都写在这里。</div></div>
+    <div class="row"><div class="src">name = <span class="s">"jev-cli"</span></div><div class="exp">项目名。由 <code>uv init</code> 根据文件夹名或 <code>--name</code> 参数生成。只有打包发布时这个名字才重要。</div></div>
+    <div class="row"><div class="src">version = <span class="s">"0.1.0"</span></div><div class="exp">项目自己的版本号。自己用的小工具可以不管它。</div></div>
+    <div class="row"><div class="src">description = <span class="s">"一个用来体验…"</span></div><div class="exp">一句话描述，只是说明用途，不影响运行。</div></div>
+    <div class="row"><div class="src">requires-python = <span class="s">"&gt;=3.12"</span></div><div class="exp"><strong>重要</strong>：声明项目支持哪些 Python 版本。uv 选择解释器、解析依赖时都会遵守它。第 6 课有一个因为它而解析失败的真实例子。</div></div>
+    <div class="row"><div class="src">dependencies = [
+    <span class="s">"python-dotenv&gt;=1.2.3"</span>,
+    <span class="s">"typesafe-sdk&gt;=0.7.1"</span>,
+]</div><div class="exp"><strong>最重要的部分</strong>：直接依赖列表。<code>uv add</code> 会自动往这里加一行，并写上"不低于当前最新版"的约束；<code>uv remove</code> 会删掉对应的行。间接依赖<em>不会</em>出现在这里，它们只记录在 uv.lock 中。</div></div>
+  </div>
+
+  <h3>版本号的含义：语义化版本</h3>
+  <p>大多数 Python 包的版本号遵循"语义化版本"（SemVer）惯例，三个数字各有含义：</p>
+  <div class="semver" aria-label="版本号 2.13.5 的三部分"><span class="ma">2</span><i>.</i><span class="mi">13</span><i>.</i><span class="pa">5</span></div>
+  <div class="semver-legend">
+    <div><b>主版本</b><span>有不兼容的改动。从 1 升到 2，你的代码可能需要修改。</span></div>
+    <div><b>次版本</b><span>新增了功能，保持向后兼容。</span></div>
+    <div><b>修订号</b><span>只修 bug，保持向后兼容。</span></div>
+  </div>
+  <p>注意两点：一是这只是<strong>惯例</strong>，不是强制规定，有的包并不严格遵守；二是主版本为 <code>0</code> 时（比如 <code>typesafe-sdk 0.7.1</code>）表示还在早期开发阶段，次版本升级也可能带来不兼容的改动。</p>
+
+  <h3>版本约束符号怎么读</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>写法</th><th>意思</th><th>什么时候用</th></tr></thead>
+    <tbody>
+      <tr><td><code>&gt;=0.7.1</code></td><td>0.7.1 或更新的任何版本</td><td>uv add 的默认写法，最常见</td></tr>
+      <tr><td><code>==0.7.1</code></td><td>必须正好是 0.7.1</td><td>明确需要固定某个版本时。一般交给 uv.lock 就够了</td></tr>
+      <tr><td><code>~=0.7.1</code></td><td>≥0.7.1 且 &lt;0.8（只接受修订号更新）</td><td>想要 bug 修复，但不想要新功能带来的变化</td></tr>
+      <tr><td><code>&gt;=2,&lt;3</code></td><td>2.x 系列里的任意版本</td><td>明确避开下一个主版本</td></tr>
+      <tr><td><code>!=2.1.0</code></td><td>除 2.1.0 以外都行</td><td>某个版本有已知 bug 时排除它</td></tr>
+    </tbody>
+  </table></div>
+  <p>指定版本的写法：<code>uv add "typesafe-sdk==0.7.1"</code>。命令里的约束要加引号，否则 shell 会把 <code>&gt;</code> 当成重定向符号，结果生成一个名叫 <code>=0.7.1</code> 的文件。</p>
+  <div class="note"><span class="tag">为什么默认只写下限（>=），不写上限？</span>上限写得太紧，会让你的项目和别的包"凑不到一起"，导致解析失败。精确版本已经由 uv.lock 固定住了，所以 pyproject.toml 里保持宽松反而更好。</div>
+
+  <h3>你将来可能看到的其他段落</h3>
+  <dl class="defs">
+    <dt><code>[dependency-groups]</code></dt>
+    <dd><p>开发时才用的依赖，比如测试框架 pytest。用 <code>uv add --dev pytest</code> 添加后会出现：</p>
+      <div class="code"><pre><span class="k">[dependency-groups]</span>
+dev = [
+    <span class="s">"pytest&gt;=9.1.1"</span>,
+]</pre></div></dd>
+    <dt><code>[project.scripts]</code><br><code>[build-system]</code></dt>
+    <dd><p>把项目做成"可安装的包"时才需要。在 uv 0.12 中，<code>uv init</code> <strong>默认</strong>会生成它们。示例项目只是一个脚本，用不到，所以创建后删掉了它们。第 13 课会详细讲它们的作用。</p></dd>
+    <dt><code>[tool.uv]</code></dt>
+    <dd><p>uv 自己的设置。<code>[tool.xxx]</code> 是约定俗成的写法：每个工具都可以在 pyproject.toml 里占一个自己的 <code>tool</code> 段，互不干扰，比如 <code>[tool.ruff]</code>、<code>[tool.pytest.ini_options]</code>。</p></dd>
+  </dl>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li><code>[project]</code> 里最重要的两项：<code>requires-python</code> 和 <code>dependencies</code>。</li>
+    <li>pyproject.toml 里写宽松的范围（通常只有下限），精确版本交给 uv.lock。</li>
+    <li>主版本号变化意味着可能不兼容；0.x 版本的包更要留心。</li>
+  </ul></div>
+</section>
+
+<section id="lock">
+  <div class="lesson">第 6 课</div>
+  <h2>uv.lock 与依赖解析</h2>
+  <p class="intro">pyproject.toml 里写的是 <code>typesafe-sdk&gt;=0.7.1</code>，这是一个范围。从范围得到精确版本的过程叫"依赖解析"，uv.lock 就是解析的结果。</p>
+
+  <h3>为什么需要锁文件</h3>
+  <p>今天满足 <code>&gt;=0.7.1</code> 的最新版是 0.7.1，半年后可能就是 0.9.0。如果只有 pyproject.toml，你今天装的和半年后同事装的就不是同一个版本，间接依赖更是可能全都变了。"在我电脑上能跑"的问题就是这样来的。</p>
+  <p><code>uv.lock</code> 把某一时刻解析出来的<strong>每一个</strong>包的精确版本、下载地址和文件哈希值都记录下来，包括间接依赖。只要有它，任何人在任何时间装出来的环境都一模一样。</p>
+
+  <h3>uv 怎么从"范围"得到"精确版本"</h3>
+  <p>每个包发布时都会声明自己需要什么。比如 <code>typesafe-sdk 0.7.1</code> 声明了"需要 pydantic ≥ 2.12、需要 Python ≥ 3.10"等。uv 把<strong>你的要求</strong>和<strong>所有包的要求</strong>放在一起，找出一组能同时满足的版本，一般尽量选最新的。这个过程叫<strong>依赖解析</strong>。</p>
+  <p>什么时候会发生解析？<code>uv add</code>、<code>uv remove</code>、<code>uv lock</code> 一定会；<code>uv sync</code> 和 <code>uv run</code> 在发现 pyproject.toml 改过时也会。解析的结果写进 uv.lock。</p>
+  <p>还有一条很重要的规则：<strong>已经锁定的版本，uv 会尽量保持不变</strong>。即使 PyPI 上出了新版本，只要旧版本仍满足约束，再次解析时也不会自动升级。想升级必须明确说出来（第 9 课详细对比）。这正是锁文件的意义：版本只在你要求时才变。</p>
+
+  <h3>一个真实的"回退"例子</h3>
+  <p>在一个新项目里同时要求 <code>typesafe-sdk</code> 和 <code>pydantic&lt;2</code>。typesafe-sdk 最新版要求 pydantic ≥ 2.12，二者矛盾。uv 没有报错，而是做了这件事：</p>
+  <div class="code"><pre><span class="p">$ </span>uv add typesafe-sdk "pydantic&lt;2"
+Resolved 13 packages in 1.45s
+ + pydantic==1.10.26
+ + <span class="hl">typesafe-sdk==0.6.0</span>          <span class="c"># ← 不是最新的 0.7.1！</span>
+ + msgspec==0.21.1              <span class="c"># ← 0.6.0 版才有的依赖</span>
+ …</pre></div>
+  <p>uv 往回找，发现 <code>typesafe-sdk 0.6.0</code> 还支持 pydantic 1，就选了它，并在 pyproject.toml 里写下了 <code>"typesafe-sdk&gt;=0.6.0"</code>。这是正确的解，但很可能<strong>不是你想要的</strong>。所以养成习惯：<code>uv add</code> 之后扫一眼输出，看版本号是不是你预期的。</p>
+
+  <p>如果明确要求 0.7 以上（<code>uv add "typesafe-sdk&gt;=0.7" "pydantic&lt;2"</code>），就无路可退了，uv 会报错。怎么读这类报错，见 <a href="#errors">第 14 课</a>。</p>
+
+  <h3>它长什么样</h3>
+  <div class="code"><div class="label"><span>uv.lock（节选）</span></div><pre>version = 1
+revision = 3
+requires-python = <span class="s">"&gt;=3.12"</span>
+
+<span class="k">[[package]]</span>                                     <span class="c"># 双方括号 = 列表里的一项，每个包一项</span>
+name = <span class="s">"annotated-types"</span>
+version = <span class="s">"0.8.0"</span>                                 <span class="c"># 精确版本</span>
+source = { registry = <span class="s">"https://pypi.org/simple"</span> }  <span class="c"># 从哪里下载</span>
+wheels = [
+    { url = <span class="s">"https://files.pythonhosted.org/…whl"</span>,
+      hash = <span class="s">"sha256:f072f4d8…"</span> },              <span class="c"># 防篡改校验</span>
+]</pre></div>
+
+  <h3>为什么 uv.lock 里的包比 .venv 里多？</h3>
+  <p>示例项目的 .venv 装了 14 个包，uv.lock 里却有 16 个条目。多出来的两个：一个是项目自己（<code>jev-cli</code>）；另一个是 <code>httpx2-jsfetch</code>，示例项目所在的 Mac 上根本没装它。看看 uv.lock 里的这几行：</p>
+  <div class="code"><pre>{ name = <span class="s">"anyio"</span>,          marker = <span class="s">"sys_platform != 'emscripten'"</span> },
+{ name = <span class="s">"httpx2-jsfetch"</span>, marker = <span class="s">"sys_platform == 'emscripten'"</span> },
+{ name = <span class="s">"typing-extensions"</span>, marker = <span class="s">"python_full_version &lt; '3.13'"</span> },</pre></div>
+  <p><code>marker</code> 是条件：<code>httpx2-jsfetch</code> 只在 <code>emscripten</code> 平台（运行在浏览器里的 Python）上才需要。uv.lock 是<strong>通用锁文件</strong>，它为所有可能的平台和 Python 版本一次性解好，所以会把这些条件依赖也记下来；实际安装时，uv 只装当前平台需要的那部分。</p>
+  <p>这也是 uv.lock 那么长的原因：比如 <code>pydantic-core</code> 含有编译过的代码，需要为不同系统、不同 Python 版本各准备一个安装包，光它一个就在 uv.lock 里列了六十多个下载地址。</p>
+
+  <div class="note warn"><span class="tag">不要手动编辑</span>uv.lock 是给机器读的。它由 uv 自动维护，而且<strong>要提交到 git</strong>。</div>
+
+  <h3>用 uv tree 看依赖关系</h3>
+  <p>想知道谁依赖谁，运行 <code>uv tree</code>。这是示例项目在写作时的输出：</p>
+  <div class="code"><div class="label"><span>$ uv tree</span></div><pre>jev-cli v0.1.0
+├── python-dotenv v1.2.3                <span class="c"># 直接依赖</span>
+└── typesafe-sdk v0.7.1                 <span class="c"># 直接依赖</span>
+    ├── httpx2 v2.13.1                  <span class="c"># ↓ 以下都是间接依赖</span>
+    │   ├── anyio v4.15.1
+    │   │   ├── idna v3.20
+    │   │   └── typing-extensions v4.16.0
+    │   ├── httpcore2 v2.13.1
+    │   │   ├── h11 v0.16.0
+    │   │   └── truststore v0.10.4
+    │   └── …
+    ├── pydantic v2.13.5
+    │   ├── annotated-types v0.8.0
+    │   ├── pydantic-core v2.46.5
+    │   └── …
+    ├── tenacity v9.1.4
+    └── typing-extensions v4.16.0</pre></div>
+  <p>常用变体：<code>uv tree --depth 1</code> 只看直接依赖；<code>uv tree --outdated</code> 标出有新版本的包；<code>uv tree --invert --package pydantic</code> 反过来查"谁依赖了 pydantic"。</p>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>解析 = 找到一组同时满足所有约束的版本；已锁定的版本不会自动升级。</li>
+    <li>解析器会自动回退到旧版本来满足约束，所以 <code>uv add</code> 后要看一眼实际选中的版本。</li>
+    <li>uv.lock 覆盖所有平台，比 .venv 里实际装的多，这很正常。</li>
+  </ul></div>
+</section>
+
+<section id="venv">
+  <div class="lesson">第 7 课</div>
+  <h2>.venv：项目专属的"冰箱"</h2>
+  <p class="intro"><code>.venv</code> 就是这个项目的虚拟环境。它只是一个普通文件夹，没什么神秘的。这一课讲清楚它里面有什么、为什么必须用 uv run，以及它会不会占用很多空间。</p>
+
+  <div class="code"><div class="label"><span>.venv 的主要结构</span></div><pre>.venv/
+├── pyvenv.cfg              <span class="c"># 说明这个环境用的是哪个解释器</span>
+├── bin/
+│   ├── python → …python3.12 <span class="c"># 指向 uv 管理的 Python 3.12（符号链接）</span>
+│   ├── activate            <span class="c"># "激活"脚本（用 uv run 就不需要）</span>
+│   └── dotenv              <span class="c"># 某些包自带的命令行工具也装在这里</span>
+└── lib/python3.12/
+    └── site-packages/      <span class="c"># ← 所有装好的包都在这里</span>
+        ├── typesafe_sdk/
+        ├── dotenv/
+        └── …</pre></div>
+
+  <div class="code"><div class="label"><span>.venv/pyvenv.cfg（示例项目的实际内容，路径有缩写）</span></div><pre>home = ~/.local/share/uv/python/cpython-3.12-macos-aarch64-none/bin
+implementation = CPython
+uv = 0.12.3
+version_info = 3.12
+include-system-site-packages = false   <span class="c"># 与系统里装的包完全隔离</span>
+prompt = jev-cli</pre></div>
+
+  <h3>为什么必须用 uv run，import 才找得到包</h3>
+  <p>Python 执行 <code>import</code> 时，只会在几个固定位置里找：标准库、当前目录，以及<strong>正在运行的那个解释器</strong>对应的包目录（site-packages）。</p>
+  <ul>
+    <li>用 <code>uv run</code>，运行的是 <code>.venv/bin/python</code>，找的就是 <code>.venv/lib/python3.12/site-packages</code>，你用 uv 装的包都在这里。</li>
+    <li>用系统的 <code>python3</code>，找的是系统自己的目录，那里没有这些包，于是报 <code>ModuleNotFoundError</code>。</li>
+  </ul>
+  <p>想确认某个包到底是从哪里导入的，可以直接问它：</p>
+  <div class="code"><pre><span class="p">$ </span>uv run python -c "import typesafe_sdk; print(typesafe_sdk.__file__)"
+项目目录/.venv/lib/python3.12/site-packages/typesafe_sdk/__init__.py</pre></div>
+  <div class="note warn"><span class="tag">一个常见的坑</span>当前目录也在查找范围里，而且排在前面。如果你把自己的文件命名成 <code>json.py</code>、<code>random.py</code>、<code>dotenv.py</code> 这类和标准库或第三方包同名的名字，import 会先找到你的文件，导致奇怪的报错。给文件起名时避开这些名字。</div>
+
+  <h3>包名和 import 名为什么不一样</h3>
+  <p><code>uv add</code> 时用的名字，和代码里 <code>import</code> 的名字，经常对不上：</p>
+  <div class="tbl"><table>
+    <thead><tr><th>uv add 用的名字（发行包名）</th><th>代码里 import 的名字</th></tr></thead>
+    <tbody>
+      <tr><td><code>python-dotenv</code></td><td><code>import dotenv</code></td></tr>
+      <tr><td><code>typesafe-sdk</code></td><td><code>import typesafe_sdk</code></td></tr>
+      <tr><td><code>typing-extensions</code></td><td><code>import typing_extensions</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>发行包名是作者在 PyPI 上注册的名字，import 名由包里的代码决定，两者没有强制关系。另外，Python 的名字里不能有 <code>-</code>，所以 <code>typesafe-sdk</code> 在代码里就成了 <code>typesafe_sdk</code>。想知道 import 名，最可靠的办法是看包的文档。</p>
+
+  <h3>每个项目一个 .venv，会不会很占空间？</h3>
+  <p>不会。听起来像是"每个项目都下载一份解释器和所有依赖"，但实际上 uv 让它们<strong>共享同一份数据</strong>：</p>
+
+  <div class="share" role="img" aria-label="多个项目的 .venv 通过符号链接共用同一个解释器，通过写时复制共用全局缓存里的包">
+    <div class="projs"><span class="fn">项目 A/.venv</span><span class="fn">项目 B/.venv</span><span class="fn">项目 C/.venv</span><span>……每个项目里都有 bin/python 和 site-packages/</span></div>
+    <div class="link"><b>↓</b>bin/python 是<strong>符号链接</strong></div>
+    <div class="link"><b>↓</b>包是从缓存<strong>克隆</strong>过来的</div>
+    <div class="store"><span class="fn">~/.local/share/uv/python/</span><span class="an">解释器</span><span>每个 Python 版本只存一份，3.12 约 72 MB</span></div>
+    <div class="store"><span class="fn">~/.cache/uv/</span><span class="an">全局包缓存</span><span>每个包的每个版本只下载一次，写作时约 580 MB</span></div>
+  </div>
+
+  <dl class="defs">
+    <dt>解释器<small>符号链接</small></dt>
+    <dd><p><code>.venv/bin/python</code> 不是一份真正的 Python，只是一个"快捷方式"：</p>
+      <div class="code"><pre><span class="p">$ </span>ls -l .venv/bin/python
+.venv/bin/python -> ~/.local/share/uv/python/cpython-3.12-macos-aarch64-none/bin/python3.12</pre></div>
+      <p>不管有多少个项目用 3.12，磁盘上都只有那一份约 72 MB 的解释器。</p></dd>
+    <dt>依赖包<small>写时复制 clone</small></dt>
+    <dd><p>包第一次被需要时下载进全局缓存 <code>~/.cache/uv</code>，之后装到任何项目的 .venv，都是从缓存里<strong>克隆</strong>过去。这是 uv 在 macOS 和 Linux 上的默认方式（Windows 上用硬链接）。</p>
+      <p>macOS 默认使用 APFS 文件系统。克隆出来的文件和缓存里的原文件<strong>共用同一块磁盘空间</strong>，只有某个文件被修改时才会真正复制一份。装好的包基本不会被修改，所以十个项目都用 <code>typesafe-sdk</code>，磁盘上实际也只存了一份。</p></dd>
+  </dl>
+
+  <div class="note"><span class="tag">为什么 du 显示 .venv 有 12 MB？</span><code>du -sh .venv</code> 统计的是文件的名义大小，它分辨不出克隆出来的文件和原文件共用了空间。这 12 MB 并不会在缓存之外再占一次磁盘。这也是删掉 .venv 再重建只要一两秒的原因：不用重新下载，只是从缓存克隆一遍。</div>
+
+  <p>真正会越来越大的是缓存本身：旧版本的包、已删除项目用过的包都还留在里面。清理方法：</p>
+  <div class="code"><div class="label"><span>查看和清理</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>uv cache dir                <span class="c"># 缓存在哪里（macOS 上默认是 ~/.cache/uv）</span>
+<span class="p">$ </span>du -sh ~/.cache/uv          <span class="c"># 占了多少空间</span>
+<span class="p">$ </span>uv cache prune              <span class="c"># 只删不再需要的条目，比较安全，推荐</span>
+<span class="p">$ </span>uv cache clean              <span class="c"># 全部清空：项目不会坏，只是下次安装要重新下载</span>
+<span class="p">$ </span>uv python uninstall 3.13    <span class="c"># 删掉不用的 Python 版本</span></pre></div>
+  <p>为什么清空缓存不会弄坏项目？因为克隆出来的文件是独立的，即使原件被删除，.venv 里那一份依然完好。只有在手动把链接模式设成 <code>symlink</code> 时，清空缓存才会弄坏环境，所以不建议改这个设置。</p>
+
+  <h3>关于 .venv 的三条规则</h3>
+  <ul>
+    <li><strong>可以随时删除。</strong>运行 <code>uv sync</code> 就会按 uv.lock 原样重建。环境出现奇怪问题时，这是最有效的"重启大法"。</li>
+    <li><strong>不提交到 git。</strong>它和你的电脑、系统相关，别人拿去也用不了。别人只需要 pyproject.toml 和 uv.lock，就能在自己电脑上重建。</li>
+    <li><strong>不要往里手动装东西。</strong>用 pip 装进去的包 uv.lock 里没有记录，下次 <code>uv sync</code> 时会被清掉（模拟器第 7、8 步演示过）。</li>
+  </ul>
+
+  <h3>"激活"虚拟环境是什么？</h3>
+  <p>传统做法是先运行 <code>source .venv/bin/activate</code>。它做的事情很简单：把 <code>.venv/bin</code> 放到 <code>PATH</code> 环境变量的最前面，于是你之后输入的 <code>python</code> 就是 .venv 里那个，终端提示符也会变成 <code>(jev-cli) $</code>。输入 <code>deactivate</code> 恢复原状。</p>
+  <p>用 uv 的话<strong>基本不需要激活</strong>，<code>uv run</code> 每次都会自动使用 .venv。下面两种方式效果相同：</p>
+  <div class="code"><div class="label"><span>两种运行方式</span><button class="copy" type="button">复制</button></div><pre><span class="c"># 方式一（推荐）：一步到位</span>
+<span class="p">$ </span>uv run main.py
+
+<span class="c"># 方式二：传统方式，先激活再运行</span>
+<span class="p">$ </span>source .venv/bin/activate
+<span class="p">$ </span>python main.py
+<span class="p">$ </span>deactivate</pre></div>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>只有用 .venv 里的 Python（也就是 <code>uv run</code>）运行，才能 import 到项目的包。</li>
+    <li>uv add 用的包名和 import 名不一定相同，以包的文档为准。</li>
+    <li>解释器和包在所有项目间共享，.venv 几乎不额外占空间；需要清理的是全局缓存。</li>
+  </ul></div>
+</section>
+
+<!-- ================= 第三部分 ================= -->
+<div class="part"><span class="pn">第三部分</span><span class="pt">日常使用</span><span class="pd">每天都会用到的命令：它们各自做了什么、改动了什么、在什么场景下用。</span></div>
+
+<section id="run">
+  <div class="lesson">第 8 课</div>
+  <h2>uv run main.py 背后发生了什么</h2>
+  <p class="intro">这是你用得最多的命令。它看起来只是"运行一下"，其实每次都会先检查一遍环境，把缺的补上，然后才执行你的代码。</p>
+
+  <ol class="steps">
+    <li><div><b>找到项目根目录</b><span>从当前目录开始往上找 <code>pyproject.toml</code>。找到了，就知道"这是哪个项目"。所以在项目的子目录里运行也没问题。</span></div></li>
+    <li><div><b>确定 Python 版本</b><span>读取 <code>.python-version</code>（示例项目里是 <code>3.12</code>），并确认它满足 <code>requires-python</code>。电脑上没有这个版本就自动下载。</span></div></li>
+    <li><div><b>确保 .venv 存在</b><span>没有就用选定的解释器新建一个；版本不对就重建。</span></div></li>
+    <li><div><b>检查 uv.lock 是否过期</b><span>如果你手改过 pyproject.toml，uv 会先重新锁定，更新 uv.lock。</span></div></li>
+    <li><div><b>补齐 .venv</b><span>把 uv.lock 里有、.venv 里没有的包装上。注意：默认<strong>只补不删</strong>，.venv 里多出来的包会保留。想要严格一致，用 <code>uv sync</code> 或 <code>uv run --exact</code>。</span></div></li>
+    <li><div><b>用 .venv 里的 Python 执行命令</b><span>相当于运行 <code>.venv/bin/python main.py</code>，所以 <code>import typesafe_sdk</code> 能找到包。</span></div></li>
+  </ol>
+
+  <p>第一次在新项目里运行时，能看到这些步骤的痕迹（新建示例项目的真实输出）：</p>
+  <div class="code"><pre><span class="p">$ </span>uv run main.py
+Using CPython 3.12.13                    <span class="c"># 第 2 步：选定解释器</span>
+Creating virtual environment at: .venv   <span class="c"># 第 3 步：新建 .venv</span>
+Hello from demo!                         <span class="c"># 第 6 步：你的程序输出</span></pre></div>
+
+  <h3>控制它"修不修"：--locked、--frozen、--exact</h3>
+  <p>默认情况下 uv run 会自动修好环境，这在自己电脑上很方便。但有时你希望它<strong>别自作主张</strong>，比如在自动化部署里，你希望"uv.lock 过期了就报错"，而不是悄悄更新它。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>写法</th><th>uv.lock 过期时</th><th class="l3">.venv 里多余的包</th><th>适合</th></tr></thead>
+    <tbody>
+      <tr><td><code>uv run</code></td><td>自动重新锁定</td><td>保留</td><td>日常开发</td></tr>
+      <tr><td><code>uv run --locked</code></td><td><strong>报错退出</strong></td><td>保留</td><td>CI、部署：确保提交的 uv.lock 是最新的</td></tr>
+      <tr><td><code>uv run --frozen</code></td><td>不检查，直接按现有 uv.lock</td><td>保留</td><td>明确不想动 uv.lock 时</td></tr>
+      <tr><td><code>uv run --exact</code></td><td>自动重新锁定</td><td><strong>删除</strong></td><td>想要和 uv sync 一样严格</td></tr>
+    </tbody>
+  </table></div>
+  <p><code>--locked</code> 的真实报错（手改了 pyproject.toml 之后运行，模拟器第 5 步）：</p>
+  <div class="code"><pre><span class="p">$ </span>uv run --locked main.py
+<span class="e">error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided.</span>
+
+hint: To update the lockfile, run `uv lock`.</pre></div>
+  <p><code>uv sync</code> 也支持 <code>--locked</code> 和 <code>--frozen</code>，含义相同。</p>
+
+  <h3>对比：绕过 uv，直接用系统的 python3</h3>
+  <p>如果在示例项目里直接运行 <code>python3 main.py</code>，用的是 macOS 自带的 3.9.6，它根本不会去 .venv 里找包：</p>
+  <div class="code"><pre><span class="p">$ </span>python3 main.py
+Traceback (most recent call last):
+  …
+    from dotenv import load_dotenv
+<span class="e">ModuleNotFoundError: No module named 'dotenv'</span></pre></div>
+
+  <h3>uv run 不只能运行 .py 文件</h3>
+  <div class="code"><div class="label"><span>在项目环境里运行任意命令</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>uv run python                         <span class="c"># 打开交互式 Python，可以直接 import 项目依赖来试验</span>
+<span class="p">$ </span>uv run pytest                         <span class="c"># 运行 .venv 里装的命令行工具</span>
+<span class="p">$ </span>uv run --with rich python             <span class="c"># 临时加上 rich 试一试，不写进项目（见第 9 课）</span>
+<span class="p">$ </span>uv run --env-file .env main.py        <span class="c"># 让 uv 替你加载 .env（不需要 python-dotenv）</span></pre></div>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>uv run = 找项目 → 选 Python → 建 .venv → 更新锁 → 补包 → 运行。</li>
+    <li>默认只补不删；<code>--locked</code> 用于"过期就报错"，<code>--frozen</code> 用于"完全不动 uv.lock"。</li>
+    <li>看到 <code>ModuleNotFoundError</code>，先检查是不是忘了用 <code>uv run</code>。</li>
+  </ul></div>
+</section>
+
+<section id="compare">
+  <div class="lesson">第 9 课</div>
+  <h2>容易混淆的命令：到底有什么区别</h2>
+  <p class="intro">很多命令看起来差不多，执行后的结果却不一样。这一课把最容易搞混的几组放在一起对比。每一组的输出都是写作时实际运行得到的。</p>
+
+  <nav class="minitoc" aria-label="本课内容">
+    <a href="#cmp-install">装包的三种方式</a><a href="#cmp-apply">lock / sync / run</a><a href="#cmp-upgrade">怎样才算升级</a><a href="#cmp-remove">删除依赖</a><a href="#cmp-dev">普通依赖与开发依赖</a><a href="#cmp-python">切换 Python 版本</a><a href="#cmp-venv">uv venv 与 uv sync</a><a href="#cmp-tools">四种用工具的方式</a><a href="#cmp-init">三种 uv init</a>
+  </nav>
+
+  <h3 id="cmp-install">① 装包：uv add、uv pip install、手改 pyproject.toml</h3>
+  <p class="verdict"><span>结论</span>永远用 <code>uv add</code>。另外两种都会让三层暂时或永久地不一致。</p>
+  <div class="tbl"><table class="wide">
+    <thead><tr><th>操作</th><th class="l1">pyproject.toml</th><th class="l2">uv.lock</th><th class="l3">.venv</th><th>之后运行 uv sync</th><th>别人 clone 后</th></tr></thead>
+    <tbody>
+      <tr><td><code>uv add rich</code></td><td class="y">写入</td><td class="y">立即更新</td><td class="y">立即安装</td><td class="y">保留</td><td class="y">也有 rich</td></tr>
+      <tr><td><code>uv pip install rich</code></td><td class="n">不变</td><td class="n">不变</td><td class="y">立即安装</td><td class="n">被删除</td><td class="n">没有 rich</td></tr>
+      <tr><td>手动在 dependencies 里加一行</td><td class="y">写入</td><td class="m">过期，下次 lock/sync/run 时才更新</td><td class="m">下次 sync/run 时才安装</td><td class="y">装上</td><td class="m">取决于你有没有更新并提交 uv.lock</td></tr>
+    </tbody>
+  </table></div>
+  <p>手改 pyproject.toml 并不算错，只是改完要记得运行一次 <code>uv sync</code>（或 <code>uv lock</code>），再把 uv.lock 一起提交。第 2 课模拟器的第 4～8 步完整演示了后两种情况。</p>
+
+  <h3 id="cmp-apply">② 让改动生效：uv lock、uv sync、uv run</h3>
+  <p class="verdict"><span>结论</span><code>uv lock</code> 只动小票；<code>uv sync</code> 把冰箱整理得和小票一模一样；<code>uv run</code> 只补不扔，然后运行。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>它会……</th><th><code>uv lock</code></th><th><code>uv sync</code></th><th><code>uv run</code></th></tr></thead>
+    <tbody>
+      <tr><td>pyproject.toml 改过时，更新 uv.lock</td><td class="y">会</td><td class="y">会</td><td class="y">会</td></tr>
+      <tr><td>安装 .venv 里缺少的包</td><td class="n">不会</td><td class="y">会</td><td class="y">会</td></tr>
+      <tr><td>删除 .venv 里多余的包</td><td class="n">不会</td><td class="y">会</td><td class="n">不会（加 <code>--exact</code> 才会）</td></tr>
+      <tr><td>.venv 不存在时创建它</td><td class="n">不会</td><td class="y">会</td><td class="y">会</td></tr>
+      <tr><td>运行你的代码</td><td class="n">不会</td><td class="n">不会</td><td class="y">会</td></tr>
+      <tr><td>典型场景</td><td>升级版本、只想更新锁文件</td><td>刚 clone 项目、重建环境、确保环境干净</td><td>日常运行代码</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><code>uv sync</code> 和 <code>uv run</code> 都可以加 <code>--locked</code> 或 <code>--frozen</code>，二者经常被搞混。测试方法：在 pyproject.toml 里手动加一行 <code>"six"</code>（不更新 uv.lock），然后分别运行：</p>
+  <div class="code"><div class="label"><span>同一个过期状态，三种写法</span></div><pre><span class="p">$ </span>uv sync --locked
+<span class="e">error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided.</span>
+<span class="c">#   → 发现 uv.lock 过期，报错退出，什么都没改</span>
+
+<span class="p">$ </span>uv sync --frozen
+Checked 6 packages in 0.81ms
+<span class="c">#   → 完全不看 pyproject.toml，照旧的 uv.lock 检查了一遍。six 根本没装！</span>
+
+<span class="p">$ </span>uv sync
+Resolved 9 packages in 2ms
+Installed 1 package in 1ms
+ + six==1.17.0
+<span class="c">#   → 先更新 uv.lock，再装上 six</span></pre></div>
+  <div class="tbl"><table>
+    <thead><tr><th>参数</th><th>uv.lock 过期时</th><th>一句话记忆</th></tr></thead>
+    <tbody>
+      <tr><td>（不加）</td><td>自动更新 uv.lock</td><td>帮我修好</td></tr>
+      <tr><td><code>--locked</code></td><td>报错退出</td><td>uv.lock 必须是最新的，否则别动</td></tr>
+      <tr><td><code>--frozen</code></td><td>不检查，照旧的 uv.lock 执行</td><td>就用现在这份 uv.lock，别管 pyproject.toml</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><span class="tag">--frozen 的坑</span>正因为它不看 pyproject.toml，你手动加的依赖会被静默忽略，就像上面的 six。日常开发不要用它；它适合"确定 uv.lock 是对的、只想尽快装好"的场景，比如部署时。</div>
+
+  <h3 id="cmp-upgrade">③ 升级：哪些操作真的会升级，哪些不会</h3>
+  <p class="verdict"><span>结论</span>已锁定的版本只要仍满足约束，就<strong>不会</strong>自动升级。想升级，要么用 <code>--upgrade-package</code>，要么提高约束的下限。</p>
+  <p>测试准备：项目依赖 <code>idna</code>，约束是 <code>&gt;=3.6</code>，uv.lock 里锁定的是 3.6，PyPI 上最新版是 3.20。然后逐个尝试：</p>
+  <div class="tbl"><table>
+    <thead><tr><th>操作</th><th>升级了吗</th><th>实际发生了什么</th></tr></thead>
+    <tbody>
+      <tr><td>把约束从 <code>==3.6</code> 手改成 <code>&gt;=3.6</code>，再 <code>uv lock</code></td><td class="n">没有</td><td>3.6 仍然满足 <code>&gt;=3.6</code>，uv 保持原样</td></tr>
+      <tr><td><code>uv add idna</code>（它已经是依赖）</td><td class="n">没有</td><td>输出 <code>Checked 1 package</code>，pyproject.toml 也没变</td></tr>
+      <tr><td><code>uv lock --upgrade-package idna</code></td><td class="y">升了（只改 uv.lock）</td><td>输出 <code>Updated idna v3.6 -&gt; v3.20</code>；.venv 里还是 3.6，要等下次 sync/run</td></tr>
+      <tr><td><code>uv sync --upgrade-package idna</code></td><td class="y">升了（一步到位）</td><td>更新 uv.lock，同时把 .venv 里的 3.6 换成 3.20</td></tr>
+      <tr><td><code>uv add "idna&gt;=3.10"</code></td><td class="y">升了</td><td>pyproject.toml 的下限变成 3.10；3.6 不再满足，uv 为它重新选了最新的 3.20</td></tr>
+      <tr><td><code>uv lock --upgrade</code></td><td class="y">全部升级</td><td>所有包（包括间接依赖）都升到约束允许的最新版</td></tr>
+    </tbody>
+  </table></div>
+  <div class="code"><div class="label"><span>真实输出：分两步升级 vs 一步升级</span></div><pre><span class="c"># 分两步：先改小票，再让冰箱跟上</span>
+<span class="p">$ </span>uv lock --upgrade-package idna
+Resolved 2 packages in 422ms
+Updated idna v3.6 -&gt; v3.20
+<span class="p">$ </span>uv run python -c "import idna; print(idna.__version__)"
+Uninstalled 1 package in 1ms          <span class="c"># ← uv run 发现 .venv 与 uv.lock 不一致，先换版本</span>
+Installed 1 package in 3ms
+3.20
+
+<span class="c"># 一步到位</span>
+<span class="p">$ </span>uv sync --upgrade-package idna
+Resolved 2 packages in 433ms
+ - idna==3.6
+ + idna==3.20</pre></div>
+  <p>注意 <code>--upgrade-package</code> 只会在 pyproject.toml 允许的范围内升级，不会修改 pyproject.toml。如果你写的是 <code>&lt;4</code>，它最多升到 3.x；想跨过这个上限，得先改约束。另外，升级后记得运行一遍程序，确认新版本没有带来问题。</p>
+
+  <h3 id="cmp-remove">④ 删除依赖：uv remove 与手动删除</h3>
+  <p class="verdict"><span>结论</span><code>uv remove</code> 一步清理干净；手动删除后，只有 <code>uv sync</code> 才会把包从 .venv 里移除。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>操作</th><th class="l1">pyproject.toml</th><th class="l2">uv.lock</th><th class="l3">.venv 里的包</th></tr></thead>
+    <tbody>
+      <tr><td><code>uv remove requests</code></td><td class="y">删除这一行</td><td class="y">更新</td><td class="y">卸载 requests，以及只被它用到的间接依赖</td></tr>
+      <tr><td>手动删掉这一行，然后 <code>uv run</code></td><td class="y">已删除</td><td class="y">更新</td><td class="n">仍然保留（只补不删）</td></tr>
+      <tr><td>手动删掉这一行，然后 <code>uv sync</code></td><td class="y">已删除</td><td class="y">更新</td><td class="y">卸载</td></tr>
+    </tbody>
+  </table></div>
+  <p><code>uv remove</code> 只能删除<strong>直接依赖</strong>。想删一个间接依赖（比如 requests 带进来的 urllib3）会报错：</p>
+  <div class="code"><pre><span class="p">$ </span>uv remove urllib3
+<span class="e">error: The dependency `urllib3` could not be found in `project.dependencies`</span></pre></div>
+  <p>这很合理：只要 requests 还在，它就需要 urllib3。想去掉 urllib3，只能去掉需要它的那个包。拼错名字，或者要删的包其实在 dev 组里（应该用 <code>uv remove --dev</code>），也会看到同样的报错。</p>
+
+  <h3 id="cmp-dev">⑤ 普通依赖与开发依赖：uv add 与 uv add --dev</h3>
+  <p class="verdict"><span>结论</span>程序运行时需要的，用 <code>uv add</code>；只在开发时用的（测试、代码检查），用 <code>uv add --dev</code>。</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th><code>uv add rich</code></th><th><code>uv add --dev pytest</code></th></tr></thead>
+    <tbody>
+      <tr><td>写在 pyproject.toml 的哪里</td><td><code>[project]</code> 的 <code>dependencies</code></td><td><code>[dependency-groups]</code> 的 <code>dev</code></td></tr>
+      <tr><td><code>uv sync</code> / <code>uv run</code> 时装不装</td><td>装</td><td>默认也装</td></tr>
+      <tr><td><code>uv sync --no-dev</code> 时</td><td>装</td><td>不装（已装的会被卸载）</td></tr>
+      <tr><td>项目发布成包后，别人安装时</td><td>一起安装</td><td>不会安装</td></tr>
+      <tr><td>删除用</td><td><code>uv remove rich</code></td><td><code>uv remove --dev pytest</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="code"><div class="label"><span>真实输出：--no-dev 会卸载开发依赖</span></div><pre><span class="p">$ </span>uv sync --no-dev
+Resolved 8 packages in 2ms
+Uninstalled 5 packages in 22ms
+ - iniconfig==2.3.0
+ - packaging==26.3
+ - pluggy==1.6.0
+ - pygments==2.21.0
+ - pytest==9.1.1          <span class="c"># pytest 和它的间接依赖都被移除</span>
+<span class="p">$ </span>uv sync                 <span class="c"># 不加 --no-dev，又全部装回来</span>
+Installed 5 packages in 4ms</pre></div>
+
+  <h3 id="cmp-python">⑥ 切换 Python 版本：install、pin 与 requires-python</h3>
+  <p class="verdict"><span>结论</span>想让项目换一个 Python 版本，用 <code>uv python pin</code>；<code>uv python install</code> 只负责下载，不改变项目。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>操作</th><th>改动了什么</th><th>对 .venv 的影响</th></tr></thead>
+    <tbody>
+      <tr><td><code>uv python install 3.13</code></td><td>把 3.13 下载到 uv 的全局目录，不改项目里任何文件</td><td>无</td></tr>
+      <tr><td><code>uv python pin 3.13</code></td><td>把 <code>.python-version</code> 改成 3.13</td><td>下次 sync/run 时删掉旧 .venv，用 3.13 重建</td></tr>
+      <tr><td>修改 <code>requires-python</code></td><td>改变项目"声明支持"的版本范围，uv.lock 要按新范围重新解析</td><td>不直接影响，但 <code>.python-version</code> 必须落在新范围内</td></tr>
+    </tbody>
+  </table></div>
+  <div class="code"><div class="label"><span>真实输出：pin 之后，uv run 自动重建 .venv</span></div><pre><span class="p">$ </span>uv python pin 3.13
+Updated `.python-version` from `3.12` -&gt; `3.13`
+<span class="p">$ </span>uv run python --version
+Using CPython 3.13.15
+Removed virtual environment at: .venv     <span class="c"># ← 旧的 3.12 环境被删除</span>
+Creating virtual environment at: .venv    <span class="c"># ← 用 3.13 重建</span>
+Installed 6 packages in 4ms               <span class="c"># ← 按 uv.lock 重新装包</span>
+Python 3.13.15</pre></div>
+  <p>切回去也是同样的过程。由于包都在缓存里，来回切换只需几毫秒。</p>
+
+  <h3 id="cmp-venv">⑦ 创建环境：uv venv 与 uv sync</h3>
+  <p class="verdict"><span>结论</span>在 uv 项目里用 <code>uv sync</code>（或者直接 <code>uv run</code>），基本用不到 <code>uv venv</code>。</p>
+  <p><code>uv venv</code> 只创建一个<strong>空的</strong>虚拟环境，不看 pyproject.toml，也不装任何包：</p>
+  <div class="code"><pre><span class="p">$ </span>uv venv
+Using CPython 3.13.15
+Creating virtual environment at: .venv
+Activate with: source .venv/bin/activate
+<span class="c"># site-packages 里除了两个内部文件，什么包都没有</span></pre></div>
+  <p><code>uv sync</code> 则会创建环境，并按 uv.lock 装好所有包。<code>uv venv</code> 是给不用 pyproject.toml 的老式工作流准备的（配合 <code>uv pip install</code>）。</p>
+
+  <h3 id="cmp-tools">⑧ 使用命令行工具：四种方式</h3>
+  <p class="verdict"><span>结论</span>看"谁需要它、要用多久"：偶尔用一次，用 <code>uvx</code>；自己常用，用 <code>uv tool install</code>；团队都得用，用 <code>uv add --dev</code>；临时试个库，用 <code>uv run --with</code>。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>方式</th><th>装在哪里</th><th>记录进项目吗</th><th>用完还在吗</th><th>适合</th></tr></thead>
+    <tbody>
+      <tr><td><code>uvx ruff check .</code></td><td>缓存里的临时环境</td><td class="n">否</td><td>不在 PATH 里，下次运行直接复用缓存</td><td>偶尔用一次的工具</td></tr>
+      <tr><td><code>uv tool install ruff</code></td><td>全局的独立环境，命令放进 PATH</td><td class="n">否</td><td class="y">一直在，终端里直接输入 <code>ruff</code></td><td>你在各个项目里都常用的工具</td></tr>
+      <tr><td><code>uv add --dev ruff</code></td><td>项目的 .venv</td><td class="y">是，写进 dev 组</td><td class="y">在，用 <code>uv run ruff</code></td><td>团队约定必须用、版本要统一的工具</td></tr>
+      <tr><td><code>uv run --with rich …</code></td><td>缓存里的临时环境，叠加在项目环境上</td><td class="n">否</td><td class="n">只在这一次运行里有效</td><td>临时试一个库，不想弄脏项目</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="cmp-init">⑨ 新建：三种 uv init</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>命令</th><th>生成什么</th><th>怎么运行</th><th>适合</th></tr></thead>
+    <tbody>
+      <tr><td><code>uv init 名字 --no-package</code></td><td>pyproject.toml + main.py</td><td><code>uv run main.py</code></td><td>小工具、学习项目（示例项目 jev-cli 就是这种）</td></tr>
+      <tr><td><code>uv init 名字</code>（即 <code>--package</code>）</td><td>pyproject.toml + <code>src/名字/__init__.py</code></td><td><code>uv run 名字</code></td><td>要发布、要做成命令、要被别的项目 import（第 13 课）</td></tr>
+      <tr><td><code>uv init --script 文件.py</code></td><td>只有一个 .py 文件，依赖写在文件开头</td><td><code>uv run 文件.py</code></td><td>一次性的小脚本（第 12 课）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>装包只用 <code>uv add</code>；删包只用 <code>uv remove</code>，它只能删直接依赖。</li>
+    <li><code>uv lock</code> 只改锁文件，<code>uv sync</code> 严格同步，<code>uv run</code> 只补不删。</li>
+    <li><code>--locked</code>：过期就报错；<code>--frozen</code>：忽略 pyproject.toml 的改动，小心使用。</li>
+    <li>版本不会自动升级，要用 <code>--upgrade-package</code> 或提高下限。</li>
+  </ul></div>
+</section>
+
+<section id="commands">
+  <div class="lesson">第 10 课</div>
+  <h2>命令手册：每条命令改动了什么</h2>
+  <p class="intro">每条命令都写明了"执行后依次发生什么"。右侧标签表示这条命令会<strong>写入</strong>哪些文件或目录。想看命令之间的区别，回到 <a href="#compare">第 9 课</a>。</p>
+  <p class="touch-legend">标签说明：<span class="chip l1">pyproject</span> <span class="chip l2">uv.lock</span> <span class="chip l3">.venv</span> <span class="chip w">.python-version</span> 表示会被修改（颜色与三层模型一致）；<span class="chip">只读</span> 表示只查看，不改动任何东西。</p>
+
+  <div class="filters" id="filters" role="group" aria-label="按类别筛选">
+    <button type="button" data-f="all" aria-pressed="true">全部</button>
+    <button type="button" data-f="project" aria-pressed="false">创建项目</button>
+    <button type="button" data-f="deps" aria-pressed="false">管理依赖</button>
+    <button type="button" data-f="run" aria-pressed="false">运行与同步</button>
+    <button type="button" data-f="python" aria-pressed="false">Python 版本</button>
+    <button type="button" data-f="tool" aria-pressed="false">工具与其他</button>
+  </div>
+
+  <div class="cmds" id="cmds">
+
+    <details class="cmd" data-cat="project">
+      <summary><span class="name">uv init 项目名 --no-package</span><span class="touch"><span class="chip w">新建多个文件</span></span><span class="one">新建一个项目。只生成描述文件，不安装任何东西。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>给了项目名就新建同名文件夹；没给就在当前目录里初始化。</li>
+          <li>生成 <code>pyproject.toml</code>：<code>name</code> 取文件夹名，<code>requires-python</code> 取当前选用的 Python 版本（用 <code>-p</code> 可以指定），<code>dependencies</code> 为空。</li>
+          <li>生成 <code>.python-version</code>，写入这个版本号。</li>
+          <li>生成 <code>main.py</code>（打印一句 Hello）和 <code>README.md</code>。目录里已有的同名文件<strong>不会被覆盖</strong>。</li>
+          <li>默认初始化 git 仓库并生成 <code>.gitignore</code>。</li>
+        </ol><p class="not"><b>不会：</b>创建 .venv、生成 uv.lock、下载任何包。它们要等第一次 add/sync/run 时才出现。</p></div>
+        <p>常用参数：<code>--no-package</code> 简单结构（初学者推荐）；<code>--package</code> 包结构（uv 0.12 的默认，见第 13 课）；<code>--script 文件.py</code> 单文件脚本（第 12 课）；<code>-p 3.12</code> 指定 Python；<code>--no-readme</code>、<code>--vcs none</code> 不生成 README、不初始化 git。</p>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv init my-tool --no-package -p 3.12
+Initialized project `my-tool` at `…/my-tool`</pre></div>
+        <p class="see">三种 init 的对比：<a href="#cmp-init">第 9 课 ⑨</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="deps" open>
+      <summary><span class="name">uv add 包名</span><span class="touch"><span class="chip l1">pyproject</span><span class="chip l2">uv.lock</span><span class="chip l3">.venv</span></span><span class="one">添加一个依赖。三层一起更新：写进清单 → 重新锁定 → 安装进 .venv。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>把约束写进 pyproject.toml 的 <code>dependencies</code>。没写版本时，写成 <code>&gt;=当前最新版</code>。</li>
+          <li>重新解析所有依赖，更新 uv.lock。新包的间接依赖也一并确定下来。</li>
+          <li>.venv 不存在就创建。</li>
+          <li>下载缺少的包（缓存里已有的直接用），装进 .venv。</li>
+          <li>用 <code>+</code> / <code>-</code> 打印 .venv 里实际发生的变化。</li>
+        </ol><p class="not"><b>特殊情况：</b>解析失败时 pyproject.toml 保持原样，可以放心重试；包已经是依赖时，不会升级它，只输出 <code>Checked</code>（见 <a href="#cmp-upgrade">第 9 课 ③</a>）。</p></div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv add requests
+ + certifi==2026.7.22
+ + charset-normalizer==3.5.1
+ + idna==3.20
+ + requests==2.34.2          <span class="c"># 你要的包</span>
+ + urllib3==2.8.0            <span class="c"># 其余都是它的间接依赖</span>
+
+<span class="p">$ </span>uv add "requests==2.31.0"   <span class="c"># 指定版本（记得加引号）</span>
+<span class="p">$ </span>uv add rich httpx           <span class="c"># 一次添加多个</span>
+<span class="p">$ </span>uv add -r requirements.txt  <span class="c"># 从旧的 requirements.txt 批量导入</span></pre></div>
+        <p>装完扫一眼输出里的版本号：解析器可能为了满足约束选了旧版本（第 6 课"回退"的例子）。</p>
+        <p class="see">和 <code>uv pip install</code>、手改 pyproject.toml 的区别：<a href="#cmp-install">第 9 课 ①</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="deps">
+      <summary><span class="name">uv add --dev 包名</span><span class="touch"><span class="chip l1">pyproject</span><span class="chip l2">uv.lock</span><span class="chip l3">.venv</span></span><span class="one">添加只在开发时使用的依赖（测试、代码检查工具等）。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b>和 <code>uv add</code> 的流程完全一样，唯一的区别是约束写进 <code>[dependency-groups]</code> 的 <code>dev</code> 组，而不是 <code>dependencies</code>。</div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv add --dev pytest
+<span class="p">$ </span>uv remove --dev pytest      <span class="c"># 删除时也要加 --dev</span></pre></div>
+        <p class="see">开发依赖什么时候装、什么时候不装：<a href="#cmp-dev">第 9 课 ⑤</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="deps">
+      <summary><span class="name">uv remove 包名</span><span class="touch"><span class="chip l1">pyproject</span><span class="chip l2">uv.lock</span><span class="chip l3">.venv</span></span><span class="one">移除一个直接依赖，连同只被它用到的间接依赖一起清理。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>从 pyproject.toml 里删掉这一行。</li>
+          <li>重新解析，更新 uv.lock。</li>
+          <li>从 .venv 卸载这个包，以及<strong>不再被任何包需要</strong>的间接依赖；还被别的包用着的会保留。</li>
+        </ol></div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv remove requests
+ - idna==3.20
+ - requests==2.34.2
+ - urllib3==2.8.0</pre></div>
+        <p>只能删除直接依赖；对间接依赖或拼错的名字会报错 <code>could not be found in `project.dependencies`</code>。</p>
+        <p class="see">和手动删除的区别：<a href="#cmp-remove">第 9 课 ④</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="run">
+      <summary><span class="name">uv run 命令</span><span class="touch"><span class="chip l2">uv.lock</span><span class="chip l3">.venv</span></span><span class="one">在项目环境里运行命令。先更新锁、补装缺少的包，再运行；不删除多余的包。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>找到项目，确定 Python 版本，.venv 不存在或版本不对就（重新）创建。</li>
+          <li>pyproject.toml 改过的话，重新解析并更新 uv.lock。</li>
+          <li>把 uv.lock 里有、.venv 里缺的包装上。多余的包<strong>保留</strong>。</li>
+          <li>用 .venv 里的 Python 执行你给的命令。</li>
+        </ol><p class="not"><b>环境已经一致时：</b>第 1～3 步什么都不改，几乎不花时间。详见第 8 课。</p></div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv run main.py
+<span class="p">$ </span>uv run --locked main.py     <span class="c"># uv.lock 过期就报错</span>
+<span class="p">$ </span>uv run --exact main.py      <span class="c"># 同时删除 .venv 里多余的包</span>
+<span class="p">$ </span>uv run --with rich main.py  <span class="c"># 临时多加一个包，不写进项目</span></pre></div>
+        <p class="see">和 uv sync、uv lock 的区别：<a href="#cmp-apply">第 9 课 ②</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="run">
+      <summary><span class="name">uv sync</span><span class="touch"><span class="chip l2">uv.lock</span><span class="chip l3">.venv</span></span><span class="one">让 .venv 与 uv.lock 完全一致：缺的装上，多的删掉。不运行代码。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>pyproject.toml 改过的话，先更新 uv.lock。</li>
+          <li>.venv 不存在或 Python 版本不对就（重新）创建。</li>
+          <li>安装缺少的包；版本不对的换成 uv.lock 里的版本。</li>
+          <li><strong>卸载 uv.lock 里没有的包</strong>：用 pip 私自装的、从 pyproject.toml 删掉后残留的，全部清掉。</li>
+          <li>默认包括 dev 组的开发依赖。</li>
+        </ol></div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv sync
+<span class="p">$ </span>uv sync --no-dev                     <span class="c"># 不装（并卸载）开发依赖</span>
+<span class="p">$ </span>uv sync --locked                     <span class="c"># uv.lock 过期时报错，不自动更新</span>
+<span class="p">$ </span>uv sync --frozen                     <span class="c"># 忽略 pyproject.toml 的改动，只按现有 uv.lock</span>
+<span class="p">$ </span>uv sync --inexact                    <span class="c"># 不删除多余的包</span>
+<span class="p">$ </span>uv sync --upgrade-package 包名        <span class="c"># 升级一个包并立即装上</span></pre></div>
+        <p>最常用的场景：刚 clone 一个项目、删了 .venv 想重建、手改 pyproject.toml 之后。</p>
+        <p class="see">--locked 和 --frozen 的真实对比：<a href="#cmp-apply">第 9 课 ②</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="deps">
+      <summary><span class="name">uv lock</span><span class="touch"><span class="chip l2">uv.lock</span></span><span class="one">只根据 pyproject.toml 重新生成 uv.lock，不碰 .venv。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>读取 pyproject.toml。</li>
+          <li>重新解析依赖。已经锁定、而且仍满足约束的版本<strong>保持不变</strong>。</li>
+          <li>写回 uv.lock。版本有变化时，会打印 <code>Updated 包 v旧 -&gt; v新</code>。</li>
+        </ol><p class="not"><b>不会：</b>安装或卸载任何包。.venv 要等下一次 sync/run 才会跟上。</p></div>
+        <p>平时 add、remove、sync、run 都会自动锁定，很少需要手动运行它。它真正有用的地方是升级：</p>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv lock --upgrade-package typesafe-sdk   <span class="c"># 只升级这一个包（在约束范围内取最新版）</span>
+<span class="p">$ </span>uv lock --upgrade                        <span class="c"># 所有包都升到允许的最新版</span>
+<span class="p">$ </span>uv lock --check                          <span class="c"># 只检查 uv.lock 是否过期，不修改</span></pre></div>
+        <p class="see">哪些操作会升级、哪些不会：<a href="#cmp-upgrade">第 9 课 ③</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="deps">
+      <summary><span class="name">uv tree</span><span class="touch"><span class="chip l2">uv.lock（过期时）</span></span><span class="one">以树状图显示依赖关系（见第 6 课的真实输出）。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b>按 uv.lock 画出依赖树。注意它并非完全只读：uv.lock 过期时，它会先更新 uv.lock（但不安装任何东西）。不想让它动 uv.lock，加 <code>--frozen</code>。</div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv tree --depth 1                      <span class="c"># 只看直接依赖</span>
+<span class="p">$ </span>uv tree --outdated                     <span class="c"># 标出有新版本的包</span>
+<span class="p">$ </span>uv tree --invert --package pydantic    <span class="c"># 谁依赖了 pydantic</span></pre></div>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="deps">
+      <summary><span class="name">uv export</span><span class="touch"><span class="chip">只输出</span></span><span class="one">把 uv.lock 的内容转换成其他格式输出，比如 requirements.txt。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b>把结果打印到终端，不改动任何项目文件。要保存成文件，用 <code>&gt;</code> 重定向。只有某个平台或工具只认 requirements.txt 时才需要。</div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv export --format requirements-txt &gt; requirements.txt</pre></div>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="python">
+      <summary><span class="name">uv python list</span><span class="touch"><span class="chip">只读</span></span><span class="one">列出可用的 Python 版本，包括系统自带的和 uv 下载的。</span></summary>
+      <div class="body">
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv python list --only-installed   <span class="c"># 只看已经装好的（第 1 课的表格就来自它）</span></pre></div>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="python">
+      <summary><span class="name">uv python install / uninstall</span><span class="touch"><span class="chip">仅全局目录</span></span><span class="one">下载或删除 uv 管理的 Python 版本，不改动任何项目。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b>把指定版本下载到 <code>~/.local/share/uv/python/</code>（或从那里删除）。不改项目文件，也不影响系统自带的 Python。</div>
+        <p>通常不用手动安装：<code>uv run</code>、<code>uv sync</code> 发现缺少需要的版本时会自动下载。每个版本只装一份，所有项目共用。</p>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv python install 3.13
+<span class="p">$ </span>uv python uninstall 3.13</pre></div>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="python">
+      <summary><span class="name">uv python pin 3.13</span><span class="touch"><span class="chip w">.python-version</span></span><span class="one">让项目换用另一个 Python 版本。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后依次发生：</b><ol>
+          <li>立即：把 <code>.python-version</code> 改成 3.13。只做这一件事。</li>
+          <li>下一次 <code>uv run</code> / <code>uv sync</code> 时：发现 .venv 的版本不对，删掉旧 .venv，用 3.13 重建，再按 uv.lock 装好所有包（缺 3.13 的话会先下载）。</li>
+        </ol></div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv python pin 3.13
+Updated `.python-version` from `3.12` -&gt; `3.13`</pre></div>
+        <p>前提是 3.13 满足 pyproject.toml 里的 <code>requires-python</code>。</p>
+        <p class="see">完整过程的真实输出：<a href="#cmp-python">第 9 课 ⑥</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="tool">
+      <summary><span class="name">uvx 工具名</span><span class="touch"><span class="chip">不影响项目</span></span><span class="one">临时下载并运行一个 Python 命令行工具，等同于 uv tool run。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b>在缓存里为这个工具准备一个独立环境（第一次需要下载），然后运行它。不改动当前项目的任何文件；下次再运行时直接复用缓存。</div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uvx ruff check .           <span class="c"># 检查代码问题</span>
+<span class="p">$ </span>uv tool install ruff       <span class="c"># 想长期使用就全局安装，之后直接输入 ruff</span></pre></div>
+        <p class="see">和 <code>uv tool install</code>、<code>uv add --dev</code>、<code>uv run --with</code> 的区别：<a href="#cmp-tools">第 9 课 ⑧</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="tool">
+      <summary><span class="name">uv pip …</span><span class="touch"><span class="chip l3">.venv</span></span><span class="one">兼容 pip 的接口。在 uv 项目里请不要用它安装包。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b><code>uv pip install xxx</code> 只把包装进 .venv，<strong>不会</strong>写进 pyproject.toml 和 uv.lock。下次 <code>uv sync</code> 时，这些包就会被删掉（模拟器第 7、8 步）。</div>
+        <p>它存在是为了兼容老项目的工作流。在 uv 项目里，只推荐用它来查看：<code>uv pip list</code> 列出 .venv 里装了什么。</p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="tool">
+      <summary><span class="name">uv venv</span><span class="touch"><span class="chip l3">.venv</span></span><span class="one">创建一个空的虚拟环境。uv 项目里基本用不到。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b>创建 .venv，但不看 pyproject.toml，也不装任何包。在 uv 项目里请用 <code>uv sync</code>。</div>
+        <p class="see">对比：<a href="#cmp-venv">第 9 课 ⑦</a></p>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="tool">
+      <summary><span class="name">uv cache dir / prune / clean</span><span class="touch"><span class="chip">仅全局缓存</span></span><span class="one">查看或清理 uv 的全局包缓存（macOS 上默认在 ~/.cache/uv）。</span></summary>
+      <div class="body">
+        <div class="happen"><b>执行后：</b><code>dir</code> 只打印位置；<code>prune</code> 删除不再需要的条目；<code>clean</code> 清空全部缓存。都不会弄坏已有项目，只是之后可能要重新下载。</div>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv cache dir
+<span class="p">$ </span>uv cache prune
+<span class="p">$ </span>uv cache clean</pre></div>
+      </div>
+    </details>
+
+    <details class="cmd" data-cat="tool">
+      <summary><span class="name">uv 命令 --help</span><span class="touch"><span class="chip">只读</span></span><span class="one">查看任意命令的全部参数。遇到不懂的参数，先试试它。</span></summary>
+      <div class="body">
+        <p><code>--help</code> 看简要说明；<code>uv help 命令</code> 看每个参数的详细解释（本教程里很多细节就是从这里核实的）。</p>
+        <div class="code"><button class="copy" type="button" style="position:absolute;right:10px;top:10px">复制</button><pre><span class="p">$ </span>uv add --help
+<span class="p">$ </span>uv help sync
+<span class="p">$ </span>uv --version</pre></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="recipes">
+  <div class="lesson">第 11 课</div>
+  <h2>常见场景：照着做就行</h2>
+
+  <h3>从零开始一个新项目</h3>
+  <div class="code"><div class="label"><span>新建项目</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>uv init my-tool --no-package   <span class="c"># 1. 创建项目文件夹和基础文件</span>
+<span class="p">$ </span>cd my-tool                     <span class="c"># 2. 进入项目</span>
+<span class="p">$ </span>uv add requests                <span class="c"># 3. 添加需要的库</span>
+<span class="p">$ </span>uv run main.py                 <span class="c"># 4. 编辑 main.py 后运行</span>
+<span class="p">$ </span>git add . &amp;&amp; git commit -m "init"   <span class="c"># 5. 提交（.venv 会被 .gitignore 自动排除）</span></pre></div>
+
+  <h3>拿到别人的 uv 项目（或者换了一台电脑）</h3>
+  <div class="code"><div class="label"><span>克隆并运行</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>git clone &lt;仓库地址&gt; &amp;&amp; cd &lt;项目&gt;
+<span class="p">$ </span>cp .env.example .env           <span class="c"># 如果项目需要密钥，照模板填上自己的</span>
+<span class="p">$ </span>uv sync                        <span class="c"># 按 uv.lock 装出一模一样的环境（也可以跳过，直接 uv run）</span>
+<span class="p">$ </span>uv run main.py</pre></div>
+  <p>这就是提交 uv.lock 的意义：对方不需要问你"装的是哪个版本"。</p>
+
+  <h3>把旧的 pip 项目迁移到 uv</h3>
+  <p>假设旧项目里有 <code>main.py</code> 和 <code>requirements.txt</code>（这个流程实测可用）：</p>
+  <div class="code"><div class="label"><span>迁移</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>cd 旧项目
+<span class="p">$ </span>uv init --no-package           <span class="c"># 已有的 main.py 不会被覆盖</span>
+<span class="p">$ </span>uv add -r requirements.txt     <span class="c"># 依赖原样写进 pyproject.toml，并生成 uv.lock</span>
+<span class="p">$ </span>uv run main.py
+<span class="c"># 确认没问题后，可以删掉旧的 venv/ 文件夹和 requirements.txt</span></pre></div>
+  <p>requirements.txt 里如果写的是 <code>==</code> 固定版本，迁入后 pyproject.toml 里也是 <code>==</code>。可以考虑改成 <code>&gt;=</code>，让 uv.lock 负责固定版本。</p>
+
+  <h3>升级某个库到新版本</h3>
+  <div class="code"><div class="label"><span>升级 typesafe-sdk</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>uv tree --outdated --depth 1                 <span class="c"># 1. 看看哪些直接依赖有新版本</span>
+<span class="p">$ </span>uv sync --upgrade-package typesafe-sdk      <span class="c"># 2. 在允许的范围内升到最新，并立即装上</span>
+<span class="p">$ </span>uv run main.py                               <span class="c"># 3. 跑一遍，确认新版本没带来问题</span>
+<span class="p">$ </span>git add uv.lock &amp;&amp; git commit -m "upgrade typesafe-sdk"   <span class="c"># 4. 提交新的 uv.lock</span></pre></div>
+  <p>第 2 步只改 uv.lock 和 .venv，pyproject.toml 保持不变。如果新版本超出了 pyproject.toml 里的范围（比如你写了 <code>&lt;1</code>，而新版是 1.0），就要改用 <code>uv add "typesafe-sdk&gt;=1.0"</code>，它会同时提高下限。所有升级方式的对比见 <a href="#cmp-upgrade">第 9 课 ③</a>。</p>
+
+  <h3>同事加了新依赖，你 git pull 之后</h3>
+  <div class="code"><div class="label"><span>拉取后同步</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>git pull          <span class="c"># 拿到了新的 pyproject.toml 和 uv.lock</span>
+<span class="p">$ </span>uv sync           <span class="c"># 按新的 uv.lock 装上新包、删掉被移除的包</span></pre></div>
+  <p>直接 <code>uv run</code> 也能把新包装上，但同事<strong>删掉</strong>的包会残留在你的 .venv 里（只补不删）。拉取后运行一次 <code>uv sync</code> 最稳妥。</p>
+
+  <h3>不小心用 pip 装了包</h3>
+  <p>如果这个包确实需要，用 <code>uv add 包名</code> 把它正式记录下来（已经装好的不会重复下载）；如果不需要，运行 <code>uv sync</code>，它会被自动清理掉。</p>
+
+  <h3>环境出现奇怪的问题</h3>
+  <div class="code"><div class="label"><span>重建虚拟环境</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>rm -rf .venv     <span class="c"># 删掉"冰箱"。放心，清单和小票都还在</span>
+<span class="p">$ </span>uv sync          <span class="c"># 按小票重新装满</span></pre></div>
+
+  <h3>在 VS Code 里使用</h3>
+  <p>VS Code 需要知道用哪个解释器，否则会在 <code>import</code> 下画红色波浪线。按 <kbd>⌘ ⇧ P</kbd> → 输入 "Python: Select Interpreter" → 选择 <code>./.venv/bin/python</code>。通常 VS Code 也会自动检测到 .venv 并提示你选择它。</p>
+</section>
+
+<!-- ================= 第四部分 ================= -->
+<div class="part"><span class="pn">第四部分</span><span class="pt">进阶</span><span class="pd">第一次读可以先跳过。等你用 uv 做过几个项目后再回来看，会更有收获。</span></div>
+
+<section id="scripts">
+  <div class="lesson">第 12 课 <span class="badge">进阶 · 可跳过</span></div>
+  <h2>单文件脚本与临时工具</h2>
+  <p class="intro">不是每段代码都值得建一个项目。写个一次性的小脚本，或者试一下某个库，uv 有更轻量的办法。</p>
+
+  <h3>自带依赖声明的脚本（PEP 723）</h3>
+  <p>Python 有一个标准（PEP 723），允许把依赖直接写在脚本文件的开头，用一段特殊注释表示。uv 可以读懂它：</p>
+  <div class="code"><div class="label"><span>创建并添加依赖（真实输出）</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>uv init --script hello.py
+<span class="p">$ </span>uv add --script hello.py rich</pre></div>
+  <div class="code"><div class="label"><span>hello.py 现在的内容</span></div><pre><span class="c"># /// script</span>
+<span class="c"># requires-python = "&gt;=3.12"</span>
+<span class="c"># dependencies = [</span>
+<span class="c">#     "rich&gt;=15.0.0",</span>
+<span class="c"># ]</span>
+<span class="c"># ///</span>
+
+
+def main() -&gt; None:
+    print("Hello from hello.py!")
+
+
+if __name__ == "__main__":
+    main()</pre></div>
+  <p>运行时 uv 读取这段注释，自动为这个脚本准备一个<strong>临时环境</strong>（放在缓存里，不会生成 .venv），装好 rich，然后运行：</p>
+  <div class="code"><pre><span class="p">$ </span>uv run hello.py
+Installed 4 packages in 4ms
+Hello from hello.py!</pre></div>
+  <p>这个文件可以直接发给别人。只要对方装了 uv，<code>uv run hello.py</code> 就能跑起来，不需要任何其他文件。它相当于把一个迷你版的 pyproject.toml 塞进了脚本里。</p>
+
+  <h3>临时多加一个包：--with</h3>
+  <p>想在不改动项目的情况下试一个库：</p>
+  <div class="code"><div class="label"><span>--with</span><button class="copy" type="button">复制</button></div><pre><span class="p">$ </span>uv run --with rich python -c "import rich; print('ok')"
+Installed 4 packages in 4ms
+ok</pre></div>
+  <p>rich 只存在于这一次运行里，pyproject.toml、uv.lock、.venv 都不会被改动。</p>
+
+  <h3>命令行工具</h3>
+  <p>像 ruff、pytest 这类"装了之后在终端里用"的工具，有 <code>uvx</code>、<code>uv tool install</code>、<code>uv add --dev</code> 三种装法，区别见 <a href="#compare">第 9 课</a>。</p>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>单文件脚本用 PEP 723 头部声明依赖，<code>uv run 脚本.py</code> 自动准备临时环境。</li>
+    <li><code>--with</code> 临时加包，不留痕迹。</li>
+  </ul></div>
+</section>
+
+<section id="package">
+  <div class="lesson">第 13 课 <span class="badge">进阶 · 可跳过</span></div>
+  <h2>应用与包：src 结构是怎么回事</h2>
+  <p class="intro">uv 0.12 的 <code>uv init</code> 默认生成"包"结构，示例项目 jev-cli 用的是更简单的"应用"结构。这一课讲清楚两者的区别。</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>应用（--no-package）</th><th>包（--package，默认）</th></tr></thead>
+    <tbody>
+      <tr><td>代码在哪</td><td>项目根目录的 <code>main.py</code></td><td><code>src/项目名/__init__.py</code></td></tr>
+      <tr><td>怎么运行</td><td><code>uv run main.py</code></td><td><code>uv run 项目名</code>（一个命令）</td></tr>
+      <tr><td>pyproject.toml</td><td>只有 <code>[project]</code></td><td>多了 <code>[project.scripts]</code> 和 <code>[build-system]</code></td></tr>
+      <tr><td>项目自身装进 .venv 吗</td><td>不装</td><td>装（可编辑模式）</td></tr>
+      <tr><td>适合</td><td>脚本、小工具、学习</td><td>要发布到 PyPI、要被别的项目 import、要做成命令</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>包结构实际长什么样</h3>
+  <p>用 <code>uv init pkgdemo --package</code> 新建一个示例，下面是它的真实内容：</p>
+  <div class="annot">
+    <div class="row"><div class="src"><span class="k">[project.scripts]</span>
+pkgdemo = <span class="s">"pkgdemo:main"</span></div><div class="exp">定义一个命令。格式是 <code>命令名 = "模块:函数"</code>：安装后，终端里会出现一个叫 <code>pkgdemo</code> 的命令，执行时调用 <code>pkgdemo</code> 模块里的 <code>main()</code> 函数。</div></div>
+    <div class="row"><div class="src"><span class="k">[build-system]</span>
+requires = [<span class="s">"uv_build&gt;=0.12.3,&lt;0.13.0"</span>]
+build-backend = <span class="s">"uv_build"</span></div><div class="exp">告诉工具用什么把项目"打包"。这里用的是 uv 自带的打包后端 <code>uv_build</code>。有了它，项目才能被打包并安装。</div></div>
+    <div class="row"><div class="src"><span class="c"># src/pkgdemo/__init__.py</span>
+def main() -&gt; None:
+    print(<span class="s">"Hello from pkgdemo!"</span>)</div><div class="exp">代码放在 <code>src/</code> 下的同名文件夹里。<code>__init__.py</code> 让这个文件夹成为一个包，<code>import pkgdemo</code> 时执行的就是它。</div></div>
+  </div>
+  <div class="code"><pre><span class="p">$ </span>uv run pkgdemo
+Using CPython 3.13.15
+Creating virtual environment at: .venv
+   Building pkgdemo @ file:///…/pkgdemo      <span class="c"># ← 先把项目自己打包</span>
+      Built pkgdemo @ file:///…/pkgdemo
+Installed 1 package in 1ms                    <span class="c"># ← 装进自己的 .venv</span>
+Hello from pkgdemo!</pre></div>
+  <p>安装后，<code>.venv/bin/</code> 里多了一个 <code>pkgdemo</code> 命令文件，这就是 <code>[project.scripts]</code> 的效果。</p>
+
+  <h3>改了代码要重新安装吗？</h3>
+  <p>不用。uv 以"可编辑"方式安装项目自身，它指向的就是你 <code>src/</code> 里的源代码，改完下次 <code>uv run</code> 直接生效。只有改了 pyproject.toml 里的 <code>[project.scripts]</code>（比如新增一个命令）时，才需要 <code>uv sync</code> 一下，让新命令出现在 <code>.venv/bin/</code> 里。</p>
+
+  <div class="keys"><div class="kt">本课要点</div><ul>
+    <li>只是写个程序自己跑，用 <code>--no-package</code>；要发布、要被 import、要做成命令，用包结构。</li>
+    <li><code>[project.scripts]</code> 定义命令，<code>[build-system]</code> 定义打包方式。</li>
+    <li>项目自身以可编辑方式安装，改代码不用重装。</li>
+  </ul></div>
+</section>
+
+<!-- ================= 第五部分 ================= -->
+<div class="part"><span class="pn">第五部分</span><span class="pt">排错与复习</span><span class="pd">遇到报错不要慌。uv 的报错信息其实写得很清楚，关键是知道怎么读。</span></div>
+
+<section id="errors">
+  <div class="lesson">第 14 课</div>
+  <h2>读懂报错</h2>
+  <p class="intro">下面每个报错都是写作时实际触发的。每个都按"现象 → 原因 → 怎么办"来拆解。</p>
+
+  <div class="errcase">
+    <div class="eh">① 找不到模块 <small>最常见</small></div>
+    <div class="code"><pre><span class="p">$ </span>python3 main.py
+<span class="e">ModuleNotFoundError: No module named 'dotenv'</span></pre></div>
+    <dl>
+      <dt>原因</dt><dd><p>运行代码的不是项目 .venv 里的 Python，或者这个包根本没有装（第 7 课）。</p></dd>
+      <dt>排查</dt><dd><p>1. 是用 <code>uv run</code> 运行的吗？ 2. pyproject.toml 的 dependencies 里有这个包吗？没有就 <code>uv add</code>。 3. 包名和 import 名是否搞混了？比如装的是 <code>python-dotenv</code>，import 的是 <code>dotenv</code>。</p></dd>
+    </dl>
+  </div>
+
+  <div class="errcase">
+    <div class="eh">② 版本冲突，无解 <small>依赖解析失败</small></div>
+    <div class="code"><pre><span class="p">$ </span>uv add "typesafe-sdk&gt;=0.7" "pydantic&lt;2"
+  × No solution found when resolving dependencies:
+  ╰─▶ Because <span class="hl">typesafe-sdk&gt;=0.7.0 depends on pydantic&gt;=2.12.0</span> and <span class="hl">your
+      project depends on pydantic&lt;2</span>, we can conclude that your project and
+      typesafe-sdk&gt;=0.7.0 are incompatible.
+      And because your project depends on typesafe-sdk&gt;=0.7, we can conclude
+      that your project's requirements are unsatisfiable.</pre></div>
+    <dl>
+      <dt>怎么读</dt><dd><p>这是一段推理，按 "Because A and B, we can conclude C" 的结构读：<strong>因为</strong> typesafe-sdk ≥0.7 需要 pydantic ≥2.12，<strong>而</strong>你要求 pydantic &lt;2，<strong>所以</strong>二者不兼容；<strong>又因为</strong>你要求 typesafe-sdk ≥0.7，<strong>所以</strong>无解。高亮的两句就是冲突的双方。</p></dd>
+      <dt>怎么办</dt><dd><p>放宽其中一方：去掉 <code>pydantic&lt;2</code>，或者接受旧版 typesafe-sdk。失败时 pyproject.toml 不会被修改，可以放心重试。</p></dd>
+    </dl>
+  </div>
+
+  <div class="errcase">
+    <div class="eh">③ Python 版本范围不匹配 <small>requires-python 冲突</small></div>
+    <div class="code"><pre><span class="p">$ </span>uv add typesafe-sdk          <span class="c"># 在一个 requires-python = "&gt;=3.9" 的项目里</span>
+  × No solution found when resolving dependencies for split (markers:
+  │ python_full_version == '3.9.*'):
+  ╰─▶ Because the requested Python version (&gt;=3.9) does not satisfy
+      Python&gt;=3.10 and all versions of typesafe-sdk depend on Python&gt;=3.10, we
+      can conclude that all versions of typesafe-sdk cannot be used.
+      …
+hint: The `requires-python` value (&gt;=3.9) includes Python versions that are not
+supported by your dependencies (e.g., all versions of typesafe-sdk only supports
+&gt;=3.10). Consider using a more restrictive `requires-python` value (like &gt;=3.10).</pre></div>
+    <dl>
+      <dt>怎么读</dt><dd><p>容易让人困惑的地方：当时用的明明是 3.13，为什么还会失败？因为 uv.lock 是通用的（第 6 课），它要为 <code>requires-python</code> 允许的<strong>所有</strong>版本求解，而 3.9 上装不了 typesafe-sdk。第一行的 <code>python_full_version == '3.9.*'</code> 就是在说"卡在 3.9 这个分支上"。</p></dd>
+      <dt>怎么办</dt><dd><p><code>hint</code> 已经给出答案：把 pyproject.toml 的 <code>requires-python</code> 改成 <code>"&gt;=3.10"</code>。<strong>遇到报错时，一定要读到最后的 hint。</strong></p></dd>
+    </dl>
+  </div>
+
+  <div class="errcase">
+    <div class="eh">④ 包名写错 <small>找不到包</small></div>
+    <div class="code"><pre><span class="p">$ </span>uv add typesafe-sdkk
+  × No solution found when resolving dependencies:
+  ╰─▶ Because <span class="hl">typesafe-sdkk was not found in the package registry</span> and your
+      project depends on typesafe-sdkk, we can conclude that your project's
+      requirements are unsatisfiable.</pre></div>
+    <dl>
+      <dt>怎么办</dt><dd><p>检查拼写，去 pypi.org 搜一下正确的发行包名。常见错误是把 import 名当成了包名，比如 <code>uv add dotenv</code> 装到的并不是 python-dotenv。</p></dd>
+    </dl>
+  </div>
+
+  <div class="errcase">
+    <div class="eh">⑤ 锁文件过期 <small>使用了 --locked</small></div>
+    <div class="code"><pre><span class="p">$ </span>uv run --locked main.py
+<span class="e">error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided.</span>
+hint: To update the lockfile, run `uv lock`.</pre></div>
+    <dl>
+      <dt>怎么办</dt><dd><p>有人改了 pyproject.toml 却没有更新 uv.lock。本地运行 <code>uv lock</code>，把新的 uv.lock 一起提交。</p></dd>
+    </dl>
+  </div>
+
+  <h3>通用排错技巧</h3>
+  <ul>
+    <li><strong>读到最后。</strong>uv 的 <code>hint:</code> 行往往直接给出解决办法。</li>
+    <li><strong>加 <code>-v</code> 看详细过程</strong>，比如 <code>uv sync -v</code>，能看到 uv 在哪一步、用了哪个解释器、从哪里下载。</li>
+    <li><strong>重建环境。</strong><code>rm -rf .venv &amp;&amp; uv sync</code> 能解决大多数"莫名其妙"的问题。</li>
+    <li><strong>确认版本。</strong><code>uv --version</code>、<code>uv run python --version</code>。</li>
+  </ul>
+
+  <h3>其他常见问题</h3>
+  <details class="faq"><summary><span class="qt">能用 pip install 装包吗？</span></summary><div class="body">
+    <p>在 uv 项目里不要这样做。pip（包括 <code>uv pip install</code>）只把包装进 .venv，不会记录到 pyproject.toml 和 uv.lock。后果是：别人的环境里没有这个包，你下次 <code>uv sync</code> 时它也会被删掉。一律用 <code>uv add</code>。</p>
+  </div></details>
+
+  <details class="faq"><summary><span class="qt">我手动改了 pyproject.toml，接下来要做什么？</span></summary><div class="body">
+    <p>运行 <code>uv sync</code>，三层就一致了。如果直接 <code>uv run</code>，它会更新 uv.lock、补装新加的包；但如果你<strong>删掉</strong>了某个依赖，uv run 不会把它从 .venv 里移除（模拟器第 6 步），需要 <code>uv sync</code> 才会移除。</p>
+  </div></details>
+
+  <details class="faq"><summary><span class="qt">.python-version 和 requires-python 有什么区别？</span></summary><div class="body">
+    <p><code>requires-python = "&gt;=3.12"</code> 是<strong>兼容范围</strong>：项目能在哪些版本上运行，uv.lock 会为这个范围内的所有版本求解。</p>
+    <p><code>.python-version</code> 里的 <code>3.12</code> 是<strong>这台电脑上实际使用的版本</strong>。前者是范围，后者是范围里的一个具体取值。</p>
+  </div></details>
+
+  <details class="faq"><summary><span class="qt">main.py 里的 if __name__ == "__main__": 是什么意思？</span></summary><div class="body">
+    <p>直接运行某个文件时，Python 会把这个文件的 <code>__name__</code> 设为 <code>"__main__"</code>；如果它是被 <code>import</code> 进来的，<code>__name__</code> 就是模块名。</p>
+    <p>所以这一行的意思是：<strong>只有直接运行这个文件时才执行 main()</strong>，被 import 时不自动执行。比如写测试时，可以用 <code>from main import 某个函数</code> 只引入需要的函数，而不会把整个程序跑起来。</p>
+  </div></details>
+
+  <details class="faq"><summary><span class="qt">__pycache__ 文件夹是什么？可以删吗？</span></summary><div class="body">
+    <p>Python 把 .py 文件编译成字节码后缓存在这里，下次启动会快一点。可以随便删，会自动重新生成。已经写进 .gitignore 了。</p>
+  </div></details>
+
+  <details class="faq"><summary><span class="qt">git 合并时 uv.lock 冲突了怎么办？</span></summary><div class="body">
+    <p>不要手动合并。先解决 pyproject.toml 的冲突，然后接受任意一方的 uv.lock，再运行 <code>uv lock</code> 重新生成。</p>
+  </div></details>
+</section>
+
+<section id="review">
+  <div class="lesson">第 15 课</div>
+  <h2>自测与速查</h2>
+  <p class="intro">先自己想一想，再点开看答案。能答对大部分，说明你已经掌握了 uv 的核心。</p>
+
+  <div class="quiz">
+    <details><summary><span class="qt">用 <code>uv add</code> 装一个包，会改动哪三样东西？</span></summary><div class="ans"><b>pyproject.toml、uv.lock、.venv。</b>写进清单，更新小票，装进冰箱。见第 2 课。</div></details>
+    <details><summary><span class="qt">同事克隆了你的项目，他需要做什么才能跑起来？</span></summary><div class="ans"><b><code>uv sync</code> 然后 <code>uv run main.py</code></b>，或者直接 <code>uv run main.py</code>。前提是你提交了 uv.lock；如果需要密钥，还要照 .env.example 建一个 .env。见第 10 课。</div></details>
+    <details><summary><span class="qt">用 <code>uv pip install rich</code> 装了 rich，然后运行 <code>uv sync</code>，rich 还在吗？</span></summary><div class="ans"><b>不在了。</b>rich 没有记录在 uv.lock 里，uv sync 会严格同步，把它删掉。应该用 <code>uv add rich</code>。见模拟器第 7、8 步。</div></details>
+    <details><summary><span class="qt">手动从 pyproject.toml 删掉一个依赖，然后 <code>uv run</code>，这个包还在 .venv 里吗？</span></summary><div class="ans"><b>还在。</b>uv run 会更新 uv.lock，但默认只补不删。运行 <code>uv sync</code>（或 <code>uv run --exact</code>）才会移除。见第 8 课。</div></details>
+    <details><summary><span class="qt">为什么 <code>uv add python-dotenv</code> 之后，代码里要写 <code>import dotenv</code>？</span></summary><div class="ans"><b>发行包名和 import 名是两回事。</b>发行包名是 PyPI 上注册的名字，import 名由包里的代码目录决定。见第 7 课。</div></details>
+    <details><summary><span class="qt">删掉 .venv 会丢失什么？</span></summary><div class="ans"><b>什么都不会丢。</b>.venv 完全由 pyproject.toml + uv.lock 决定，<code>uv sync</code> 就能原样重建；得益于缓存，只需一两秒。见第 7 课。</div></details>
+    <details><summary><span class="qt">电脑上用的是 Python 3.13，为什么 <code>requires-python = "&gt;=3.9"</code> 会导致装不上一个要求 3.10 的包？</span></summary><div class="ans"><b>uv.lock 是通用锁文件</b>，要为 requires-python 允许的所有 Python 版本求解，3.9 上无解就整体失败。把 requires-python 改成 <code>"&gt;=3.10"</code>。见第 14 课报错 ③。</div></details>
+    <details><summary><span class="qt"><code>uv add typesafe-sdk "pydantic&lt;2"</code> 成功了，但装的是 0.6.0 而不是最新版，为什么？</span></summary><div class="ans"><b>解析器回退了。</b>最新版要求 pydantic ≥2.12，与你的约束冲突，于是 uv 找到了仍兼容 pydantic 1 的旧版本。见第 6 课。</div></details>
+    <details><summary><span class="qt">把约束从 <code>"idna==3.6"</code> 改成 <code>"idna&gt;=3.6"</code>，然后运行 <code>uv lock</code>，会升级到最新版吗？</span></summary><div class="ans"><b>不会。</b>3.6 仍然满足 &gt;=3.6，已锁定的版本保持不变。要升级得用 <code>uv lock --upgrade-package idna</code> 或 <code>uv sync --upgrade-package idna</code>。见第 9 课 ③。</div></details>
+    <details><summary><span class="qt">uv.lock 已经过期时，<code>uv sync --locked</code> 和 <code>uv sync --frozen</code> 分别会怎样？</span></summary><div class="ans"><b>--locked 报错退出；--frozen 不检查，照旧的 uv.lock 安装，</b>你在 pyproject.toml 里新加的依赖会被忽略。见第 9 课 ②。</div></details>
+  </div>
+
+  <h3>速查表</h3>
+  <div class="cheat">
+    <div><code>uv init 名字 --no-package</code><span>新建项目</span></div>
+    <div><code>uv add 包名</code><span>添加依赖（三层一起更新）</span></div>
+    <div><code>uv remove 包名</code><span>移除依赖</span></div>
+    <div><code>uv run main.py</code><span>运行（自动锁定并补齐环境）</span></div>
+    <div><code>uv sync</code><span>严格按 uv.lock 同步 .venv</span></div>
+    <div><code>uv sync --upgrade-package 包名</code><span>升级某个包并立即装上</span></div>
+    <div><code>uv tree</code><span>查看依赖树</span></div>
+    <div><code>uv python pin 3.13</code><span>切换项目的 Python 版本</span></div>
+    <div><code>uv run --with 包名 …</code><span>临时加一个包试试</span></div>
+    <div><code>uvx 工具名</code><span>临时运行一个命令行工具</span></div>
+    <div><code>rm -rf .venv &amp;&amp; uv sync</code><span>环境坏了就重建</span></div>
+    <div><code>uv cache prune</code><span>清理缓存里不再需要的包</span></div>
+  </div>
+
+  <div class="note"><span class="tag">最后记住三句话</span>
+    <p>1. 加库用 <code>uv add</code>，运行用 <code>uv run</code>，不要用 pip 和系统的 python3。</p>
+    <p>2. pyproject.toml 归你改；uv.lock 和 .venv 归 uv 管。</p>
+    <p>3. 提交 pyproject.toml 和 uv.lock；不提交 .venv 和 .env。</p>
+  </div>
+
+  <footer>写于 2026 年 9 月，基于 uv 0.12.3（macOS，Apple 芯片）。文中的命令输出都是当时实际运行得到的快照（路径有缩写），命令的行为用 <code>uv help</code> 核实过。uv 更新较快，以后的输出细节可能不同；遇到不一致时，以 <code>uv help 命令</code> 和 <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv 官方文档</a>为准。</footer>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  function each(list, fn){ Array.prototype.forEach.call(list, fn); }
+
+  // ---------- 三层模拟器（数据来自真实执行） ----------
+  var T13 = ["annotated-types","anyio","h11","httpcore2","httpx2","idna","pydantic","pydantic-core","tenacity","truststore","typesafe-sdk","typing-extensions","typing-inspection"];
+  var LOCK_T = T13.concat(["httpx2-jsfetch"]);
+  var RICH = ["markdown-it-py","mdurl","pygments","rich"];
+  var steps = [
+    { t:"新建项目", cmd:"uv init sim --no-package",
+      out:"Initialized project `sim` at `…/sim`",
+      why:"只创建了“清单”。uv.lock 和 .venv 都还不存在，要等第一次需要安装东西时才会出现。",
+      pp:[], lock:null, venv:null },
+    { t:"添加第一个依赖", cmd:"uv add python-dotenv",
+      out:"Using CPython 3.12.13\nCreating virtual environment at: .venv\nResolved 2 packages in 449ms\nInstalled 1 package in 7ms\n + python-dotenv==1.2.3",
+      why:"三层同时更新：清单里多了一行；uv.lock 被创建；.venv 被创建并装好包。“Resolved 2 packages”里的另一个是项目 sim 自身。",
+      pp:["python-dotenv>=1.2.3"], lock:["sim（项目自身）","python-dotenv"], venv:["python-dotenv"] },
+    { t:"添加 typesafe-sdk", cmd:"uv add typesafe-sdk",
+      out:"Resolved 16 packages in 1.05s\nInstalled 13 packages in 12ms\n + annotated-types==0.8.0\n + anyio==4.15.1\n + h11==0.16.0\n + httpcore2==2.13.1\n + httpx2==2.13.1\n + idna==3.20\n + pydantic==2.13.5\n + pydantic-core==2.46.5\n + tenacity==9.1.4\n + truststore==0.10.4\n + typesafe-sdk==0.7.1\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4",
+      why:"清单里只多了 1 行，但 uv 解析出了 12 个间接依赖。注意 uv.lock 里有一个 .venv 里没有的 httpx2-jsfetch：它只在浏览器里的 Python 上才需要，uv.lock 为所有平台记录，Mac 上不安装（第 6 课）。",
+      pp:["python-dotenv>=1.2.3","typesafe-sdk>=0.7.1"], lock:["sim（项目自身）","python-dotenv"].concat(LOCK_T), venv:["python-dotenv"].concat(T13) },
+    { t:"手动编辑 pyproject.toml", cmd:"（在编辑器里删掉 \"python-dotenv>=1.2.3\" 这一行）",
+      out:"（没有命令，也就没有输出）",
+      why:"只有清单变了，uv 并不知道。现在三层不一致：uv.lock 已经过期，它还记录着 python-dotenv。",
+      pp:["typesafe-sdk>=0.7.1"], lock:"same", stale:true, venv:"same" },
+    { t:"uv run --locked", cmd:"uv run --locked main.py",
+      out:"error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided.\n\nhint: To update the lockfile, run `uv lock`.",
+      why:"--locked 的意思是“uv.lock 必须已经是最新的，否则报错”。它发现过期，就拒绝运行，什么都没改。适合用在自动化部署里。",
+      pp:"same", lock:"same", stale:true, venv:"same" },
+    { t:"普通的 uv run", cmd:"uv run main.py",
+      out:"Hello from sim!",
+      why:"普通 uv run 会先悄悄重新锁定：uv.lock 里的 python-dotenv 没了。但注意 .venv：python-dotenv 还在！uv run 默认“只补不删”。",
+      pp:"same", lock:["sim（项目自身）"].concat(LOCK_T), venv:"same" },
+    { t:"用 pip 私自装包", cmd:"uv pip install rich",
+      out:"…\n + markdown-it-py==4.2.0\n + mdurl==0.1.2\n + pygments==2.21.0\n + rich==15.0.0",
+      why:"pip 接口只动 .venv，完全绕过了清单和小票。rich 能用，但它没有被记录下来，别人的环境里不会有它。",
+      pp:"same", lock:"same", venv:["python-dotenv"].concat(T13, RICH) },
+    { t:"uv sync：严格同步", cmd:"uv sync",
+      out:"Resolved 15 packages in 2ms\nUninstalled 5 packages in 22ms\n - markdown-it-py==4.2.0\n - mdurl==0.1.2\n - pygments==2.21.0\n - python-dotenv==1.2.3\n - rich==15.0.0",
+      why:"uv sync 让 .venv 与 uv.lock 完全一致：私自装的 rich 一家，还有第 6 步残留的 python-dotenv，全部被删除。三层重新一致。",
+      pp:"same", lock:"same", venv:T13.slice() },
+    { t:"删掉 .venv 重建", cmd:"rm -rf .venv && uv sync",
+      out:"Using CPython 3.12.13\nCreating virtual environment at: .venv\nResolved 15 packages in 1ms\nInstalled 13 packages in 6ms\n + annotated-types==0.8.0\n + anyio==4.15.1\n …（与上一步相同的 13 个包）",
+      why:"删掉“冰箱”不会丢任何东西：uv 按小票原样重建，装 13 个包只用了 6 毫秒，因为全部来自缓存，没有重新下载。",
+      pp:"same", lock:"same", venv:T13.slice(), rebuilt:true }
+  ];
+  // 展开 "same"
+  for (var i=0;i<steps.length;i++){
+    ["pp","lock","venv"].forEach(function(k){ if (steps[i][k]==="same") steps[i][k] = steps[i-1][k]; });
+  }
+  var cur = 0;
+  var el = function(id){ return document.getElementById(id); };
+  var dots = el("sim-dots");
+  steps.forEach(function(s, i){
+    var b = document.createElement("button"); b.type="button"; b.textContent = i+1; b.title = s.t;
+    b.setAttribute("aria-label", "第 "+(i+1)+" 步："+s.t);
+    b.addEventListener("click", function(){ render(i); }); dots.appendChild(b);
+  });
+  function fill(itemsId, statusId, now, prev, opts){
+    var box = el(itemsId), st = el(statusId); box.innerHTML = "";
+    var status = "无变化", cls = "";
+    if (now === null){
+      status = "不存在"; cls = "none";
+      var e = document.createElement("span"); e.className="empty"; e.textContent = "（还没有这个文件）"; box.appendChild(e);
+    } else {
+      var p = prev || [];
+      now.forEach(function(n){
+        var s = document.createElement("span"); s.className = "it" + (prev !== undefined && p.indexOf(n) < 0 ? " add" : ""); s.textContent = n; box.appendChild(s);
+      });
+      p.forEach(function(n){ if (now.indexOf(n) < 0){ var s=document.createElement("span"); s.className="it del"; s.textContent=n; box.appendChild(s);} });
+      if (now.length === 0 && p.length === 0){ var e2=document.createElement("span"); e2.className="empty"; e2.textContent="dependencies = [ ]（空）"; box.appendChild(e2); }
+      if (prev === null){ status="新建"; cls="new"; }
+      else if (prev !== undefined && (now.length !== p.length || now.some(function(n){ return p.indexOf(n)<0; }))){ status="已改动"; cls="chg"; }
+    }
+    if (opts && opts.stale){ status="已过期"; cls="stale"; }
+    if (opts && opts.rebuilt){ status="整个重建"; cls="new"; }
+    st.textContent = status; st.className = "stt " + cls;
+  }
+  function render(i){
+    cur = i; var s = steps[i], pv = i>0 ? steps[i-1] : null;
+    el("sim-title").textContent = "第 " + (i+1) + " 步 · " + s.t;
+    el("sim-count").textContent = (i+1) + " / " + steps.length;
+    el("sim-cmd").textContent = (s.cmd.charAt(0)==="（" ? "" : "$ ") + s.cmd;
+    el("sim-out").textContent = s.out;
+    el("sim-why").textContent = s.why;
+    fill("it-pp","st-pp", s.pp, pv ? pv.pp : undefined);
+    fill("it-lock","st-lock", s.lock, pv ? pv.lock : undefined, { stale: !!s.stale });
+    fill("it-venv","st-venv", s.venv, pv ? pv.venv : undefined, { rebuilt: !!s.rebuilt });
+    el("sim-prev").disabled = i === 0;
+    el("sim-next").disabled = i === steps.length-1;
+    each(dots.children, function(b, j){ if (j===i) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current"); });
+  }
+  el("sim-prev").addEventListener("click", function(){ if (cur>0) render(cur-1); });
+  el("sim-next").addEventListener("click", function(){ if (cur<steps.length-1) render(cur+1); });
+  render(2);
+
+  // ---------- 文件浏览器 ----------
+  var files = [
+    { name:"pyproject.toml", git:true, who:"uv init 创建 · uv add/remove 修改", edit:"hand",
+      what:"项目的配置文件：项目名、需要的 Python 版本、直接依赖列表。三层模型里的“购物清单”。",
+      more:"这是你最常查看的文件。可以手动修改，也可以让 uv add / uv remove 自动修改。第 5 课有逐行讲解。",
+      content:'[project]\nname = "jev-cli"\nversion = "0.1.0"\ndescription = "一个用来体验 TypeSafe Jev 模型的最小命令行工具"\nrequires-python = ">=3.12"\ndependencies = [\n    "python-dotenv>=1.2.3",\n    "typesafe-sdk>=0.7.1",\n]' },
+    { name:"uv.lock", git:true, who:"uv 自动生成和维护", edit:"auto",
+      what:"锁文件：每个包（包括间接依赖）的精确版本、下载地址和哈希值。三层模型里的“购物小票”。",
+      more:"不要手动编辑。一定要提交到 git，别人才能装出一模一样的环境。示例项目的 uv.lock 有 251 行、16 个条目。第 6 课有详细讲解。",
+      content:'version = 1\nrevision = 3\nrequires-python = ">=3.12"\n\n[[package]]\nname = "annotated-types"\nversion = "0.8.0"\nsource = { registry = "https://pypi.org/simple" }\n...\n\n[[package]]\nname = "typesafe-sdk"\nversion = "0.7.1"\n...' },
+    { name:".python-version", git:true, who:"uv init 创建 · uv python pin 修改", edit:"hand",
+      what:"告诉 uv：这个项目在当前电脑上用哪个 Python 版本。",
+      more:"只有一行。uv run 会按它选择解释器，没有这个版本还会自动下载。它必须落在 pyproject.toml 的 requires-python 范围内。",
+      content:"3.12" },
+    { name:".venv/", git:false, who:"uv add / sync / run 首次运行时自动创建", edit:"auto",
+      what:"虚拟环境：本项目专属的解释器入口和所有已安装的包。三层模型里的“冰箱”。",
+      more:"可以随时删除，uv sync 会原样重建。不提交到 git（已写进 .gitignore）。不要用 pip 往里装东西。第 7 课有详细讲解。",
+      content:".venv/\n├── pyvenv.cfg\n├── bin/\n│   ├── python -> …/python3.12\n│   ├── activate\n│   └── dotenv\n└── lib/python3.12/site-packages/\n    ├── typesafe_sdk/\n    ├── dotenv/\n    ├── pydantic/\n    └── ...（共 14 个包）" },
+    { name:"main.py", git:true, who:"项目自己的代码", edit:"hand",
+      what:"程序本身：读取 .env 里的 API Key，调用 TypeSafe 的 Jev 模型，把结果显示在终端里。",
+      more:"用 uv run main.py 运行。文件末尾的 if __name__ == \"__main__\": 是 Python 惯用写法，见第 14 课的常见问题。",
+      content:'import os\nimport re\n\nfrom dotenv import load_dotenv        # ← 来自 python-dotenv 包\nfrom typesafe_sdk import (            # ← 来自 typesafe-sdk 包\n    Choice, Noul, Score, TypeSafeClient, ...\n)\n\n...\n\ndef main() -> None:\n    load_dotenv()                      # 读取 .env\n    ...\n\nif __name__ == "__main__":\n    main()' },
+    { name:".env", git:false, who:"开发者手动创建", edit:"hand",
+      what:"存放本地密钥（TYPESAFE_API_KEY）。main.py 启动时由 python-dotenv 读取。",
+      more:"含有秘密，绝对不能提交到 git，已写进 .gitignore。这不是 uv 的文件，而是一种通用惯例。",
+      content:"# 在 https://console.typesafe.ai/ 创建 key 后填在等号后面\nTYPESAFE_API_KEY=你的key" },
+    { name:".env.example", git:true, who:"开发者手动创建", edit:"hand",
+      what:".env 的模板：告诉别人需要哪些变量，但不包含真正的值。",
+      more:"提交到 git。别人拿到项目后运行 cp .env.example .env，再填上自己的 key。",
+      content:"# 复制为 .env 并填入你的 key：cp .env.example .env\nTYPESAFE_API_KEY=" },
+    { name:".gitignore", git:true, who:"uv init 创建 · 手动追加了 .env", edit:"hand",
+      what:"告诉 git 哪些文件不要跟踪。",
+      more:"每行一条规则，# 开头是注释，* 是通配符。",
+      content:"# Python-generated files\n__pycache__/\n*.py[oc]\nbuild/\ndist/\nwheels/\n*.egg-info\n\n# Virtual environments\n.venv\n\n# 本地密钥，不要提交\n.env" },
+    { name:".git/", git:null, who:"uv init 自动执行 git init", edit:"auto",
+      what:"git 仓库本身，保存所有版本历史。",
+      more:"与 uv 无关，是 git 的内部数据，不要手动修改。不想让 uv init 创建它，可以加上 --vcs none。",
+      content:"（git 内部文件，无需查看）" }
+  ];
+  var editLabel = { hand:["可以手动编辑","hand"], auto:["不要手动编辑","auto"] };
+  var tree = el("file-tree"), panel = el("panel");
+  function show(i){
+    var f = files[i];
+    each(tree.querySelectorAll("button"), function(b, j){ b.setAttribute("aria-selected", j===i ? "true":"false"); });
+    panel.innerHTML = "";
+    var h = document.createElement("h4"); h.textContent = f.name; var lyr = {"pyproject.toml":"l1","uv.lock":"l2",".venv/":"l3"}[f.name]; if (lyr) h.className = lyr; panel.appendChild(h);
+    var chips = document.createElement("div"); chips.className = "chips";
+    function chip(t,c){ var s=document.createElement("span"); s.className="chip "+(c||""); s.textContent=t; chips.appendChild(s); }
+    if (f.git === true) chip("提交到 git","yes"); else if (f.git === false) chip("不提交到 git","no"); else chip("git 自身","");
+    chip(editLabel[f.edit][0], editLabel[f.edit][1]);
+    chip(f.who,"");
+    panel.appendChild(chips);
+    var p1 = document.createElement("p"); p1.className="what"; p1.innerHTML = "<strong>作用：</strong>"; p1.appendChild(document.createTextNode(f.what)); panel.appendChild(p1);
+    var p2 = document.createElement("p"); p2.textContent = f.more; p2.style.color="var(--muted)"; p2.style.fontSize=".92rem"; p2.style.margin=".4rem 0"; panel.appendChild(p2);
+    var box = document.createElement("div"); box.className="code";
+    var pre = document.createElement("pre"); pre.textContent = f.content; box.appendChild(pre); panel.appendChild(box);
+  }
+  files.forEach(function(f, i){
+    var b = document.createElement("button"); b.type="button"; b.setAttribute("role","tab");
+    var t = document.createElement("span"); t.textContent = f.name; b.appendChild(t);
+    if (f.git !== null){ var d=document.createElement("span"); d.className="dot "+(f.git?"git-yes":"git-no"); b.appendChild(d); }
+    b.addEventListener("click", function(){ show(i); });
+    tree.appendChild(b);
+  });
+  var lg = document.createElement("div"); lg.className="legend";
+  lg.innerHTML = '<span><i class="dot git-yes"></i>提交到 git</span><span><i class="dot git-no"></i>不提交</span>';
+  tree.appendChild(lg);
+  show(0);
+
+  // ---------- 命令筛选 ----------
+  var fbtns = document.querySelectorAll("#filters button");
+  each(fbtns, function(b){
+    b.addEventListener("click", function(){
+      var f = b.getAttribute("data-f");
+      each(fbtns, function(x){ x.setAttribute("aria-pressed", x===b ? "true":"false"); });
+      each(document.querySelectorAll("#cmds details"), function(d){ d.hidden = !(f==="all" || d.getAttribute("data-cat")===f); });
+    });
+  });
+
+  // ---------- 复制按钮：只复制以 $ 开头的命令行 ----------
+  function selectPre(pre){ try{ var r=document.createRange(); r.selectNodeContents(pre); var s=getSelection(); s.removeAllRanges(); s.addRange(r);}catch(e){} }
+  each(document.querySelectorAll(".code .copy"), function(btn){
+    btn.addEventListener("click", function(){
+      var pre = btn.closest(".code").querySelector("pre");
+      var text = pre.textContent.split("\n").filter(function(l){ return l.indexOf("$ ")===0; })
+        .map(function(l){ return l.slice(2).replace(/\s+#.*$/, "").trim(); }).join("\n");
+      function done(ok){ btn.textContent = ok ? "已复制" : "请手动复制"; setTimeout(function(){ btn.textContent="复制"; }, 1500); }
+      try { navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ selectPre(pre); done(false); }); }
+      catch(e){ selectPre(pre); done(false); }
+    });
+  });
+
+  // ---------- 目录高亮 + 阅读进度 ----------
+  var links = document.querySelectorAll("#toc a");
+  if ("IntersectionObserver" in window){
+    var map = {}; each(links, function(a){ map[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){
+          each(links, function(a){ a.classList.remove("active"); });
+          var a = map[e.target.id]; if (a) a.classList.add("active");
+        }
+      });
+    }, { rootMargin:"-20% 0px -70% 0px" });
+    Object.keys(map).forEach(function(id){ var s=el(id); if (s) io.observe(s); });
+  }
+  var bar = el("progress-bar"), ticking = false;
+  function upd(){ var d=document.documentElement; var max=d.scrollHeight - d.clientHeight; bar.style.transform = "scaleX(" + (max>0 ? Math.min(1, d.scrollTop/max) : 0) + ")"; ticking=false; }
+  addEventListener("scroll", function(){ if (!ticking){ ticking=true; requestAnimationFrame(upd); } }, { passive:true });
+  upd();
+})();
+</script>
+</body>
+</html>
