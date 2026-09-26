@@ -49,7 +49,7 @@ body,body *{font-variant-ligatures:none}
 a{color:var(--accent);text-underline-offset:3px}
 a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 code,kbd{font-family:var(--f-mono);font-size:.88em}
-p code,li code,td code,dd code,summary code,.note code{background:var(--surface-2);padding:.1em .38em;border-radius:4px}
+p code,li code,td code,dd code,summary code,.note code{background:var(--surface-2);padding:.1em .38em;border-radius:4px;overflow-wrap:anywhere}
 td code{white-space:nowrap}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.3;margin:0}
 h2{font-size:1.8rem;font-weight:900}
@@ -62,7 +62,7 @@ li{margin:.3rem 0}
 .progress i{display:block;height:3px;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
 
 .wrap{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:210px minmax(0,1fr);gap:56px}
-.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;padding-top:36px;font-size:.86rem;max-height:calc(100vh - 40px);overflow-y:auto}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--sitebar-h));align-self:start;padding-top:36px;font-size:.86rem;max-height:calc(100vh - var(--sitebar-h) - env(safe-area-inset-top,0px) - 16px);overflow-y:auto}
 .toc-part{font-size:.72rem;letter-spacing:.1em;color:var(--muted);margin:1rem 0 .3rem .5rem}
 .toc-part:first-child{margin-top:0}
 .toc ol{list-style:none;padding:0;margin:0;display:grid;gap:1px}
@@ -210,7 +210,9 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 
 /* site navigation (website version) */
-.sitebar{max-width:1160px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:18px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+:root{--sitebar-h:46px}
+html{scroll-padding-top:var(--sitebar-h)}
+.sitebar{position:sticky;top:0;z-index:9;min-height:calc(var(--sitebar-h) + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax);max-width:1160px;margin:10px auto 0;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
 .sitebar a{color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
 .sitebar a:hover{color:var(--accent);border-color:var(--accent)}
 </style>
@@ -536,7 +538,7 @@ To https://github.com/dfangkai/dfangkai.github.io.git
   <ol>
     <li>新建文件夹，比如 <code>git-basics/</code>，把网页存成里面的 <code>index.html</code>。文件夹名用小写英文和连字符，不要用空格和中文，网址会更干净。</li>
     <li>如果网页来自 Artifact，记得像第 1 步那样补上完整的外壳。</li>
-    <li>在新页面顶部加上返回首页的导航条（每篇笔记只放这一个返回入口）：从 <code>uv-guide/index.html</code> 里复制 <code>&lt;nav class="sitebar"&gt;</code> 那一行和对应的样式。链接写 <code>href="../"</code>，意思是"上一级文件夹"，也就是首页。</li>
+    <li>在新页面顶部加上返回首页的导航条（每篇笔记只放这一个返回入口）：从 <code>uv-guide/index.html</code> 里复制 <code>&lt;nav class="sitebar"&gt;</code> 那一行和对应的样式。链接写 <code>href="../"</code>，意思是"上一级文件夹"，也就是首页。这个导航条会吸在页面顶部，高度记在 <code>--sitebar-h</code> 里；如果新页面也有吸在顶部的目录，把目录的 <code>top</code> 加上 <code>var(--sitebar-h)</code>，免得被导航条挡住。</li>
     <li>在首页 <code>index.html</code> 的"笔记"列表里加一项：复制已有的那个 <code>&lt;li&gt;</code>，改掉标题、简介、标签、日期和链接（写 <code>href="git-basics/"</code>，相对路径，不用写完整网址）。再把"笔记"旁边的数字加一，在"学习日志"最上面加一行。</li>
     <li>在浏览器里直接打开本地的 <code>index.html</code> 检查一遍，然后按上面的四步提交、推送。</li>
   </ol>

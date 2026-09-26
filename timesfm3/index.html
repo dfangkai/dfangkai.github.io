@@ -95,7 +95,7 @@ h1{font-size:clamp(30px,5vw,48px); font-weight:700; letter-spacing:-.01em}
 /* layout */
 .cols{display:grid; grid-template-columns:212px minmax(0,1fr); gap:52px; align-items:start; margin-top:40px}
 @media (max-width:1040px){ .cols{grid-template-columns:minmax(0,1fr); gap:28px} }
-.toc{position:sticky; top:calc(env(safe-area-inset-top,0px) + 18px); font-size:13px; line-height:1.45; max-height:calc(100vh - 36px); overflow-y:auto; padding-right:4px}
+.toc{position:sticky; top:calc(env(safe-area-inset-top,0px) + var(--sitebar-h) + 8px); font-size:13px; line-height:1.45; max-height:calc(100vh - var(--sitebar-h) - env(safe-area-inset-top,0px) - 26px); overflow-y:auto; padding-right:4px}
 .toc .toc-h{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); padding-bottom:8px; border-bottom:1px solid var(--rule); margin-bottom:10px}
 .toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px}
 .toc a{display:grid; grid-template-columns:22px 1fr; column-gap:6px; text-decoration:none; color:var(--ink-2); padding:5px 6px; border-radius:5px}
@@ -242,7 +242,9 @@ footer p{max-width:none; margin:8px 0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 
 /* site navigation (website version) */
-.sitebar{max-width:var(--maxw); margin:0 auto; padding:18px 22px 0; display:flex; justify-content:space-between; align-items:center; gap:12px; font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-3)}
+:root{--sitebar-h:46px}
+html{scroll-padding-top:var(--sitebar-h)}
+.sitebar{position:sticky; top:0; z-index:9; min-height:calc(var(--sitebar-h) + env(safe-area-inset-top,0px)); padding-top:env(safe-area-inset-top,0px); background:var(--bg); box-shadow:0 0 0 100vmax var(--bg); clip-path:inset(0 -100vmax); max-width:var(--maxw); margin:10px auto 0; padding-inline:22px; display:flex; justify-content:space-between; align-items:center; gap:12px; font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-3)}
 .sitebar a{color:var(--ink-2); text-decoration:none; border:1px solid var(--rule-2); border-radius:999px; padding:3px 12px; background:var(--surface)}
 .sitebar a:hover{color:var(--accent); border-color:var(--accent)}
 @media (max-width:520px){ .sitebar{padding-inline:16px} }
