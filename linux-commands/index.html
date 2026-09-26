@@ -2465,7 +2465,16 @@ $ curl -s "wttr.in/Beijing?0"             # 在终端看天气（网址含 ? 要
       });
       g.appendChild(ul);
     }
-    h.addEventListener('click',function(){setGroup(sec.id);});
+    if(flat) h.addEventListener('click',function(){setGroup(sec.id);});
+    else{
+      /* 有小节的分类：点击只展开/收起，不跳转；点小节才跳转 */
+      h.setAttribute('aria-expanded','false');
+      h.addEventListener('click',function(e){
+        if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+        e.preventDefault();e.stopPropagation();
+        toggleGroup(sec.id);
+      });
+    }
     tocBody.appendChild(g);
   });
 
@@ -2476,11 +2485,26 @@ $ curl -s "wttr.in/Beijing?0"             # 在终端看天气（网址含 ? 要
     if(r.top<b.top+8) tocBody.scrollTop-=b.top+8-r.top;
     else if(r.bottom>b.bottom-24) tocBody.scrollTop+=r.bottom-b.bottom+24;
   }
+  /* 展开状态（open）和当前阅读位置（on）分开：滚到新分类时只展开它，手动展开的分类保留到下次换分类 */
+  function openGroup(id,open){
+    var g=groups[id];
+    g.el.classList.toggle('open',open);
+    if(g.head.hasAttribute('aria-expanded')) g.head.setAttribute('aria-expanded',String(open));
+  }
+  function showOnly(id){for(var k in groups) openGroup(k,k===id);}
+  function toggleGroup(id){
+    if(groups[id].el.classList.contains('open')){openGroup(id,false);return;}
+    showOnly(id);
+    var ul=groups[id].el.querySelector('.toc-l');
+    if(ul&&ul.lastElementChild) reveal(ul.lastElementChild);
+    reveal(groups[id].head);
+  }
   function setGroup(id){
     if(activeGroup===id) return;
-    if(activeGroup){groups[activeGroup].el.classList.remove('open');groups[activeGroup].head.classList.remove('on');}
+    if(activeGroup) groups[activeGroup].head.classList.remove('on');
     activeGroup=id;
-    groups[id].el.classList.add('open');groups[id].head.classList.add('on');
+    groups[id].head.classList.add('on');
+    showOnly(id);
     reveal(groups[id].head);
   }
   function setItem(id){
@@ -2625,7 +2649,7 @@ $ curl -s "wttr.in/Beijing?0"             # 在终端看天气（网址含 ? 要
     if(!el) return;
     e.preventDefault();
     if(!mq.matches) toc.open=false;
-    try{history.pushState(null,'','#'+id);}catch(err){}
+    try{history.replaceState(null,'','#'+id);}catch(err){}   /* 不新增历史记录，浏览器后退直接回到首页 */
     if(id==='page-top'){if(stopSettle) stopSettle();window.scrollTo(0,0);return;}
     if(el.closest('[hidden]')){q.value='';filter();syncClear();}   /* 目标被搜索结果隐藏时，先清空搜索 */
     jumpTo(el);
