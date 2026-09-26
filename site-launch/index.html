@@ -11,9 +11,6 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='44' height='52' rx='6' fill='%230E7466'/%3E%3Crect x='10' y='6' width='9' height='52' rx='3' fill='%230A5A4F'/%3E%3Cpath d='M27 22h19M27 31h19M27 40h12' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
 <title>网站上线手记</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap">
 <style>
 :root{
   --bg:#F2F4F1; --grid:#E1E7E3; --surface:#FFFFFF; --surface-2:#E8EEEA; --ink:#16201C; --muted:#56645E; --line:#D3DCD7;
@@ -539,6 +536,8 @@ To https://github.com/dfangkai/dfangkai.github.io.git
     <li>新建文件夹，比如 <code>git-basics/</code>，把网页存成里面的 <code>index.html</code>。文件夹名用小写英文和连字符，不要用空格和中文，网址会更干净。</li>
     <li>如果网页来自 Artifact，记得像第 1 步那样补上完整的外壳。</li>
     <li>在新页面顶部加上返回首页的导航条（每篇笔记只放这一个返回入口）：从 <code>uv-guide/index.html</code> 里复制 <code>&lt;nav class="sitebar"&gt;</code> 那一行和对应的样式。链接写 <code>href="../"</code>，意思是"上一级文件夹"，也就是首页。这个导航条会吸在页面顶部，高度记在 <code>--sitebar-h</code> 里；如果新页面也有吸在顶部的目录，把目录的 <code>top</code> 加上 <code>var(--sitebar-h)</code>，免得被导航条挡住。</li>
+    <li>再从 <code>uv-guide/index.html</code> 末尾复制"页内跳转不新增历史记录"那段 <code>&lt;script&gt;</code>，放在新页面的 <code>&lt;/body&gt;</code> 前面。有了它，在笔记里点多少次目录，按一次浏览器"后退"都能直接回到首页。</li>
+    <li>不要引用 Google Fonts 之类的外链字体：国内经常打不开，会让页面白屏好几秒。字体直接写系统自带的，比如 <code>"PingFang SC","Microsoft YaHei",sans-serif</code>，等宽字体写 <code>"SF Mono",Menlo,Consolas,monospace</code>。</li>
     <li>在首页 <code>index.html</code> 的"笔记"列表里加一项：复制已有的那个 <code>&lt;li&gt;</code>，改掉标题、简介、标签、日期和链接（写 <code>href="git-basics/"</code>，相对路径，不用写完整网址）。再把"笔记"旁边的数字加一，在"学习日志"最上面加一行。</li>
     <li>在浏览器里直接打开本地的 <code>index.html</code> 检查一遍，然后按上面的四步提交、推送。</li>
   </ol>
@@ -615,7 +614,7 @@ Hi dfangkai! You've successfully authenticated, but GitHub does not provide shel
   <h2>以后可能用到</h2>
   <dl class="defs">
     <dt>自定义域名</dt><dd><p>买了自己的域名（比如 <code>dfangkai.com</code>）后，可以让它指向这个网站：在仓库 Settings → Pages → Custom domain 填写域名，再到域名服务商那里添加 DNS 记录。GitHub 会自动配置 HTTPS。</p></dd>
-    <dt>自定义 404 页面</dt><dd><p>在仓库根目录放一个 <code>404.html</code>，访客打开不存在的网址时就会看到它，而不是 GitHub 默认的错误页。</p></dd>
+    <dt>自定义 404 页面（已加上）</dt><dd><p>仓库根目录的 <code>404.html</code> 就是它：访客打开不存在的网址时会看到这一页，而不是 GitHub 默认的英文错误页。它会出现在任意网址下，所以里面的链接要写 <code>/</code> 开头的绝对路径（比如 <code>href="/"</code>），不能写 <code>../</code>。</p></dd>
     <dt>项目站点</dt><dd><p>其他仓库也能开 Pages，网址是 <code>dfangkai.github.io/仓库名/</code>。比如以后给某个项目写文档，可以放在那个项目自己的仓库里，而不用塞进这个笔记网站。</p></dd>
     <dt>直接在网页上改</dt><dd><p>在 GitHub 仓库页面点开文件，再点铅笔图标，可以直接在线编辑并提交，同样会触发部署。之后回到电脑上，记得先 <code>git pull</code> 把这次改动拉下来（见下方常见问题）。</p></dd>
   </dl>

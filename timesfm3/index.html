@@ -9,11 +9,8 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://dfangkai.github.io/timesfm3/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='44' height='52' rx='6' fill='%230E7466'/%3E%3Crect x='10' y='6' width='9' height='52' rx='3' fill='%230A5A4F'/%3E%3Cpath d='M27 22h19M27 31h19M27 40h12' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
 <title>TimesFM 3.0 架构导览</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
 <style>
 :root{
   --bg:#F4F6F5; --surface:#FFFFFF; --surface-2:#EAEFED; --surface-3:#DDE5E2;
@@ -66,43 +63,43 @@
 *{box-sizing:border-box}
 body{
   background:var(--bg); color:var(--ink);
-  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
   font-size:15.5px; line-height:1.85;
   -webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:var(--maxw); margin:0 auto; padding-inline:22px; padding-block:0 80px}
 @media (max-width:520px){ .wrap{padding-inline:16px} body{font-size:15px} }
-h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC",Georgia,serif; text-wrap:balance; line-height:1.4; margin:0}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.4; margin:0}
 a{color:var(--accent)}
 a:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
-code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code,.mono{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace}
 code{background:var(--code-bg); padding:.08em .36em; border-radius:4px; font-size:.86em; overflow-wrap:anywhere}
 b,strong{font-weight:700}
 
 /* masthead */
 .masthead{padding-block:52px 30px; border-bottom:1px solid var(--rule)}
-.kicker{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:16px}
+.kicker{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:16px}
 h1{font-size:clamp(30px,5vw,48px); font-weight:700; letter-spacing:-.01em}
 .dek{margin-top:14px; max-width:64ch; font-size:16.5px; color:var(--ink-2); line-height:1.85}
 .dek b{color:var(--ink); font-weight:500}
 .specs{display:flex; flex-wrap:wrap; gap:1px; margin-top:30px;
   background:var(--rule); border:1px solid var(--rule); border-radius:7px; overflow:hidden}
 .spec{background:var(--surface); padding:12px 14px; flex:1 1 132px}
-.spec dt{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
-.spec dd{margin:4px 0 0; font-size:19px; font-weight:500; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
-.spec dd small{font-size:12px; color:var(--ink-2); font-family:"Noto Sans SC",sans-serif; margin-left:3px; font-weight:400}
+.spec dt{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace}
+.spec dd{margin:4px 0 0; font-size:19px; font-weight:500; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums}
+.spec dd small{font-size:12px; color:var(--ink-2); font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; margin-left:3px; font-weight:400}
 
 /* layout */
 .cols{display:grid; grid-template-columns:212px minmax(0,1fr); gap:52px; align-items:start; margin-top:40px}
 @media (max-width:1040px){ .cols{grid-template-columns:minmax(0,1fr); gap:28px} }
 .toc{position:sticky; top:calc(env(safe-area-inset-top,0px) + var(--sitebar-h) + 8px); font-size:13px; line-height:1.45; max-height:calc(100vh - var(--sitebar-h) - env(safe-area-inset-top,0px) - 26px); overflow-y:auto; padding-right:4px}
-.toc .toc-h{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); padding-bottom:8px; border-bottom:1px solid var(--rule); margin-bottom:10px}
+.toc .toc-h{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); padding-bottom:8px; border-bottom:1px solid var(--rule); margin-bottom:10px}
 .toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px}
 .toc a{display:grid; grid-template-columns:22px 1fr; column-gap:6px; text-decoration:none; color:var(--ink-2); padding:5px 6px; border-radius:5px}
 .toc a:hover{background:var(--surface-2); color:var(--ink)}
-.toc .n{font-family:"IBM Plex Mono",monospace; color:var(--ink-3); font-size:11px; padding-top:1px}
-.toc .sh{grid-column:2; font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-3); letter-spacing:0}
-.toc .grp{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin:12px 0 2px 6px}
+.toc .n{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; color:var(--ink-3); font-size:11px; padding-top:1px}
+.toc .sh{grid-column:2; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10.5px; color:var(--ink-3); letter-spacing:0}
+.toc .grp{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin:12px 0 2px 6px}
 @media (max-width:1040px){
   .toc{position:static; max-height:none; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:14px 14px}
   .toc ol{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:2px 10px}
@@ -111,7 +108,7 @@ h1{font-size:clamp(30px,5vw,48px); font-weight:700; letter-spacing:-.01em}
 
 article{min-width:0; display:flex; flex-direction:column; gap:64px}
 section{scroll-margin-top:16px; min-width:0}
-.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center}
+.eyebrow{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center}
 .eyebrow .io{color:var(--ink-3); letter-spacing:0; text-transform:none}
 h2{font-size:clamp(22px,3vw,28px); font-weight:700}
 h3{font-size:18px; font-weight:600; margin-top:36px}
@@ -126,38 +123,38 @@ li::marker{color:var(--ink-3)}
 
 /* blocks */
 .def{border-left:3px solid var(--accent); background:var(--surface); padding:14px 18px; border-radius:0 7px 7px 0; margin:20px 0; max-width:72ch}
-.def .t{font-weight:600; font-family:"Noto Serif SC",serif; margin-bottom:2px}
+.def .t{font-weight:600; font-family:"Noto Serif SC","Songti SC","STSong",serif; margin-bottom:2px}
 .def p{margin:6px 0}
 .def ul{margin:6px 0}
 .why{background:var(--surface-2); border-radius:8px; padding:16px 20px; margin:20px 0; max-width:72ch}
-.why .t{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:4px}
+.why .t{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:4px}
 .why p:first-of-type{margin-top:0} .why p:last-child{margin-bottom:0}
 .note{border:1px dashed var(--rule-2); border-radius:8px; padding:13px 17px; margin:20px 0; font-size:14px; color:var(--ink-2); max-width:72ch}
 .note b{color:var(--ink)}
 .fix{border:1px solid var(--rule-2); background:var(--surface); border-radius:8px; padding:13px 17px; margin:20px 0; font-size:14px; color:var(--ink-2); max-width:72ch}
 .fix{border-left:3px solid var(--pos)}
-.fix .t{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin-bottom:2px}
-.tag{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.06em; padding:1px 7px; border-radius:99px; border:1px solid var(--rule-2); color:var(--ink-2); vertical-align:2px; white-space:nowrap}
+.fix .t{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin-bottom:2px}
+.tag{display:inline-block; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10.5px; letter-spacing:.06em; padding:1px 7px; border-radius:99px; border:1px solid var(--rule-2); color:var(--ink-2); vertical-align:2px; white-space:nowrap}
 .tag.inf{border-style:dashed}
 .tag.meas{background:var(--surface-2)}
 
 pre.code{background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:14px 16px;
-  overflow-x:auto; font-family:"IBM Plex Mono",monospace; font-size:12.6px; line-height:1.7; margin:18px 0; max-width:100%}
+  overflow-x:auto; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:12.6px; line-height:1.7; margin:18px 0; max-width:100%}
 pre.code .c{color:var(--ink-3)}
 pre.code .k{color:var(--accent)}
 
 .eq{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:12px 16px; margin:16px 0; overflow-x:auto;
-  font-family:"IBM Plex Mono",monospace; font-size:13.2px; line-height:1.9; white-space:pre; max-width:100%}
+  font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:13.2px; line-height:1.9; white-space:pre; max-width:100%}
 .eq .c{color:var(--ink-3)}
 
 .tbl{overflow-x:auto; margin:20px 0; border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
 table{border-collapse:collapse; width:100%; font-size:13.5px; min-width:440px}
-th{text-align:left; font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+th{text-align:left; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink-3); font-weight:400; padding:10px 14px; border-bottom:1px solid var(--rule-2); white-space:nowrap}
 td{padding:9px 14px; border-bottom:1px solid var(--rule); vertical-align:top; line-height:1.6}
 tr:last-child td{border-bottom:none}
-td.num,th.num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
-td.m{font-family:"IBM Plex Mono",monospace; white-space:nowrap; font-size:12.8px}
+td.num,th.num{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+td.m{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; white-space:nowrap; font-size:12.8px}
 tr.sum td{background:var(--surface-2); font-weight:500}
 tr.hl td{background:var(--fc-tint)}
 
@@ -168,7 +165,7 @@ figure{margin:26px 0}
 .fig.wide svg{min-width:720px}
 figcaption{font-size:13px; color:var(--ink-2); margin-top:10px; line-height:1.75; max-width:74ch}
 figcaption b{color:var(--ink); font-weight:500}
-.fig-h{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.08em; color:var(--ink-3); margin-bottom:8px}
+.fig-h{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:11px; letter-spacing:.08em; color:var(--ink-3); margin-bottom:8px}
 .legend{display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 10px; padding:0; list-style:none; font-size:12.5px; color:var(--ink-2)}
 .legend li{display:flex; align-items:center; gap:7px; margin:0}
 .sw{width:14px; height:14px; border-radius:3px; flex:none; border:1px solid transparent}
@@ -182,7 +179,7 @@ figcaption b{color:var(--ink); font-weight:500}
 .trio{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px}
 .tip{position:absolute; pointer-events:none; background:var(--surface); border:1px solid var(--rule-2); border-radius:6px; padding:7px 10px;
   font-size:12px; line-height:1.55; color:var(--ink); box-shadow:var(--shadow); white-space:nowrap; z-index:3; font-variant-numeric:tabular-nums}
-.tip .k{color:var(--ink-3); font-family:"IBM Plex Mono",monospace; font-size:11px}
+.tip .k{color:var(--ink-3); font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:11px}
 .tip i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; vertical-align:0}
 
 /* static svg classes */
@@ -193,9 +190,9 @@ figcaption b{color:var(--ink); font-weight:500}
 .s-box{fill:var(--surface-2); stroke:var(--rule-2)}
 .s-surf{fill:var(--surface); stroke:var(--ink-2)}
 .t1{fill:var(--ink)} .t2{fill:var(--ink-2)} .t3{fill:var(--ink-3)}
-.tm{font-family:"IBM Plex Mono",monospace}
-.ts{font-family:"Noto Sans SC",sans-serif}
-.tserif{font-family:"Noto Serif SC",serif}
+.tm{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace}
+.ts{font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+.tserif{font-family:"Noto Serif SC","Songti SC","STSong",serif}
 .ln{stroke:var(--ink-3); fill:none}
 .ln-t{stroke:var(--tgt); fill:none}
 .ln-c{stroke:var(--cov); fill:none}
@@ -207,10 +204,10 @@ figcaption b{color:var(--ink); font-weight:500}
 .spine{list-style:none; margin:22px 0; padding:0; counter-reset:st; border:1px solid var(--rule); border-radius:10px; background:var(--surface); overflow:hidden}
 .spine li{display:grid; grid-template-columns:34px minmax(0,1.25fr) minmax(0,1fr); gap:6px 16px; padding:12px 16px; margin:0; border-bottom:1px solid var(--rule); align-items:baseline}
 .spine li:last-child{border-bottom:none}
-.spine li::before{counter-increment:st; content:counter(st,decimal-leading-zero); font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-3)}
+.spine li::before{counter-increment:st; content:counter(st,decimal-leading-zero); font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:11px; color:var(--ink-3)}
 .spine .what b{font-weight:600}
 .spine .what span{display:block; font-size:13px; color:var(--ink-2); line-height:1.6; margin-top:2px}
-.spine .shape{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink); line-height:1.6}
+.spine .shape{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:12.5px; color:var(--ink); line-height:1.6}
 .spine .shape em{font-style:normal; display:block; color:var(--ink-3); font-size:11.5px}
 .spine li.blk{background:var(--surface-2)}
 .spine li.out{background:var(--fc-tint)}
@@ -225,16 +222,16 @@ figcaption b{color:var(--ink); font-weight:500}
 .bar{display:grid; grid-template-columns:minmax(90px,150px) minmax(0,1fr) auto; gap:10px; align-items:center; font-size:13px}
 .bar .track{height:14px; background:var(--surface-2); border-radius:3px; overflow:hidden}
 .bar .fill{height:100%; border-radius:0 4px 4px 0}
-.bar .v{font-family:"IBM Plex Mono",monospace; font-size:12px; text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2)}
+.bar .v{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:12px; text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2)}
 
 details{border-top:1px solid var(--rule); padding:2px 0}
 details:last-of-type{border-bottom:1px solid var(--rule)}
-summary{cursor:pointer; padding:13px 0; font-weight:500; font-family:"Noto Serif SC",serif; font-size:15.5px; list-style:none; display:flex; gap:11px; align-items:flex-start}
+summary{cursor:pointer; padding:13px 0; font-weight:500; font-family:"Noto Serif SC","Songti SC","STSong",serif; font-size:15.5px; list-style:none; display:flex; gap:11px; align-items:flex-start}
 summary::-webkit-details-marker{display:none}
-summary::before{content:"+"; font-family:"IBM Plex Mono",monospace; color:var(--accent); font-size:16px; line-height:1.5; flex:none}
+summary::before{content:"+"; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; color:var(--accent); font-size:16px; line-height:1.5; flex:none}
 details[open] summary::before{content:"−"}
 details > p, details > ul{margin:2px 0 10px 24px; font-size:14.3px; color:var(--ink-2)}
-details.tbl-toggle summary{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); padding:8px 0}
+details.tbl-toggle summary{font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:12px; color:var(--ink-2); padding:8px 0}
 
 footer{margin-top:40px; padding-top:22px; border-top:1px solid var(--rule); font-size:13px; color:var(--ink-3); max-width:74ch}
 footer p{max-width:none; margin:8px 0}
@@ -244,7 +241,7 @@ footer p{max-width:none; margin:8px 0}
 /* site navigation (website version) */
 :root{--sitebar-h:46px}
 html{scroll-padding-top:var(--sitebar-h)}
-.sitebar{position:sticky; top:0; z-index:9; min-height:calc(var(--sitebar-h) + env(safe-area-inset-top,0px)); padding-top:env(safe-area-inset-top,0px); background:var(--bg); box-shadow:0 0 0 100vmax var(--bg); clip-path:inset(0 -100vmax); max-width:var(--maxw); margin:10px auto 0; padding-inline:22px; display:flex; justify-content:space-between; align-items:center; gap:12px; font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-3)}
+.sitebar{position:sticky; top:0; z-index:9; min-height:calc(var(--sitebar-h) + env(safe-area-inset-top,0px)); padding-top:env(safe-area-inset-top,0px); background:var(--bg); box-shadow:0 0 0 100vmax var(--bg); clip-path:inset(0 -100vmax); max-width:var(--maxw); margin:10px auto 0; padding-inline:22px; display:flex; justify-content:space-between; align-items:center; gap:12px; font-family:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace; font-size:12.5px; color:var(--ink-3)}
 .sitebar a{color:var(--ink-2); text-decoration:none; border:1px solid var(--rule-2); border-radius:999px; padding:3px 12px; background:var(--surface)}
 .sitebar a:hover{color:var(--accent); border-color:var(--accent)}
 @media (max-width:520px){ .sitebar{padding-inline:16px} }
