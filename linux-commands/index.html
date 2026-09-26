@@ -1,0 +1,2638 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="按用途分类的 Linux 常用命令速查：用法、常用选项、缩写全称和可以直接照抄的示例，支持搜索。">
+<meta property="og:title" content="Linux 命令手册">
+<meta property="og:description" content="按用途分类的 Linux 常用命令速查：用法、常用选项、缩写全称和可以直接照抄的示例，支持搜索。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://dfangkai.github.io/linux-commands/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='44' height='52' rx='6' fill='%230E7466'/%3E%3Crect x='10' y='6' width='9' height='52' rx='3' fill='%230A5A4F'/%3E%3Cpath d='M27 22h19M27 31h19M27 40h12' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>Linux 命令手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#F2F4F7; --surface:#FFFFFF; --surface-2:#EDF0F5; --zebra:#F8F9FB; --ink:#1B2130; --ink-2:#3A4356; --muted:#667085; --line:#DDE2EA; --line-2:#E9EDF2;
+  --accent:#AD4F0B; --accent-soft:#FCEEDF; --link:#2D57B0;
+  --tip:#23684A; --tip-soft:#EAF5EF; --tip-line:#C7E3D3; --warn:#A2341E; --warn-soft:#FCEEEA; --warn-line:#F1CBBF;
+  --code-bg:#1A1E28; --code-edge:#1A1E28; --code-line:#2C3242; --code-ink:#E9ECF2; --code-out:#9AA3B6; --code-cmt:#7F8AA2; --code-prompt:#F2B45A; --code-sel:#3D5A8F;
+  --shadow:0 1px 2px rgba(27,33,48,.04),0 2px 8px -4px rgba(27,33,48,.06);
+  --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono","SF Mono",Menlo,Consolas,"Noto Sans SC",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#10131A; --surface:#171B24; --surface-2:#212631; --zebra:#1A1F29; --ink:#E4E8F0; --ink-2:#C3C9D6; --muted:#949DB0; --line:#2A303C; --line-2:#232833;
+    --accent:#F0A24E; --accent-soft:#35271A; --link:#8DAEF4;
+    --tip:#7CC9A0; --tip-soft:#15261D; --tip-line:#24402F; --warn:#F09A86; --warn-soft:#2C1B18; --warn-line:#4D2C25;
+    --code-bg:#0B0E14; --code-edge:#262C39; --code-line:#232937;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10131A; --surface:#171B24; --surface-2:#212631; --zebra:#1A1F29; --ink:#E4E8F0; --ink-2:#C3C9D6; --muted:#949DB0; --line:#2A303C; --line-2:#232833;
+  --accent:#F0A24E; --accent-soft:#35271A; --link:#8DAEF4;
+  --tip:#7CC9A0; --tip-soft:#15261D; --tip-line:#24402F; --warn:#F09A86; --warn-soft:#2C1B18; --warn-line:#4D2C25;
+  --code-bg:#0B0E14; --code-edge:#262C39; --code-line:#232937;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.75}
+::selection{background:var(--accent-soft)}
+a{color:var(--link);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+.page{max-width:1240px;margin:0 auto;padding-inline:24px;display:grid;grid-template-columns:264px minmax(0,1fr);gap:52px}
+
+/* ---------- 侧栏 ---------- */
+.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;height:100vh;display:flex;flex-direction:column;padding-top:24px}
+.side-top{flex:none}
+.brand{display:flex;align-items:center;gap:11px;margin:0 0 18px;color:var(--ink);text-decoration:none}
+.brand-mark{flex:none;width:34px;height:34px;border-radius:9px;background:var(--code-bg);color:var(--code-prompt);display:grid;place-items:center;font:600 .82rem/1 var(--f-mono)}
+.brand-text{display:flex;flex-direction:column;line-height:1.3}
+.brand-text b{font-size:.98rem;font-weight:700}
+.brand-text span{font:400 .72rem var(--f-mono);color:var(--muted)}
+.search{position:relative}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none}
+.search input{width:100%;font:inherit;font-size:.92rem;padding:8px 36px 8px 34px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow);-webkit-appearance:none;appearance:none}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+.search input::-webkit-search-cancel-button{display:none}
+.search .clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:1.1rem;line-height:1;cursor:pointer}
+.search .clear:hover{background:var(--surface-2);color:var(--ink)}
+.search kbd{position:absolute;right:9px;top:50%;transform:translateY(-50%);font:500 .7rem/1.6 var(--f-mono);color:var(--muted);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:var(--surface-2);pointer-events:none}
+.hits{font-size:.78rem;color:var(--muted);margin:8px 2px 10px}
+.toc{flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.toc>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;font-size:.84rem;font-weight:500;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+.toc>summary::-webkit-details-marker{display:none}
+.toc-body{flex:1;min-height:0;max-height:calc(100vh - 170px);overflow-y:auto;overscroll-behavior:contain;padding:12px 4px 40px 0;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.toc-h{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:8px;font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none;transition:background .12s,color .12s}
+.toc-h::before{content:"";flex:none;width:6px;height:6px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(-45deg);opacity:.45;transition:transform .15s}
+.toc-g.open>.toc-h::before{transform:rotate(45deg) translate(-1px,-1px)}
+.toc-g.flat>.toc-h::before{visibility:hidden}
+.toc-h:hover{background:var(--surface-2);color:var(--ink)}
+.toc-h .n{margin-left:auto;font:500 .68rem/1 var(--f-mono);color:var(--muted);background:var(--surface-2);border-radius:999px;padding:4px 7px;min-width:26px;text-align:center}
+.toc-h:hover .n{background:var(--surface)}
+.toc-h.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.toc-h.on .n{background:var(--surface);color:var(--accent)}
+.toc-l{display:none;list-style:none;margin:4px 0 10px 20px;padding:0;border-left:1px solid var(--line)}
+.toc-g.open>.toc-l,.toc-body.searching .toc-l{display:block}
+.toc-l a{display:block;margin-left:-1px;padding:3px 10px 3px 14px;border-left:2px solid transparent;font:400 .8rem/1.55 var(--f-mono);color:var(--muted);text-decoration:none;transition:color .12s}
+.toc-l a.zh{font-family:var(--f-body);font-size:.8rem}
+.toc-l a:hover{color:var(--ink)}
+.toc-l a.on{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* ---------- 正文 ---------- */
+main{min-width:0;max-width:840px;padding-block:28px 120px}
+.hero{padding-top:20px}
+.eyebrow{font:500 .82rem var(--f-mono);color:var(--accent);margin:0 0 10px}
+h1{font-size:clamp(2rem,5vw,2.8rem);line-height:1.15;font-weight:700;letter-spacing:-.01em;margin:0 0 16px;text-wrap:balance}
+.hero p{color:var(--ink-2);max-width:62ch;margin:0 0 10px}
+.hero .env{font-size:.9rem;color:var(--muted)}
+.legend-box{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px 18px;box-shadow:var(--shadow)}
+.legend-t{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 12px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 28px;margin:0;padding:0;list-style:none;font-size:.87rem;color:var(--ink-2);line-height:1.6}
+.legend li{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:baseline}
+.sw{justify-self:start;font:500 .76rem/1.7 var(--f-mono);background:var(--code-bg);color:var(--code-ink);padding:0 7px;border-radius:5px;white-space:nowrap}
+.sw.p{color:var(--code-prompt)} .sw.c{color:var(--code-cmt)} .sw.o{color:var(--code-out)}
+.sw.m{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.sw.v{background:transparent;color:var(--link);font-style:italic;padding:0}
+
+/* 分类 */
+.cat{padding-top:64px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:8px}
+.cat>h2{display:flex;flex-direction:column-reverse;gap:4px;font-size:1.75rem;line-height:1.25;margin:0;text-wrap:balance}
+.cat>h2 .en{font:600 .72rem/1.4 var(--f-mono);color:var(--accent);letter-spacing:.14em;text-transform:uppercase}
+.intro{color:var(--ink-2);margin-top:-6px}
+.intro p{margin:0;max-width:68ch}
+
+/* 命令卡片 */
+.cmd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 26px 8px;box-shadow:var(--shadow);scroll-margin-top:16px;transition:border-color .3s}
+.cmd.hit{border-color:var(--accent)}
+.cmd-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.cmd-h h3{margin:0;font:600 1.35rem/1.3 var(--f-mono);color:var(--accent);letter-spacing:-.01em}
+.topic .cmd-h h3{font-family:var(--f-body);font-weight:700;font-size:1.2rem;color:var(--ink)}
+.cmd-h .en{font:500 .76rem/1.6 var(--f-mono);color:var(--ink-2);background:var(--surface-2);border-radius:6px;padding:1px 8px}
+.man{margin-left:auto;font:500 .68rem/1 var(--f-mono);color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:4px 6px}
+.cmd>p,.cmd>ul,.cmd>ol{margin:0 0 14px;max-width:68ch}
+.cmd ul,.cmd ol{padding-left:1.3em}
+.cmd li{margin-bottom:5px}
+.cmd>p.full{margin:6px 0 16px;font-size:1rem;font-weight:500;color:var(--ink)}
+.cmd li::marker{color:var(--muted)}
+h4{font-size:.95rem;font-weight:700;color:var(--ink);margin:24px 0 8px;padding-top:18px;border-top:1px dashed var(--line)}
+.syn{display:inline-flex;align-items:baseline;gap:10px;max-width:100%;font:500 .88rem/1.6 var(--f-mono);background:var(--surface-2);border-radius:7px;padding:5px 12px;overflow-wrap:anywhere}
+.syn::before{content:"用法";flex:none;font:600 .7rem var(--f-body);color:var(--muted);letter-spacing:.06em}
+var{font-style:italic;color:var(--link)}
+code{font-family:var(--f-mono);font-size:.87em;background:var(--surface-2);color:var(--ink);padding:.08em .4em;border-radius:4px}
+dfn{font-style:normal;font-weight:600;color:var(--ink);text-decoration:underline dotted var(--muted);text-underline-offset:4px}
+dfn small{font-weight:400;font-size:.88em;color:var(--muted);text-decoration:none;display:inline}
+dfn small::before{content:"（"} dfn small::after{content:"）"}
+
+/* 表格 */
+.tbl{overflow-x:auto;margin:2px 0 16px;border:1px solid var(--line);border-radius:9px}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.6}
+th,td{text-align:left;vertical-align:top;padding:9px 14px;border-bottom:1px solid var(--line-2)}
+tr:last-child td{border-bottom:0}
+tr:nth-child(odd) td{background:var(--zebra)}
+th{font-size:.74rem;font-weight:700;color:var(--muted);letter-spacing:.06em;background:var(--surface-2);white-space:nowrap;border-bottom:1px solid var(--line)}
+td:first-child{white-space:nowrap;width:1%}
+td:first-child code{background:none;padding:0;color:var(--accent);font-weight:600;font-size:.9em}
+.mn{display:block;font:400 .72rem/1.45 var(--f-mono);color:var(--muted);margin-top:2px}
+
+/* 示例代码 */
+.code{position:relative;margin:4px 0 16px}
+pre.ex{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--code-edge);border-radius:9px;padding:15px 18px;font:400 .83rem/1.75 var(--f-mono);overflow-x:auto;tab-size:4;scrollbar-width:thin;scrollbar-color:var(--code-line) transparent}
+pre.ex ::selection,pre.ex::selection{background:var(--code-sel);color:#FFFFFF}
+pre.ex .p{color:var(--code-prompt);font-weight:600;-webkit-user-select:none;user-select:none}
+pre.ex .c{color:var(--code-cmt)}
+pre.ex .o{color:var(--code-out)}
+pre.ex[data-file]::before{content:attr(data-file);display:block;color:var(--code-cmt);font-size:.74rem;border-bottom:1px solid var(--code-line);padding-bottom:7px;margin-bottom:6px}
+.copy{position:absolute;top:8px;right:8px;font:500 .7rem/1 var(--f-body);color:var(--code-out);background:var(--code-line);border:0;border-radius:6px;padding:6px 10px;cursor:pointer;opacity:.55;transition:opacity .15s,color .15s}
+.code:hover .copy,.copy:focus-visible{opacity:1;color:var(--code-ink)}
+.copy.done{opacity:1;color:var(--code-prompt)}
+
+/* 提示框 */
+.note,.warn{border-radius:9px;padding:11px 15px;margin:2px 0 16px;font-size:.92rem;line-height:1.7;border:1px solid}
+.note{background:var(--tip-soft);border-color:var(--tip-line)} .note>b:first-child{color:var(--tip)}
+.warn{background:var(--warn-soft);border-color:var(--warn-line)} .warn>b:first-child{color:var(--warn)}
+.note code,.warn code{background:var(--surface)}
+
+.split{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}
+.split div{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 16px;min-width:68px}
+.split code{background:transparent;padding:0;font-size:1.15rem;font-weight:600;color:var(--accent)}
+.split span{font-size:.76rem;color:var(--muted);text-align:center;line-height:1.45}
+
+.empty{padding:56px 0;color:var(--muted);text-align:center}
+.foot{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+
+.totop{position:fixed;right:22px;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:6;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px -6px rgba(27,33,48,.25);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.totop.show{opacity:1;visibility:visible}
+.totop:hover{color:var(--accent);border-color:var(--accent)}
+.totop svg{width:16px;height:16px}
+
+@media (min-width:901px){.toc>summary{display:none}}
+@media (max-width:900px){
+  .page{grid-template-columns:minmax(0,1fr);gap:0;padding-inline:16px}
+  .side{z-index:5;height:auto;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px 8px}
+  .side-top{grid-column:1/-1}
+  .brand{display:none}
+  .hits{margin:6px 0 0}
+  .toc{border-top:0;display:block;margin-top:6px}
+  .toc[open] .toc-body{position:absolute;left:0;right:0;top:100%;max-height:65vh;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 16px 16px;box-shadow:0 14px 24px -12px rgba(0,0,0,.25)}
+  .cat,.cmd{scroll-margin-top:110px}
+  .cmd{padding:18px 16px 6px;border-radius:10px}
+  main{padding-top:8px}
+  .man{margin-left:0}
+}
+@media (max-width:520px){
+  body{font-size:15px}
+  .cmd-h h3{font-size:1.22rem}
+  pre.ex{font-size:.78rem;padding:13px 14px}
+  .legend li{grid-template-columns:56px 1fr}
+  .totop{right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+}
+.sitebar{max-width:1240px;margin:0 auto;padding:18px 24px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.sitebar a{color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+.sitebar a:hover{color:var(--accent);border-color:var(--accent)}
+@media (max-width:900px){.sitebar{padding-inline:16px}}
+</style>
+</head>
+<body>
+<nav class="sitebar" aria-label="网站导航"><a href="../">← 学习笔记</a><span>dfangkai.github.io</span></nav>
+<div class="page" lang="zh-CN">
+<aside class="side">
+  <div class="side-top">
+    <a class="brand" href="#top"><span class="brand-mark">$_</span><span class="brand-text"><b>Linux 命令手册</b><span>~/notes/linux</span></span></a>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="搜索命令、选项或用途" autocomplete="off" spellcheck="false" aria-label="搜索命令">
+      <kbd id="qkbd">/</kbd>
+      <button class="clear" id="qclear" type="button" aria-label="清空搜索" hidden>×</button>
+    </div>
+  </div>
+  <p class="hits" id="hits" aria-live="polite"></p>
+  <details class="toc" id="toc">
+    <summary>目录 ▾</summary>
+    <nav class="toc-body" id="tocBody" aria-label="目录"></nav>
+  </details>
+</aside>
+
+<main>
+<header class="hero" id="top">
+  <p class="eyebrow">$ man linux</p>
+  <h1>Linux 命令手册</h1>
+  <p>日常会用到的 Linux 命令，按用途分类。每条都写了用法、常用选项和能直接照抄的示例；第一次出现的缩写和术语会先给出英文全称和中文意思。忘了某个命令时，直接在搜索框里输入命令名或中文用途，比如“端口”“解压”“权限”。</p>
+  <p class="env">以 Ubuntu / Debian 上的 bash 和 GNU 工具为准。CentOS、Fedora 等发行版几乎一样；macOS 自带的是 BSD 版本，个别选项不同，文中会注明。</p>
+  <div class="legend-box">
+  <p class="legend-t">怎么读示例</p>
+  <ul class="legend">
+    <li><span class="sw p">$</span><span>提示符。后面是要输入的命令，<code>$</code> 本身不用输入</span></li>
+    <li><span class="sw c"># 说明</span><span>注释，解释这一行做了什么</span></li>
+    <li><span class="sw o">输出</span><span>灰色的行是命令打印出来的结果</span></li>
+    <li><span class="sw m">man 1</span><span>手册章节：1 普通命令，8 系统管理；“内建”：shell 内置，用 help 查看</span></li>
+    <li><span class="sw v">文件名</span><span>斜体蓝字是占位符，换成你自己的值</span></li>
+    <li><span class="sw m">复制</span><span>示例右上角的按钮只复制命令，不带提示符和注释</span></li>
+  </ul>
+  </div>
+</header>
+
+<!-- ============ 开始之前 ============ -->
+<section class="cat" id="basics">
+<h2>开始之前<span class="en">Basics</span></h2>
+<div class="intro">
+<p>终端（Terminal）是输入命令的窗口；真正读取并执行命令的程序叫 <dfn>shell<small>外壳，夹在用户和系统内核之间的命令解释器</small></dfn>。Ubuntu 默认用 <dfn>bash<small>Bourne Again SHell，“重生的 Bourne shell”，早期 Bourne shell 的改进版</small></dfn>，macOS 默认用 <dfn>zsh<small>Z shell</small></dfn>，日常用法几乎一样。</p>
+</div>
+
+<article class="cmd topic" id="prompt">
+<div class="cmd-h"><h3>提示符与命令结构</h3></div>
+<p>打开终端后看到的这一串就是提示符，它告诉你现在是谁、在哪台机器、在哪个目录：</p>
+<div class="code"><pre class="ex" data-file="提示符">
+alice@web01:~/projects$
+# alice      当前用户名
+# web01      主机名（这台机器的名字）
+# ~/projects 当前所在目录，~ 代表家目录 /home/alice
+# $          普通用户；如果是 # 说明你是 root（超级用户，拥有全部权限）
+</pre></div>
+<p>一条命令通常由三部分组成：<span class="syn">命令 [选项] [参数]</span>。选项改变命令的行为，参数告诉命令要处理什么。</p>
+<ul>
+<li><b>短选项</b>是一个减号加一个字母，如 <code>-l</code>，多个可以合并：<code>-l -a</code> 等于 <code>-la</code>。</li>
+<li><b>长选项</b>是两个减号加单词，如 <code>--all</code>，更好读，但不能合并。</li>
+<li>Linux 区分大小写：<code>-r</code> 和 <code>-R</code> 可能是两个意思，<code>File.txt</code> 和 <code>file.txt</code> 是两个文件。</li>
+</ul>
+<div class="code"><pre class="ex">
+$ ls -l -a /etc                  # 命令 + 两个选项 + 一个参数
+$ ls -la /etc                    # 短选项合并，效果相同
+$ ls --all --human-readable      # 长选项
+$ cat "my notes.txt"             # 文件名里有空格，要加引号
+$ rm -- -oops.txt                # "--" 表示选项到此结束，后面的 -oops.txt 当文件名处理
+</pre></div>
+<div class="note"><b>提示：</b>看到 <code>command not found</code>，说明这个命令没装或拼错了。Ubuntu 通常会提示该装哪个包，照着 <code>sudo apt install 包名</code> 装上即可。</div>
+</article>
+
+<article class="cmd topic" id="paths">
+<div class="cmd-h"><h3>路径与特殊符号</h3></div>
+<p><b>绝对路径</b>从根目录 <code>/</code> 开始写，在哪儿用都指向同一个位置，如 <code>/home/alice/notes.txt</code>。<b>相对路径</b>从当前目录出发，如 <code>notes.txt</code>、<code>docs/a.md</code>。</p>
+<div class="tbl"><table>
+<tr><th>符号</th><th>含义</th><th>例子</th></tr>
+<tr><td><code>/</code></td><td>在开头表示根目录，在中间是目录分隔符</td><td><code>/etc/hosts</code></td></tr>
+<tr><td><code>~</code></td><td>当前用户的家目录</td><td><code>~/Downloads</code> = <code>/home/alice/Downloads</code></td></tr>
+<tr><td><code>.</code></td><td>当前目录</td><td><code>./run.sh</code> 执行当前目录下的脚本</td></tr>
+<tr><td><code>..</code></td><td>上一级目录</td><td><code>cd ../..</code> 往上走两级</td></tr>
+<tr><td><code>-</code></td><td>在 <code>cd</code> 里表示“上一次所在的目录”</td><td><code>cd -</code> 在两个目录间来回切换</td></tr>
+<tr><td><code>.名字</code></td><td>以点开头的是隐藏文件，<code>ls</code> 默认不显示</td><td><code>~/.bashrc</code>、<code>.git</code></td></tr>
+</table></div>
+</article>
+
+<article class="cmd topic" id="fhs">
+<div class="cmd-h"><h3>常见目录都放什么</h3></div>
+<p>Linux 没有 C 盘、D 盘，所有东西都挂在一棵以 <code>/</code> 为根的目录树上。各目录的用途大体遵循 <dfn>FHS<small>Filesystem Hierarchy Standard，文件系统层次结构标准</small></dfn>：</p>
+<div class="tbl"><table>
+<tr><th>目录</th><th>名字来源</th><th>放什么</th></tr>
+<tr><td><code>/home</code></td><td>home，家</td><td>普通用户的家目录，如 <code>/home/alice</code></td></tr>
+<tr><td><code>/root</code></td><td>root，根用户</td><td>root 用户的家目录</td></tr>
+<tr><td><code>/etc</code></td><td>et cetera，“等等”</td><td>系统和软件的配置文件，如 <code>/etc/nginx/</code>、<code>/etc/hosts</code></td></tr>
+<tr><td><code>/var</code></td><td>variable，可变的</td><td>运行中不断变化的数据：日志 <code>/var/log</code>、网站文件 <code>/var/www</code>、缓存</td></tr>
+<tr><td><code>/tmp</code></td><td>temporary，临时</td><td>临时文件，重启后通常会被清空</td></tr>
+<tr><td><code>/usr</code></td><td>最早是 user；常被解释为 Unix System Resources</td><td>系统安装的程序、库和文档，如 <code>/usr/bin</code>、<code>/usr/lib</code></td></tr>
+<tr><td><code>/bin</code>、<code>/sbin</code></td><td>binaries 二进制程序；system binaries 系统程序</td><td>基本命令和系统管理命令。新系统里它们只是链接，分别指向 <code>/usr/bin</code> 和 <code>/usr/sbin</code></td></tr>
+<tr><td><code>/opt</code></td><td>optional，可选的</td><td>手动安装的第三方软件</td></tr>
+<tr><td><code>/dev</code></td><td>devices，设备</td><td>设备文件，如硬盘 <code>/dev/sda</code>、黑洞 <code>/dev/null</code></td></tr>
+<tr><td><code>/proc</code></td><td>process，进程</td><td>内核提供的虚拟文件，如 <code>/proc/cpuinfo</code>，不占磁盘</td></tr>
+<tr><td><code>/mnt</code>、<code>/media</code></td><td>mount，挂载</td><td>挂载硬盘、U 盘的地方</td></tr>
+<tr><td><code>/boot</code></td><td>boot，启动</td><td>内核和启动引导文件</td></tr>
+</table></div>
+</article>
+
+<article class="cmd" id="man">
+<div class="cmd-h"><h3>man</h3><span class="en">manual</span><span class="man">man 1</span></div>
+<p class="full">查看命令的使用手册</p>
+<p>系统自带的说明书，最全也最权威。忘了某个选项怎么用，先查它。</p>
+<div class="code"><pre class="ex">
+$ man ls                         # 打开 ls 的手册，按 q 退出
+$ man 5 crontab                  # 指定第 5 节：crontab 配置文件的写法
+$ man -k "copy files"            # 不知道命令名时按关键词搜索，等同 apropos
+cp (1)               - copy files and directories
+</pre></div>
+<h4>在手册里怎么操作</h4>
+<p>按键和 <a href="#less">less</a> 一样：</p>
+<div class="tbl"><table>
+<tr><th>按键</th><th>作用</th></tr>
+<tr><td><code>空格</code> / <code>b</code></td><td>向下 / 向上翻一页</td></tr>
+<tr><td><code>/关键词</code></td><td>搜索，<code>n</code> 下一个，<code>N</code> 上一个</td></tr>
+<tr><td><code>g</code> / <code>G</code></td><td>跳到开头 / 结尾</td></tr>
+<tr><td><code>q</code></td><td>退出</td></tr>
+</table></div>
+<h4>章节编号</h4>
+<p>手册分成若干节。同一个名字可能在不同节里各有一篇，比如 crontab 既是命令（第 1 节），也是配置文件（第 5 节）。不写章节号时，通常先打开第 1 节的那篇。</p>
+<div class="tbl"><table>
+<tr><th>章节</th><th>内容</th><th>例子</th></tr>
+<tr><td><code>1</code></td><td>普通用户命令</td><td>ls、grep、ssh</td></tr>
+<tr><td><code>5</code></td><td>配置文件的格式</td><td>crontab、fstab、ssh_config</td></tr>
+<tr><td><code>8</code></td><td>系统管理命令，通常需要 root</td><td>mount、useradd、ip</td></tr>
+</table></div>
+<h4>手册页的结构</h4>
+<p>每篇手册都按固定的几个部分排列，知道了结构就能直接跳到想看的地方：</p>
+<div class="tbl"><table>
+<tr><th>标题</th><th>内容</th></tr>
+<tr><td><code>NAME</code></td><td>名称和一句话说明</td></tr>
+<tr><td><code>SYNOPSIS</code></td><td>用法摘要：<code>[ ]</code> 里的可以省略，<code>...</code> 表示可以写多个</td></tr>
+<tr><td><code>DESCRIPTION</code></td><td>详细说明，很多命令的选项也列在这里</td></tr>
+<tr><td><code>OPTIONS</code></td><td>选项说明，有的命令单独成节</td></tr>
+<tr><td><code>EXAMPLES</code></td><td>示例，不是每篇都有</td></tr>
+<tr><td><code>SEE ALSO</code></td><td>相关的命令和文档</td></tr>
+</table></div>
+<h4>其他求助方式</h4>
+<div class="tbl"><table>
+<tr><th>写法</th><th>用途</th></tr>
+<tr><td><code>命令 --help</code></td><td>简短的用法说明，比 man 快</td></tr>
+<tr><td><code>help 命令</code></td><td>查看 shell 内建命令（如 <code>cd</code>、<code>export</code>）的帮助，它们没有单独的手册</td></tr>
+<tr><td><code>type 命令</code></td><td>说明这是内建命令、别名还是外部程序</td></tr>
+<tr><td><code>which 命令</code></td><td>显示将要执行的程序在哪里</td></tr>
+<tr><td><code>whatis 命令</code></td><td>一句话介绍，也就是手册的 NAME 部分</td></tr>
+<tr><td><code>tldr 命令</code></td><td><dfn>tldr<small>Too Long; Didn't Read，太长不看</small></dfn>，社区整理的常用示例，需要另外安装</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ ls --help | less               # 帮助太长时交给 less 分页
+$ type cd
+cd is a shell builtin
+$ which python3
+/usr/bin/python3
+$ whatis ls
+ls (1)               - list directory contents
+</pre></div>
+</article>
+
+<article class="cmd topic" id="keys">
+<div class="cmd-h"><h3>终端快捷键</h3></div>
+<p>这些快捷键在 bash 和 zsh 里都能用，熟练后能省很多敲键盘的时间。</p>
+<div class="tbl"><table>
+<tr><th>按键</th><th>作用</th></tr>
+<tr><td><code>Tab</code></td><td>自动补全命令和路径；按两次列出所有候选</td></tr>
+<tr><td><code>↑</code> / <code>↓</code></td><td>翻看上一条 / 下一条历史命令</td></tr>
+<tr><td><code>Ctrl+C</code></td><td>中断正在运行的命令（发送 SIGINT 信号，见 <a href="#kill">kill</a>）</td></tr>
+<tr><td><code>Ctrl+Z</code></td><td>暂停（挂起）当前命令，它会停住不动，之后用 <code>fg</code> 回到前台或用 <code>bg</code> 在后台继续（见 <a href="#jobs">前后台任务</a>）</td></tr>
+<tr><td><code>Ctrl+D</code></td><td>发送 <dfn>EOF<small>End Of File，输入结束</small></dfn>；在空行按会退出当前 shell 或 ssh 会话</td></tr>
+<tr><td><code>Ctrl+R</code></td><td>反向搜索（reverse search）历史命令，输入几个字就能找到以前敲过的命令，再按一次继续往前找</td></tr>
+<tr><td><code>Ctrl+L</code></td><td>清屏，同 <code>clear</code></td></tr>
+<tr><td><code>Ctrl+A</code> / <code>Ctrl+E</code></td><td>光标跳到行首 / 行尾</td></tr>
+<tr><td><code>Ctrl+U</code> / <code>Ctrl+K</code></td><td>删除光标前 / 光标后的全部内容（zsh 里 Ctrl+U 默认删除整行）</td></tr>
+<tr><td><code>Ctrl+W</code></td><td>删除光标前的一个单词</td></tr>
+<tr><td><code>Alt+.</code></td><td>插入上一条命令的最后一个参数，可连按往前翻。macOS 终端需在设置里勾选“将 Option 键用作 Meta 键”，或者先按 <code>Esc</code> 再按 <code>.</code></td></tr>
+<tr><td><code>Ctrl+S</code> / <code>Ctrl+Q</code></td><td>暂停 / 恢复终端输出。误按 Ctrl+S 时终端看起来像卡死了，按 Ctrl+Q 就好</td></tr>
+<tr><td><code>reset</code></td><td>终端显示乱码（比如 cat 了一个二进制文件）时，输入它重置终端</td></tr>
+</table></div>
+</article>
+</section>
+
+<!-- ============ 文件与目录 ============ -->
+<section class="cat" id="files">
+<h2>文件与目录<span class="en">Files</span></h2>
+
+<article class="cmd" id="pwd">
+<div class="cmd-h"><h3>pwd</h3><span class="en">print working directory</span><span class="man">man 1</span></div>
+<p class="full">显示当前所在目录的完整路径</p>
+<div class="code"><pre class="ex">
+$ pwd
+/home/alice/projects
+$ pwd -P                         # -P = physical，如果经过了符号链接，显示真实路径
+$ realpath notes.txt             # 顺带一提：查看某个文件的完整绝对路径
+/home/alice/projects/notes.txt
+</pre></div>
+</article>
+
+<article class="cmd" id="cd">
+<div class="cmd-h"><h3>cd</h3><span class="en">change directory</span><span class="man">内建</span></div>
+<p class="full">切换当前目录</p>
+<div class="code"><pre class="ex">
+$ cd /etc/nginx                  # 绝对路径
+$ cd sites-available             # 相对路径：进入当前目录下的子目录
+$ cd ..                          # 回到上一级
+$ cd                             # 不带参数：回到家目录，等于 cd ~
+$ cd -                           # 回到上一次所在的目录
+$ cd "My Documents"              # 目录名有空格要加引号
+</pre></div>
+</article>
+
+<article class="cmd" id="ls">
+<div class="cmd-h"><h3>ls</h3><span class="en">list</span><span class="man">man 1</span></div>
+<p class="full">列出目录中的文件</p>
+<p class="syn">ls [选项] [<var>路径…</var>]</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-l</code><span class="mn">long</span></td><td>长格式：权限、所有者、大小、修改时间</td></tr>
+<tr><td><code>-a</code><span class="mn">all</span></td><td>显示全部，包括以 <code>.</code> 开头的隐藏文件</td></tr>
+<tr><td><code>-A</code><span class="mn">almost-all</span></td><td>同 -a，但不显示 <code>.</code> 和 <code>..</code></td></tr>
+<tr><td><code>-h</code><span class="mn">human-readable</span></td><td>大小用 K、M、G 显示，配合 -l 用</td></tr>
+<tr><td><code>-t</code><span class="mn">time</span></td><td>按修改时间排序，最新的在前</td></tr>
+<tr><td><code>-S</code><span class="mn">size</span></td><td>按文件大小排序，最大的在前</td></tr>
+<tr><td><code>-r</code><span class="mn">reverse</span></td><td>倒序</td></tr>
+<tr><td><code>-R</code><span class="mn">recursive</span></td><td>递归列出所有子目录</td></tr>
+<tr><td><code>-d</code><span class="mn">directory</span></td><td>只显示目录本身，不展开里面的内容</td></tr>
+<tr><td><code>-1</code></td><td>每行一个文件名，方便交给其他命令处理</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ ls -lh
+total 12K
+drwxr-xr-x 2 alice alice 4.0K Sep 20 10:12 docs
+-rw-r--r-- 1 alice alice 1.2K Sep 21 09:30 notes.txt
+lrwxrwxrwx 1 alice alice    9 Sep 21 09:31 latest -> notes.txt
+$ ls -la ~                       # 家目录里的所有文件，含隐藏文件
+$ ls -t | head                   # 最近修改的 10 个（用 -l 时第一行是 total，只剩 9 个）
+$ ls -lhS                        # 按大小排
+$ ls -ld /var/log                # 看目录本身的权限，而不是里面的文件
+$ ls *.md                        # 只列 .md 文件
+</pre></div>
+<p><code>ls -l</code> 每一列依次是：权限（首字母 <code>d</code> 是目录、<code>-</code> 是文件、<code>l</code> 是链接，详见 <a href="#perms">读懂权限</a>）、硬链接数、所有者、所属组、大小、修改时间、文件名。</p>
+<div class="note"><b>提示：</b>很多系统预设了别名 <code>ll</code>（通常等于 <code>ls -alF</code>）。没有的话可以自己加，见 <a href="#alias">alias</a>。</div>
+</article>
+
+<article class="cmd" id="tree">
+<div class="cmd-h"><h3>tree</h3><span class="en">tree</span><span class="man">man 1</span></div>
+<p class="full">以树状图显示目录结构</p>
+<p>系统一般没预装，用 <code>sudo apt install tree</code> 安装。</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-L 2</code><span class="mn">level</span></td><td>只显示 2 层</td></tr>
+<tr><td><code>-d</code><span class="mn">directories</span></td><td>只显示目录</td></tr>
+<tr><td><code>-a</code><span class="mn">all</span></td><td>包括隐藏文件</td></tr>
+<tr><td><code>-I 模式</code><span class="mn">ignore</span></td><td>忽略匹配的文件，多个用 <code>|</code> 分隔</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ tree -L 2 -I "node_modules|.git"
+.
+├── README.md
+├── src
+│   ├── main.py
+│   └── utils.py
+└── tests
+    └── test_main.py
+
+2 directories, 4 files
+</pre></div>
+</article>
+
+<article class="cmd" id="mkdir">
+<div class="cmd-h"><h3>mkdir</h3><span class="en">make directory</span><span class="man">man 1</span></div>
+<p class="full">创建目录</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-p</code><span class="mn">parents</span></td><td>自动创建缺少的上级目录；目录已存在也不报错</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示创建了什么（很多命令的 -v 都是这个意思：啰嗦模式）</td></tr>
+<tr><td><code>-m 700</code><span class="mn">mode</span></td><td>创建时直接设定权限</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ mkdir backup
+$ mkdir -p project/src/utils     # 一次建好多层
+$ mkdir -p app/{src,tests,docs}  # 大括号展开：同时建 3 个子目录
+$ mkdir -m 700 private           # 只有自己能访问
+</pre></div>
+</article>
+
+<article class="cmd" id="touch">
+<div class="cmd-h"><h3>touch</h3><span class="en">touch</span><span class="man">man 1</span></div>
+<p class="full">“碰一下”文件：更新时间戳，文件不存在就新建一个空文件</p>
+<div class="code"><pre class="ex">
+$ touch notes.txt                # 新建空文件（已存在则只更新修改时间）
+$ touch a.txt b.txt c.txt        # 一次建多个
+$ touch -d "2026-01-01 10:00" old.txt   # -d = date，把时间改成指定值
+$ touch -c maybe.txt             # -c = no-create，文件不存在时不新建
+</pre></div>
+</article>
+
+<article class="cmd" id="cp">
+<div class="cmd-h"><h3>cp</h3><span class="en">copy</span><span class="man">man 1</span></div>
+<p class="full">复制文件或目录</p>
+<p class="syn">cp [选项] <var>源…</var> <var>目标</var></p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-r</code><span class="mn">recursive</span></td><td>递归复制，复制目录时必须加</td></tr>
+<tr><td><code>-a</code><span class="mn">archive</span></td><td>归档模式：递归，并保留权限、时间戳和符号链接（保留所有者需要 root）。做备份时用它</td></tr>
+<tr><td><code>-i</code><span class="mn">interactive</span></td><td>目标已存在时先询问</td></tr>
+<tr><td><code>-n</code><span class="mn">no-clobber</span></td><td>目标已存在就跳过，不覆盖</td></tr>
+<tr><td><code>-u</code><span class="mn">update</span></td><td>只在源文件比目标新、或目标不存在时才复制</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示复制过程</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ cp notes.txt notes.bak         # 复制一份
+$ cp notes.txt ~/backup/         # 复制到目录里，文件名不变
+$ cp -r project/ ~/backup/       # 复制整个目录
+$ cp -a /etc/nginx ~/nginx-bak   # 完整备份配置目录，保留权限
+$ cp *.jpg photos/               # 复制所有 jpg
+$ cp config.yml{,.bak}           # 大括号展开，等于 cp config.yml config.yml.bak
+</pre></div>
+<div class="warn"><b>注意：</b>cp 默认会直接覆盖同名目标文件，不提示。拿不准时加 <code>-i</code>。</div>
+</article>
+
+<article class="cmd" id="mv">
+<div class="cmd-h"><h3>mv</h3><span class="en">move</span><span class="man">man 1</span></div>
+<p class="full">移动文件，也用来重命名</p>
+<p>Linux 里没有单独的“重命名”命令，在同一目录下 mv 就是改名。移动目录不需要 <code>-r</code>。</p>
+<div class="code"><pre class="ex">
+$ mv draft.md final.md           # 重命名
+$ mv final.md ~/docs/            # 移动到另一个目录
+$ mv *.log logs/                 # 批量移动
+$ mv -i a.txt b.txt              # -i：b.txt 已存在时先问
+$ mv -n a.txt b.txt              # -n：已存在就不动
+</pre></div>
+<div class="note"><b>提示：</b>批量重命名（比如把所有 .txt 改成 .md）见 <a href="#r-rename">常用组合</a>。</div>
+</article>
+
+<article class="cmd" id="rm">
+<div class="cmd-h"><h3>rm</h3><span class="en">remove</span><span class="man">man 1</span></div>
+<p class="full">删除文件或目录</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-r</code><span class="mn">recursive</span></td><td>递归删除目录及其中所有内容</td></tr>
+<tr><td><code>-f</code><span class="mn">force</span></td><td>强制删除，不询问，文件不存在也不报错</td></tr>
+<tr><td><code>-i</code><span class="mn">interactive</span></td><td>每删一个都询问</td></tr>
+<tr><td><code>-I</code></td><td>删除超过 3 个文件或递归删除时，只询问一次</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示删了什么</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ rm old.txt
+$ rm -i *.log                    # 逐个确认
+$ rm -r build/                   # 删除目录
+$ rm -rf node_modules/           # 强制删除整个目录，不提示
+$ rm -- -weird-name.txt          # 删除以 - 开头的文件
+</pre></div>
+<div class="warn"><b>注意：</b>命令行里删除的文件<b>不进回收站</b>，基本无法恢复。用 <code>rm -rf</code> 前先用 <code>ls</code> 看一眼要删的路径；尤其小心多打的空格，<code>rm -rf / tmp/x</code> 会从根目录开始删。在脚本里写 <code>rm -rf "$DIR/"</code> 时，要确保变量不是空的。</div>
+</article>
+
+<article class="cmd" id="rmdir">
+<div class="cmd-h"><h3>rmdir</h3><span class="en">remove directory</span><span class="man">man 1</span></div>
+<p class="full">删除空目录</p>
+<p>只能删除空目录，目录里有东西会报错，所以比 <code>rm -r</code> 安全。</p>
+<div class="code"><pre class="ex">
+$ rmdir empty-dir
+$ rmdir -p a/b/c                 # 依次删除 c、b、a（都必须是空的）
+</pre></div>
+</article>
+
+<article class="cmd" id="ln">
+<div class="cmd-h"><h3>ln</h3><span class="en">link</span><span class="man">man 1</span></div>
+<p class="full">创建链接（快捷方式）</p>
+<p>Linux 中每个文件的元数据都存在一个 <dfn>inode<small>index node，索引节点：记录文件大小、权限、数据位置的结构，文件名只是指向它的标签</small></dfn> 里。</p>
+<ul>
+<li><b>符号链接</b>（软链接，<code>ln -s</code>）：一个指向路径的“快捷方式”。可以指向目录、可以跨分区；原文件删了，链接就失效。日常用的基本都是这种。</li>
+<li><b>硬链接</b>（不带 -s）：给同一个 inode 再起一个名字，和原文件完全平等；删除其中一个，另一个照样能用。不能用于目录，不能跨分区。</li>
+</ul>
+<p class="syn">ln -s <var>目标（真实文件）</var> <var>链接名</var></p>
+<div class="code"><pre class="ex">
+$ ln -s /opt/app/v2.1 /opt/app/current   # current 指向 v2.1
+$ ls -l /opt/app/current
+lrwxrwxrwx 1 root root 13 Sep 26 10:00 /opt/app/current -> /opt/app/v2.1
+$ ln -sfn /opt/app/v2.2 /opt/app/current # 改为指向新版本（-f 覆盖旧链接；-n 防止在旧链接指向的目录里再建一个）
+$ ln -s ~/dotfiles/.vimrc ~/.vimrc       # 常见用法：集中管理配置文件
+$ readlink -f /opt/app/current           # 查看链接最终指向哪里
+/opt/app/v2.2
+</pre></div>
+<div class="note"><b>提示：</b>参数顺序和 <code>cp</code> 一样：先写“已存在的东西”，再写“要新建的东西”。</div>
+</article>
+
+<article class="cmd" id="stat">
+<div class="cmd-h"><h3>stat</h3><span class="en">status</span><span class="man">man 1</span></div>
+<p class="full">查看文件的详细信息</p>
+<div class="code"><pre class="ex">
+$ stat notes.txt
+  File: notes.txt
+  Size: 1234        Blocks: 8          IO Block: 4096   regular file
+Device: 8,1         Inode: 524301      Links: 1
+Access: (0644/-rw-r--r--)  Uid: ( 1000/   alice)   Gid: ( 1000/   alice)
+Access: 2026-09-26 09:30:12.000000000 +0800
+Modify: 2026-09-21 09:30:00.000000000 +0800
+Change: 2026-09-21 09:30:00.000000000 +0800
+$ stat -c '%s %n' *.log          # 自定义格式：只看大小和文件名
+</pre></div>
+<p>三个时间：<b>Access</b>（atime，最后读取时间）、<b>Modify</b>（mtime，内容最后修改时间）、<b>Change</b>（ctime，权限、所有者等元数据最后变更时间）。<code>ls -l</code> 和 <code>find -mtime</code> 用的都是 mtime。</p>
+</article>
+
+<article class="cmd" id="file">
+<div class="cmd-h"><h3>file</h3><span class="en">file</span><span class="man">man 1</span></div>
+<p class="full">根据内容判断文件类型</p>
+<p>Linux 不靠扩展名判断文件类型。拿到一个不知道是什么的文件时，先用 file 看一下。</p>
+<div class="code"><pre class="ex">
+$ file notes.txt photo.jpg /usr/bin/ls data
+notes.txt:   Unicode text, UTF-8 text
+photo.jpg:   JPEG image data, JFIF standard 1.01
+/usr/bin/ls: ELF 64-bit LSB pie executable, x86-64
+data:        gzip compressed data
+</pre></div>
+<p>输出里的 <dfn>ELF<small>Executable and Linkable Format，可执行与可链接格式</small></dfn> 是 Linux 可执行程序的格式，相当于 Windows 的 .exe。</p>
+</article>
+</section>
+
+<!-- ============ 查看文件 ============ -->
+<section class="cat" id="view">
+<h2>查看文件内容<span class="en">Viewing</span></h2>
+
+<article class="cmd" id="cat">
+<div class="cmd-h"><h3>cat</h3><span class="en">concatenate</span><span class="man">man 1</span></div>
+<p class="full">连接文件并输出，最常用来一次性显示短文件</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-n</code><span class="mn">number</span></td><td>显示行号</td></tr>
+<tr><td><code>-A</code><span class="mn">show-all</span></td><td>显示不可见字符：行尾显示 <code>$</code>，Tab 显示 <code>^I</code>，Windows 换行多出的 <code>\r</code> 显示为 <code>^M</code></td></tr>
+<tr><td><code>-s</code><span class="mn">squeeze-blank</span></td><td>连续多个空行只显示一个</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ cat /etc/hostname
+$ cat -n script.sh               # 带行号
+$ cat part1.txt part2.txt > all.txt   # 合并文件（这才是 concatenate 的本意）
+$ cat -A config.ini | head       # 排查“看起来一样但就是不对”的配置文件
+$ tac log.txt                    # tac 是 cat 倒过来写：从最后一行往前显示
+</pre></div>
+<div class="note"><b>提示：</b>长文件别用 cat，会刷满整个屏幕，用 <a href="#less">less</a> 或 <a href="#head-tail">head / tail</a>。</div>
+</article>
+
+<article class="cmd" id="less">
+<div class="cmd-h"><h3>less</h3><span class="en">less</span><span class="man">man 1</span></div>
+<p class="full">分页查看长文件</p>
+<p>名字是个玩笑：早期有个分页工具叫 <code>more</code>，less 功能更多，取“less is more（少即是多）”之意。它不会一次把整个文件读进内存，打开几个 GB 的日志也很快。</p>
+<div class="tbl"><table>
+<tr><th>按键</th><th>作用</th></tr>
+<tr><td><code>空格</code> / <code>b</code></td><td>向下 / 向上翻一页</td></tr>
+<tr><td><code>j</code> / <code>k</code> 或方向键</td><td>向下 / 向上一行</td></tr>
+<tr><td><code>g</code> / <code>G</code></td><td>跳到开头 / 结尾</td></tr>
+<tr><td><code>/关键词</code></td><td>向下搜索；<code>?关键词</code> 向上搜索</td></tr>
+<tr><td><code>n</code> / <code>N</code></td><td>下一个 / 上一个搜索结果</td></tr>
+<tr><td><code>&amp;关键词</code></td><td>只显示包含关键词的行（再输入 <code>&amp;</code> 回车取消）</td></tr>
+<tr><td><code>F</code></td><td>跟随模式，像 <code>tail -f</code> 一样持续显示新内容，<code>Ctrl+C</code> 退出跟随</td></tr>
+<tr><td><code>q</code></td><td>退出</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ less /var/log/syslog
+$ less -N app.py                 # -N 显示行号
+$ less -S data.csv               # -S 长行不折行，用左右方向键横向滚动
+$ less +F app.log                # 打开就进入跟随模式
+$ journalctl -u nginx | less     # 分页查看其他命令的输出
+</pre></div>
+</article>
+
+<article class="cmd" id="head-tail">
+<div class="cmd-h"><h3>head / tail</h3><span class="en">head · tail</span><span class="man">man 1</span></div>
+<p class="full">显示文件开头 / 结尾的若干行</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-n 20</code><span class="mn">lines</span></td><td>显示 20 行（默认 10 行），也可以简写成 <code>-20</code></td></tr>
+<tr><td><code>-c 100</code><span class="mn">bytes</span></td><td>按字节数截取</td></tr>
+<tr><td><code>tail -f</code><span class="mn">follow</span></td><td>持续输出新增内容，看实时日志必备，<code>Ctrl+C</code> 退出</td></tr>
+<tr><td><code>tail -F</code></td><td>同 -f，但日志文件被轮换（改名、重建）后会自动跟上新文件</td></tr>
+<tr><td><code>tail -n +2</code></td><td>从第 2 行开始显示到末尾（常用于跳过表头）</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ head data.csv                  # 前 10 行
+$ head -n 3 data.csv             # 前 3 行
+$ tail -n 50 app.log             # 最后 50 行
+$ tail -f /var/log/nginx/access.log   # 实时查看新请求
+$ tail -n +2 data.csv            # 去掉第一行表头
+$ sed -n '100,120p' big.log      # 想看中间某几行，用 sed 更方便
+</pre></div>
+</article>
+
+<article class="cmd" id="wc">
+<div class="cmd-h"><h3>wc</h3><span class="en">word count</span><span class="man">man 1</span></div>
+<p class="full">统计行数、单词数、字节数</p>
+<div class="code"><pre class="ex">
+$ wc notes.txt
+  42  310 2048 notes.txt         # 行数 单词数 字节数
+$ wc -l access.log               # -l = lines，只看行数
+$ wc -m notes.txt                # -m = chars，字符数（UTF-8 环境下中文按字算）
+$ ls | wc -l                     # 当前目录有多少个文件
+</pre></div>
+</article>
+
+<article class="cmd" id="diff">
+<div class="cmd-h"><h3>diff</h3><span class="en">difference</span><span class="man">man 1</span></div>
+<p class="full">比较两个文件的差异</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-u</code><span class="mn">unified</span></td><td>统一格式，和 git diff 一样，最好读</td></tr>
+<tr><td><code>-r</code><span class="mn">recursive</span></td><td>比较两个目录</td></tr>
+<tr><td><code>-q</code><span class="mn">brief</span></td><td>只说哪些文件不同，不显示具体内容</td></tr>
+<tr><td><code>-y</code><span class="mn">side-by-side</span></td><td>左右并排显示</td></tr>
+<tr><td><code>-w</code><span class="mn">ignore-all-space</span></td><td>忽略空白字符的差异</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ diff -u old.conf new.conf
+--- old.conf    2026-09-20 10:00:00
++++ new.conf    2026-09-26 10:00:00
+@@ -1,3 +1,3 @@
+ port=80
+-debug=true
++debug=false
+ name=web
+$ diff -rq dir1/ dir2/           # 两个目录里哪些文件不一样
+$ diff &lt;(sort a.txt) &lt;(sort b.txt)   # &lt;(命令) 把命令输出当作临时文件：比较排序后的结果
+</pre></div>
+<p>读法：<code>-</code> 开头的行是旧文件有、新文件删掉的；<code>+</code> 开头是新增的；<code>@@ -1,3 +1,3 @@</code> 表示这段在旧文件从第 1 行起 3 行、新文件从第 1 行起 3 行。</p>
+</article>
+
+<article class="cmd" id="sha256sum">
+<div class="cmd-h"><h3>sha256sum / md5sum</h3><span class="en">checksum</span><span class="man">man 1</span></div>
+<p class="full">计算文件校验值，确认文件完整、没被篡改</p>
+<p><dfn>SHA-256<small>Secure Hash Algorithm 256-bit，安全散列算法，输出 256 位</small></dfn> 和 <dfn>MD5<small>Message-Digest Algorithm 5，消息摘要算法第 5 版</small></dfn> 都会把任意文件算成一串固定长度的“指纹”，文件哪怕改动一个字节，指纹都会完全不同。MD5 已不够安全，校验下载文件时优先用 SHA-256。</p>
+<div class="code"><pre class="ex">
+$ sha256sum ubuntu-24.04.iso
+8d2d1a...e0f3  ubuntu-24.04.iso
+$ sha256sum -c SHA256SUMS        # -c = check，按官方给的校验文件逐个核对
+ubuntu-24.04.iso: OK
+$ md5sum a.bin b.bin             # 快速判断两个文件内容是否相同
+</pre></div>
+<div class="note"><b>macOS：</b>用 <code>shasum -a 256 文件</code>。</div>
+</article>
+</section>
+
+<!-- ============ 搜索与查找 ============ -->
+<section class="cat" id="search">
+<h2>搜索与查找<span class="en">Search</span></h2>
+<div class="intro"><p>按<b>文件名</b>找文件用 <code>find</code>，按<b>文件内容</b>找用 <code>grep</code>，找<b>命令</b>在哪用 <code>which</code>（见 <a href="#man">man</a>）。</p></div>
+
+<article class="cmd" id="find">
+<div class="cmd-h"><h3>find</h3><span class="en">find</span><span class="man">man 1</span></div>
+<p class="full">按名称、类型、大小、时间等条件查找文件</p>
+<p class="syn">find [<var>起始目录</var>] [<var>条件…</var>] [<var>动作</var>]</p>
+<div class="tbl"><table>
+<tr><th>条件 / 动作</th><th>含义</th></tr>
+<tr><td><code>-name "*.log"</code></td><td>按文件名匹配，通配符要加引号；<code>-iname</code> 忽略大小写</td></tr>
+<tr><td><code>-type f</code></td><td>只找普通文件（file）；<code>d</code> 目录（directory），<code>l</code> 符号链接（link）</td></tr>
+<tr><td><code>-size +100M</code></td><td>大于 100 MB。单位 <code>k</code> <code>M</code> <code>G</code>；用 <code>-</code> 表示“小于”时按单位向上取整，<code>-1M</code> 只能匹配空文件，找小文件改用 <code>k</code></td></tr>
+<tr><td><code>-mtime -7</code></td><td>7 天内修改过（modification time）；<code>+30</code> 是超过 30 天没改过；<code>-mmin -60</code> 按分钟算</td></tr>
+<tr><td><code>-maxdepth 1</code></td><td>最多往下找几层，1 表示只看当前目录</td></tr>
+<tr><td><code>-user alice</code></td><td>属于某个用户的文件</td></tr>
+<tr><td><code>-empty</code></td><td>空文件或空目录</td></tr>
+<tr><td><code>-not</code> / <code>!</code></td><td>取反；<code>-o</code> 表示“或”（or）</td></tr>
+<tr><td><code>-path "./venv/*"</code></td><td>按完整路径匹配，常配合 -not 排除目录</td></tr>
+<tr><td><code>-exec 命令 {} \;</code></td><td>对每个结果执行命令，<code>{}</code> 代表文件名</td></tr>
+<tr><td><code>-exec 命令 {} +</code></td><td>把所有结果一次性交给命令，更快</td></tr>
+<tr><td><code>-delete</code></td><td>删除找到的文件</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ find . -name "*.log"                    # 当前目录及所有子目录下的 .log
+$ find /etc -iname "*nginx*"              # 忽略大小写
+$ find . -type d -name node_modules       # 只找目录
+$ find / -type f -size +1G 2>/dev/null    # 全盘找大于 1G 的文件，屏蔽无权限的报错
+$ find . -type f -mtime -1                # 最近 24 小时内改过的文件
+$ find . -maxdepth 1 -type f              # 只看当前这一层的文件
+$ find . -name "*.py" -not -path "./venv/*"   # 排除 venv 目录
+$ find . -name "*.sh" -exec chmod +x {} \;    # 给所有 .sh 加执行权限
+$ find . -name "*.txt" -exec grep -l "hello" {} +   # 哪些 txt 里含有 hello
+$ find /tmp -type f -mtime +30            # 先确认 30 天前的文件有哪些……
+$ find /tmp -type f -mtime +30 -delete    # ……确认无误再删除
+</pre></div>
+<div class="warn"><b>注意：</b><code>-delete</code> 要放在条件的最后面。写在前面会在筛选之前就开始删除。先不加 -delete 跑一遍看结果，是好习惯。</div>
+</article>
+
+<article class="cmd" id="grep">
+<div class="cmd-h"><h3>grep</h3><span class="en">global regular expression print</span><span class="man">man 1</span></div>
+<p class="full">在文件或输出中搜索匹配的行</p>
+<p>名字来自早期 ed 编辑器的命令 <code>g/re/p</code>：在全文（global）中查找匹配 <dfn>正则表达式<small>regular expression，简称 regex，描述文本模式的规则</small></dfn> 的行并打印（print）。</p>
+<p class="syn">grep [选项] <var>模式</var> [<var>文件…</var>]</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-i</code><span class="mn">ignore-case</span></td><td>忽略大小写</td></tr>
+<tr><td><code>-r</code><span class="mn">recursive</span></td><td>递归搜索整个目录</td></tr>
+<tr><td><code>-n</code><span class="mn">line-number</span></td><td>显示行号</td></tr>
+<tr><td><code>-v</code><span class="mn">invert-match</span></td><td>反向：显示<b>不</b>匹配的行</td></tr>
+<tr><td><code>-w</code><span class="mn">word-regexp</span></td><td>只匹配完整单词</td></tr>
+<tr><td><code>-c</code><span class="mn">count</span></td><td>只输出匹配的行数</td></tr>
+<tr><td><code>-l</code><span class="mn">files-with-matches</span></td><td>只列出包含匹配的文件名</td></tr>
+<tr><td><code>-o</code><span class="mn">only-matching</span></td><td>只输出匹配到的那部分，而不是整行</td></tr>
+<tr><td><code>-E</code><span class="mn">extended-regexp</span></td><td>使用扩展正则，<code>+ ? | ()</code> 不用加反斜杠</td></tr>
+<tr><td><code>-F</code><span class="mn">fixed-strings</span></td><td>把模式当普通文字，不解释正则符号</td></tr>
+<tr><td><code>-A 3</code> / <code>-B 3</code> / <code>-C 3</code><span class="mn">after / before / context</span></td><td>同时显示匹配行之后 / 之前 / 前后的 3 行</td></tr>
+<tr><td><code>--include="*.py"</code></td><td>递归时只搜索指定类型的文件；<code>--exclude-dir=.git</code> 排除目录</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ grep "error" app.log
+$ grep -i "error" app.log                 # Error、ERROR 也算
+$ grep -rn "TODO" src/                    # 在整个目录里找，带行号
+$ grep -rn --include="*.py" "import os" . # 只在 .py 文件里找
+$ grep -v "^#" nginx.conf | grep -v "^$"  # 去掉注释行和空行，只看有效配置
+$ grep -c "404" access.log                # 有多少行包含 404
+$ grep -l "password" *.conf               # 哪些文件里出现了 password
+$ grep -E "error|warn" app.log            # 包含 error 或 warn
+$ grep -w "id" main.py                    # 匹配 id，但不匹配 idle、uid
+$ grep -C 3 "Traceback" app.log           # 连同前后 3 行一起显示，方便看上下文
+$ grep -oE "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" access.log   # 提取所有 IP 地址
+$ ps aux | grep nginx                     # 在其他命令的输出里筛选
+</pre></div>
+<h4>正则表达式速查</h4>
+<div class="tbl"><table>
+<tr><th>写法</th><th>含义</th><th>例子</th></tr>
+<tr><td><code>.</code></td><td>任意一个字符</td><td><code>a.c</code> 匹配 abc、a1c</td></tr>
+<tr><td><code>*</code></td><td>前一个字符出现 0 次或多次</td><td><code>ab*c</code> 匹配 ac、abbc</td></tr>
+<tr><td><code>+</code></td><td>1 次或多次（需要 -E）</td><td><code>[0-9]+</code> 一串数字</td></tr>
+<tr><td><code>?</code></td><td>0 次或 1 次（需要 -E）</td><td><code>colou?r</code></td></tr>
+<tr><td><code>^</code> / <code>$</code></td><td>行首 / 行尾</td><td><code>^$</code> 匹配空行</td></tr>
+<tr><td><code>[abc]</code></td><td>方括号里任意一个字符；<code>[^abc]</code> 表示不是这些</td><td><code>[0-9]</code>、<code>[a-zA-Z]</code></td></tr>
+<tr><td><code>a|b</code></td><td>a 或 b（需要 -E）</td><td><code>GET|POST</code></td></tr>
+<tr><td><code>( )</code></td><td>分组（需要 -E）</td><td><code>(ab)+</code></td></tr>
+<tr><td><code>\</code></td><td>转义，让特殊字符变成普通字符</td><td><code>\.</code> 匹配真正的点</td></tr>
+</table></div>
+<div class="note"><b>提示：</b>模式用单引号或双引号括起来，避免 shell 先把 <code>*</code>、<code>$</code> 等符号解释掉。</div>
+</article>
+
+<article class="cmd" id="locate">
+<div class="cmd-h"><h3>locate</h3><span class="en">locate</span><span class="man">man 1</span></div>
+<p class="full">通过预先建好的索引数据库，快速按文件名查找</p>
+<p>比 find 快得多，因为它查的是数据库而不是实时扫描磁盘，但刚创建的文件要等数据库更新后才能搜到。Ubuntu 上用 <code>sudo apt install plocate</code> 安装。</p>
+<div class="code"><pre class="ex">
+$ locate nginx.conf
+/etc/nginx/nginx.conf
+$ locate -i readme               # 忽略大小写
+$ sudo updatedb                  # 立即更新数据库（系统每天会自动更新一次）
+</pre></div>
+</article>
+
+<article class="cmd" id="xargs">
+<div class="cmd-h"><h3>xargs</h3><span class="en">extended arguments</span><span class="man">man 1</span></div>
+<p class="full">把标准输入的内容转换成另一个命令的参数</p>
+<p>很多命令（如 <code>rm</code>、<code>cp</code>）只接受参数，不读管道输入。xargs 负责把上一个命令的输出变成它们的参数。</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-0</code><span class="mn">null</span></td><td>以空字符分隔输入，配合 <code>find -print0</code> 处理带空格的文件名</td></tr>
+<tr><td><code>-n 1</code><span class="mn">max-args</span></td><td>每次只传 1 个参数</td></tr>
+<tr><td><code>-I {}</code><span class="mn">replace</span></td><td>用 <code>{}</code> 代表每一项，可以放在命令中间</td></tr>
+<tr><td><code>-P 4</code><span class="mn">max-procs</span></td><td>最多 4 个并行执行</td></tr>
+<tr><td><code>-r</code><span class="mn">no-run-if-empty</span></td><td>输入为空时不执行命令</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ find . -name "*.tmp" | xargs rm                 # 删除所有 .tmp
+$ find . -name "*.tmp" -print0 | xargs -0 rm      # 文件名带空格时，用这对组合更安全
+$ xargs -n 1 curl -O &lt; urls.txt                   # 逐个下载 urls.txt 里的网址
+$ ls *.jpg | xargs -I {} cp {} backup/{}          # {} 代表每个文件名
+$ cat hosts.txt | xargs -P 4 -I {} ping -c 1 {}   # 4 个并行 ping
+</pre></div>
+</article>
+</section>
+
+<!-- ============ 文本处理 ============ -->
+<section class="cat" id="text">
+<h2>文本处理<span class="en">Text</span></h2>
+<div class="intro"><p>这些命令单独用都很简单，威力在于用管道 <code>|</code> 串起来：一个命令的输出作为下一个命令的输入。管道的详细说明见 <a href="#pipe">管道</a>。</p></div>
+
+<article class="cmd" id="echo">
+<div class="cmd-h"><h3>echo / printf</h3><span class="en">echo · print formatted</span><span class="man">内建</span></div>
+<p class="full">输出文字；printf 可以按格式输出</p>
+<div class="code"><pre class="ex">
+$ echo "Hello, $USER"
+Hello, alice
+$ echo -e "第一行\n第二行"        # -e 解释 \n（换行）、\t（Tab）等转义
+第一行
+第二行
+$ echo -n "不换行"               # -n 末尾不加换行
+$ echo "export EDITOR=vim" >> ~/.bashrc   # 往文件末尾追加一行
+$ printf "%-8s %5d\n" apple 3 banana 12   # %-8s 左对齐占 8 格，%5d 右对齐占 5 格的整数
+apple        3
+banana      12
+</pre></div>
+</article>
+
+<article class="cmd" id="sort">
+<div class="cmd-h"><h3>sort</h3><span class="en">sort</span><span class="man">man 1</span></div>
+<p class="full">对行排序</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-n</code><span class="mn">numeric</span></td><td>按数值排序。不加的话按字符排，10 会排在 9 前面</td></tr>
+<tr><td><code>-r</code><span class="mn">reverse</span></td><td>倒序</td></tr>
+<tr><td><code>-h</code><span class="mn">human-numeric</span></td><td>能正确比较 2K、1M、3G 这类大小</td></tr>
+<tr><td><code>-k 2,2</code><span class="mn">key</span></td><td>按第 2 列排序（只写 <code>-k 2</code> 表示从第 2 列到行尾）</td></tr>
+<tr><td><code>-t ,</code><span class="mn">field-separator</span></td><td>指定列分隔符，默认是空白</td></tr>
+<tr><td><code>-u</code><span class="mn">unique</span></td><td>排序并去重</td></tr>
+<tr><td><code>-V</code><span class="mn">version-sort</span></td><td>按版本号排序，1.10 排在 1.9 后面</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sort names.txt
+$ sort -n scores.txt              # 数值从小到大
+$ sort -rn scores.txt             # 从大到小
+$ sort -t, -k3,3n data.csv        # CSV 按第 3 列数值排序
+$ du -sh * | sort -rh             # 目录大小从大到小
+$ sort -u emails.txt > uniq.txt   # 去重后保存
+</pre></div>
+</article>
+
+<article class="cmd" id="uniq">
+<div class="cmd-h"><h3>uniq</h3><span class="en">unique</span><span class="man">man 1</span></div>
+<p class="full">去除或统计重复行</p>
+<p>uniq 只处理<b>相邻</b>的重复行，所以几乎总是先 <code>sort</code> 再 <code>uniq</code>。</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-c</code><span class="mn">count</span></td><td>每行前面加上出现次数</td></tr>
+<tr><td><code>-d</code><span class="mn">repeated</span></td><td>只显示有重复的行</td></tr>
+<tr><td><code>-u</code><span class="mn">unique</span></td><td>只显示没有重复的行</td></tr>
+<tr><td><code>-i</code><span class="mn">ignore-case</span></td><td>忽略大小写</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sort visitors.txt | uniq -c | sort -rn | head   # 出现次数最多的前 10 项（经典组合）
+     42 192.0.2.10
+     17 198.51.100.7
+      9 203.0.113.5
+$ sort list.txt | uniq -d                         # 找出重复项
+</pre></div>
+</article>
+
+<article class="cmd" id="cut">
+<div class="cmd-h"><h3>cut</h3><span class="en">cut</span><span class="man">man 1</span></div>
+<p class="full">按分隔符或字符位置截取每行的一部分</p>
+<div class="code"><pre class="ex">
+$ cut -d: -f1 /etc/passwd         # -d 分隔符（delimiter）为 :，-f 取第 1 列（field）：所有用户名
+$ cut -d, -f1,3 data.csv          # 第 1 和第 3 列
+$ cut -d, -f2- data.csv           # 第 2 列到最后
+$ cut -c1-8 ids.txt               # -c 按字符（character）：每行前 8 个字符
+</pre></div>
+<div class="note"><b>提示：</b>cut 只认单个分隔字符。遇到用多个空格对齐的输出（如 <code>ps</code>、<code>df</code>），用 <a href="#awk">awk</a> 更合适。</div>
+</article>
+
+<article class="cmd" id="tr">
+<div class="cmd-h"><h3>tr</h3><span class="en">translate</span><span class="man">man 1</span></div>
+<p class="full">逐字符替换或删除</p>
+<div class="code"><pre class="ex">
+$ echo "hello" | tr a-z A-Z        # 转大写
+HELLO
+$ echo "a,b,c" | tr ',' '\n'       # 逗号换成换行
+a
+b
+c
+$ tr -d '\r' &lt; win.txt > unix.txt  # -d = delete：删掉 Windows 换行多出的 \r
+$ echo "a     b" | tr -s ' '       # -s = squeeze：连续空格压成一个
+a b
+</pre></div>
+<p>Windows 的换行是 <code>\r\n</code>，Linux 只用 <code>\n</code>。<code>\r</code> 是 <dfn>CR<small>Carriage Return，回车</small></dfn>，从 Windows 拷来的脚本运行报 <code>$'\r': command not found</code> 就是它造成的。</p>
+</article>
+
+<article class="cmd" id="sed">
+<div class="cmd-h"><h3>sed</h3><span class="en">stream editor</span><span class="man">man 1</span></div>
+<p class="full">流编辑器：按规则批量修改文本</p>
+<p>sed 逐行读取输入，按命令处理后输出。默认只把结果打印到屏幕，<b>不改原文件</b>；加 <code>-i</code> 才会直接修改。</p>
+<div class="tbl"><table>
+<tr><th>写法</th><th>含义</th></tr>
+<tr><td><code>s/旧/新/</code></td><td>替换（substitute），每行只换第一个</td></tr>
+<tr><td><code>s/旧/新/g</code></td><td>g = global，每行全部替换</td></tr>
+<tr><td><code>-i</code><span class="mn">in-place</span></td><td>直接修改文件；<code>-i.bak</code> 修改前先备份</td></tr>
+<tr><td><code>-n '10,20p'</code><span class="mn">quiet + print</span></td><td>只打印第 10 到 20 行</td></tr>
+<tr><td><code>'/模式/d'</code></td><td>删除（delete）匹配的行</td></tr>
+<tr><td><code>-E</code></td><td>使用扩展正则，分组可以用 <code>\1</code> <code>\2</code> 引用</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sed 's/http:/https:/g' links.txt        # 预览替换结果
+$ sed -i 's/http:/https:/g' links.txt     # 确认没问题后直接改文件
+$ sed -i.bak 's/8080/9090/' app.conf      # 改之前自动备份为 app.conf.bak
+$ sed -n '100,120p' big.log               # 只看第 100～120 行
+$ sed '/^#/d' nginx.conf                  # 删除注释行
+$ sed '/^$/d' file.txt                    # 删除空行
+$ sed -i '3d' file.txt                    # 删除第 3 行
+$ sed 's#/usr/local#/opt#g' paths.txt     # 分隔符可以换成 #，替换路径时不用转义 /
+$ sed -E 's/([0-9]{4})-([0-9]{2})/\2\/\1/' dates.txt   # 2026-09 改成 09/2026
+</pre></div>
+<div class="warn"><b>macOS：</b>BSD 版的 sed 使用 <code>-i</code> 时必须带一个参数，不要备份就写 <code>sed -i '' 's/a/b/' file</code>。</div>
+</article>
+
+<article class="cmd" id="awk">
+<div class="cmd-h"><h3>awk</h3><span class="en">Aho, Weinberger, Kernighan</span><span class="man">man 1</span></div>
+<p class="full">按列处理文本的小语言，名字取自三位作者姓氏首字母</p>
+<p>awk 把每行按空白（或指定的分隔符）切成若干列，<code>$1</code> 是第一列，<code>$0</code> 是整行。常用内置变量：<dfn>NR<small>Number of Records，当前行号</small></dfn>、<dfn>NF<small>Number of Fields，当前行的列数</small></dfn>，<code>$NF</code> 就是最后一列。</p>
+<p class="syn">awk [-F <var>分隔符</var>] '<var>条件</var> { <var>动作</var> }' <var>文件</var></p>
+<div class="code"><pre class="ex">
+$ awk '{print $1, $3}' data.txt               # 打印第 1、3 列
+$ awk -F: '{print $1, $7}' /etc/passwd        # 以 : 分隔：用户名和默认 shell
+$ awk '$3 > 100' data.txt                     # 只打印第 3 列大于 100 的行
+$ awk '/error/ {print NR": "$0}' app.log      # 包含 error 的行，前面加行号
+$ awk '{sum += $2} END {print sum}' sales.txt # 第 2 列求和
+$ awk '{sum += $2} END {print sum/NR}' sales.txt   # 求平均值
+$ df -h | awk 'NR > 1 {print $5, $6}'         # 跳过表头，只要使用率和挂载点
+$ awk '{print $NF}' data.txt                  # 每行的最后一列
+$ awk -F, 'NR > 1 {c[$2]++} END {for (k in c) print k, c[k]}' orders.csv   # 按第 2 列分组计数
+</pre></div>
+<div class="note"><b>提示：</b>awk 的程序一定要用<b>单引号</b>括起来，否则 <code>$1</code> 会被 shell 当成变量先替换掉。</div>
+</article>
+
+<article class="cmd" id="tee">
+<div class="cmd-h"><h3>tee</h3><span class="en">tee</span><span class="man">man 1</span></div>
+<p class="full">把输入同时输出到屏幕和文件</p>
+<p>名字来自水管的 T 形三通接头：数据从一头进来，分两路流出。</p>
+<div class="code"><pre class="ex">
+$ ./build.sh 2>&amp;1 | tee build.log         # 边看输出边保存日志
+$ ls -l | tee list.txt | wc -l            # 保存一份，同时继续往下传
+$ echo "127.0.0.1 dev.local" | sudo tee -a /etc/hosts   # -a = append，追加到需要 root 权限的文件
+</pre></div>
+<div class="note"><b>为什么不用 <code>sudo echo ... >> /etc/hosts</code>？</b>重定向 <code>>></code> 是由当前 shell（普通用户）执行的，sudo 只作用于 echo，所以会提示 Permission denied。换成 <code>sudo tee -a</code> 就是由 root 身份写文件。</div>
+</article>
+
+<article class="cmd" id="column">
+<div class="cmd-h"><h3>column</h3><span class="en">column</span><span class="man">man 1</span></div>
+<p class="full">把文本排成整齐的表格</p>
+<div class="code"><pre class="ex">
+$ column -t -s, data.csv | less -S    # -s 指定分隔符，-t 按表格对齐：在终端里看 CSV
+$ mount | column -t                   # 把杂乱的输出对齐
+</pre></div>
+</article>
+
+<article class="cmd" id="jq">
+<div class="cmd-h"><h3>jq</h3><span class="en">JSON query</span><span class="man">man 1</span></div>
+<p class="full">在命令行里格式化、筛选 JSON</p>
+<p><dfn>JSON<small>JavaScript Object Notation，JavaScript 对象表示法</small></dfn> 是接口最常用的数据格式。jq 需要安装：<code>sudo apt install jq</code>。</p>
+<div class="code"><pre class="ex">
+$ jq . data.json                         # 格式化（美化缩进和颜色）
+$ jq '.name' data.json                   # 取字段
+$ jq -r '.name' data.json                # -r = raw，输出不带引号的原始字符串
+$ jq '.items[].id' data.json             # 取数组里每个元素的 id
+$ jq '.items[] | select(.price > 100)' data.json   # 过滤
+$ curl -s https://api.github.com/repos/jqlang/jq | jq '.stargazers_count'
+</pre></div>
+</article>
+</section>
+
+<!-- ============ Shell 技巧 ============ -->
+<section class="cat" id="shell">
+<h2>管道、重定向与展开<span class="en">Shell</span></h2>
+<div class="intro"><p>这一节不是某个命令，而是 shell 本身的语法。它们决定了命令的输出去哪、输入从哪来、多个命令怎么组合。</p></div>
+
+<article class="cmd topic" id="redirect">
+<div class="cmd-h"><h3>重定向</h3></div>
+<p>每个程序启动时都打开了三个“数据通道”，用编号表示，叫 <dfn>文件描述符<small>File Descriptor，简称 FD</small></dfn>：</p>
+<div class="tbl"><table>
+<tr><th>编号</th><th>名称</th><th>默认连接到</th></tr>
+<tr><td><code>0</code></td><td><dfn>stdin<small>standard input，标准输入</small></dfn></td><td>键盘</td></tr>
+<tr><td><code>1</code></td><td><dfn>stdout<small>standard output，标准输出</small></dfn></td><td>屏幕，正常的输出结果</td></tr>
+<tr><td><code>2</code></td><td><dfn>stderr<small>standard error，标准错误</small></dfn></td><td>屏幕，错误和警告信息</td></tr>
+</table></div>
+<p>重定向就是把这些通道改接到文件上：</p>
+<div class="tbl"><table>
+<tr><th>写法</th><th>作用</th></tr>
+<tr><td><code>命令 > 文件</code></td><td>标准输出写入文件，<b>覆盖</b>原内容</td></tr>
+<tr><td><code>命令 >> 文件</code></td><td>标准输出<b>追加</b>到文件末尾</td></tr>
+<tr><td><code>命令 2> 文件</code></td><td>只把错误信息写入文件</td></tr>
+<tr><td><code>命令 > 文件 2>&amp;1</code></td><td>输出和错误都写入同一个文件。<code>2>&amp;1</code> 意思是“2 号通道接到 1 号现在接的地方”</td></tr>
+<tr><td><code>命令 &amp;> 文件</code></td><td>bash 的简写，效果同上</td></tr>
+<tr><td><code>命令 &lt; 文件</code></td><td>从文件读取标准输入</td></tr>
+<tr><td><code>> /dev/null</code></td><td><code>/dev/null</code> 是个“黑洞”设备，写进去的东西全被丢弃</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ ls > files.txt                          # 覆盖写入
+$ date >> run.log                         # 追加一行
+$ find / -name "*.conf" 2> /dev/null      # 丢掉 Permission denied 之类的报错
+$ ./backup.sh > backup.log 2>&amp;1           # 所有输出都进日志
+$ ./noisy.sh > /dev/null 2>&amp;1             # 什么都不显示
+$ mysql mydb &lt; dump.sql                   # 把文件内容作为输入
+$ : > app.log                             # 清空文件内容，文件本身保留（: 是空命令，bash 和 zsh 通用）
+</pre></div>
+<div class="warn"><b>注意顺序：</b><code>命令 > 文件 2>&amp;1</code> 是对的；<code>命令 2>&amp;1 > 文件</code> 只会把正常输出写进文件，错误仍然打印在屏幕上，因为 2 号在 1 号改接之前就已经接到屏幕了。</div>
+<h4>Here document：多行输入</h4>
+<p><code>&lt;&lt;EOF</code> 把接下来直到 <code>EOF</code> 的几行当作输入，常用于在脚本里生成配置文件。<code>EOF</code> 只是约定俗成的结束标记，换成别的词也行。</p>
+<div class="code"><pre class="ex">
+$ cat > hello.txt &lt;&lt;EOF
+> 你好，$USER
+> 今天是 $(date +%F)
+> EOF
+$ cat hello.txt
+你好，alice
+今天是 2026-09-26
+</pre></div>
+<p>开头的 <code>></code> 是 shell 在等你继续输入时显示的提示符，不用输入。如果不想让 <code>$USER</code> 被替换，写成 <code>&lt;&lt;'EOF'</code>。</p>
+</article>
+
+<article class="cmd topic" id="pipe">
+<div class="cmd-h"><h3>管道</h3></div>
+<p><code>命令1 | 命令2</code> 把命令 1 的标准输出直接接到命令 2 的标准输入，中间不需要临时文件。可以一直串下去，每一步只做一件事。</p>
+<div class="code"><pre class="ex">
+$ ls /usr/bin | wc -l                     # /usr/bin 下有多少个程序
+$ history | grep ssh                      # 以前执行过哪些 ssh 命令
+$ ps aux | grep python                    # 找 python 进程
+$ cat access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -5
+    312 192.0.2.10
+    188 198.51.100.7
+</pre></div>
+<p>最后一条的读法：取出每行第一列（IP）→ 排序 → 合并相同的并计数 → 按次数从大到小排 → 取前 5。</p>
+<div class="note"><b>提示：</b>管道只传递标准输出。想把错误信息也传过去，写 <code>命令 2>&amp;1 | 下一个命令</code>。</div>
+</article>
+
+<article class="cmd topic" id="chain">
+<div class="cmd-h"><h3>组合多条命令</h3></div>
+<p>每条命令结束时都会返回一个 <dfn>退出码<small>exit status</small></dfn>：<code>0</code> 表示成功，非 0 表示失败。<code>$?</code> 保存着上一条命令的退出码。</p>
+<div class="tbl"><table>
+<tr><th>写法</th><th>含义</th></tr>
+<tr><td><code>A ; B</code></td><td>先执行 A，再执行 B，不管 A 成功与否</td></tr>
+<tr><td><code>A &amp;&amp; B</code></td><td>A 成功了才执行 B</td></tr>
+<tr><td><code>A || B</code></td><td>A 失败了才执行 B。注意 <code>A &amp;&amp; B || C</code> 在 B 失败时也会执行 C，不完全等于“如果…否则…”</td></tr>
+<tr><td><code>A &amp;</code></td><td>A 放到后台运行，立即返回提示符</td></tr>
+<tr><td><code>( A; B )</code></td><td>在子 shell 里执行，里面的 cd、变量不会影响当前 shell</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ mkdir build &amp;&amp; cd build                    # 建成功了才进入
+$ sudo apt update &amp;&amp; sudo apt upgrade -y     # 更新索引成功后再升级
+$ ping -c1 example.com > /dev/null &amp;&amp; echo 通 || echo 不通
+$ grep -q root /etc/passwd; echo $?         # -q 不输出，只看退出码
+0
+$ (cd /var/www &amp;&amp; tar -czf ~/site.tgz html) # 执行完仍停留在原来的目录
+</pre></div>
+</article>
+
+<article class="cmd topic" id="expand">
+<div class="cmd-h"><h3>引号、变量与通配符</h3></div>
+<p>shell 在执行命令之前，会先把命令里的一些特殊写法“展开”成实际内容。引号用来控制要不要展开。</p>
+<div class="tbl"><table>
+<tr><th>写法</th><th>含义</th></tr>
+<tr><td><code>'单引号'</code></td><td>原样保留，里面的 <code>$</code>、<code>*</code> 等都不展开</td></tr>
+<tr><td><code>"双引号"</code></td><td>保留空格，但 <code>$变量</code> 和 <code>$(命令)</code> 仍会展开</td></tr>
+<tr><td><code>\</code></td><td>转义下一个字符；放在行尾表示命令在下一行继续</td></tr>
+<tr><td><code>$VAR</code> / <code>${VAR}</code></td><td>取变量的值；后面紧跟字母时用大括号，如 <code>${name}_bak</code></td></tr>
+<tr><td><code>$(命令)</code></td><td>命令替换：用命令的输出替换这里。旧写法是反引号 <code>`命令`</code></td></tr>
+<tr><td><code>*</code></td><td>任意长度的任意字符（不匹配以 . 开头的隐藏文件）</td></tr>
+<tr><td><code>?</code></td><td>任意一个字符</td></tr>
+<tr><td><code>[0-9]</code></td><td>方括号里的任意一个字符</td></tr>
+<tr><td><code>{a,b,c}</code></td><td>大括号展开，生成多个词</td></tr>
+<tr><td><code>{1..5}</code></td><td>生成序列 1 2 3 4 5；<code>{a..e}</code> 也可以</td></tr>
+</table></div>
+<p><code>*</code>、<code>?</code>、<code>[]</code> 这类文件名通配叫 <dfn>glob<small>global 的缩写，得名于早期 Unix 里负责展开通配符的 glob 程序</small></dfn>。</p>
+<div class="code"><pre class="ex">
+$ name="Linux"                            # 变量赋值，等号两边不能有空格
+$ echo 'Hello $name'
+Hello $name
+$ echo "Hello $name"
+Hello Linux
+$ echo "今天是 $(date +%F)，当前目录有 $(ls | wc -l) 个文件"
+今天是 2026-09-26，当前目录有 12 个文件
+$ ls *.txt                                # 所有 .txt
+$ ls log-2026-0?.txt                      # log-2026-01.txt 到 log-2026-09.txt
+$ echo {1..5}
+1 2 3 4 5
+$ touch day{01..03}.md                    # 生成 day01.md day02.md day03.md
+$ backup_dir="/backup/$(date +%Y%m%d)"    # 用命令结果拼路径
+</pre></div>
+<div class="note"><b>提示：</b>用变量表示文件名时，养成加双引号的习惯：<code>rm "$file"</code>。不加的话，文件名里有空格就会被拆成两个参数。</div>
+</article>
+</section>
+
+<!-- ============ 权限与用户 ============ -->
+<section class="cat" id="perm">
+<h2>权限与用户<span class="en">Permissions</span></h2>
+
+<article class="cmd topic" id="perms">
+<div class="cmd-h"><h3>读懂权限</h3></div>
+<p><code>ls -l</code> 输出开头的 10 个字符描述了文件类型和权限，例如 <code>-rwxr-xr--</code>：</p>
+<div class="split" aria-label="权限字符串拆解">
+  <div><code>-</code><span>类型</span></div>
+  <div><code>rwx</code><span>所有者 u</span></div>
+  <div><code>r-x</code><span>所属组 g</span></div>
+  <div><code>r--</code><span>其他人 o</span></div>
+</div>
+<p>第 1 位是类型：<code>-</code> 普通文件，<code>d</code> 目录，<code>l</code> 符号链接。后面每 3 位一组，分别对应 <b>u</b>（user，文件所有者）、<b>g</b>（group，所属组的成员）、<b>o</b>（others，其他所有人）。每组的三位固定是 r、w、x，没有该权限就显示 <code>-</code>。</p>
+<div class="tbl"><table>
+<tr><th>权限</th><th>数值</th><th>对文件</th><th>对目录</th></tr>
+<tr><td><code>r</code> read</td><td>4</td><td>读取内容</td><td>列出目录里的文件名</td></tr>
+<tr><td><code>w</code> write</td><td>2</td><td>修改内容</td><td>在目录里新建、删除、重命名文件</td></tr>
+<tr><td><code>x</code> execute</td><td>1</td><td>作为程序执行</td><td>进入目录（cd）</td></tr>
+</table></div>
+<p>数字写法是把每组的数值相加：<code>rwx</code> = 4+2+1 = 7，<code>r-x</code> = 4+1 = 5，<code>r--</code> = 4。所以 <code>rwxr-xr--</code> 就是 <b>754</b>。常见组合：</p>
+<div class="tbl"><table>
+<tr><th>数字</th><th>字符</th><th>典型用途</th></tr>
+<tr><td><code>755</code></td><td>rwxr-xr-x</td><td>目录、可执行脚本：自己可改，别人可读可执行</td></tr>
+<tr><td><code>644</code></td><td>rw-r--r--</td><td>普通文件：自己可改，别人只读</td></tr>
+<tr><td><code>700</code></td><td>rwx------</td><td>私人目录，如 <code>~/.ssh</code></td></tr>
+<tr><td><code>600</code></td><td>rw-------</td><td>私密文件，如 SSH 私钥、含密码的配置</td></tr>
+<tr><td><code>777</code></td><td>rwxrwxrwx</td><td>所有人可读写执行，<b>几乎永远不该用</b></td></tr>
+</table></div>
+<div class="note"><b>umask：</b>新建文件的默认权限由 <dfn>umask<small>user file-creation mode mask，用户文件创建权限掩码</small></dfn> 决定。常见值 <code>022</code> 表示从默认权限里去掉组和其他人的写权限，所以新文件是 644、新目录是 755。输入 <code>umask</code> 可以查看当前值。</div>
+<div class="note"><b>特殊权限：</b>偶尔会在 x 的位置看到 <code>s</code> 或 <code>t</code>。<code>s</code> 是 <dfn>SUID<small>Set User ID，运行时以文件所有者的身份执行</small></dfn>，比如 <code>/usr/bin/passwd</code> 靠它让普通用户能修改密码文件；<code>t</code> 是粘滞位（sticky bit），出现在 <code>/tmp</code> 上，表示目录里的文件只有其所有者能删除。</div>
+</article>
+
+<article class="cmd" id="chmod">
+<div class="cmd-h"><h3>chmod</h3><span class="en">change mode</span><span class="man">man 1</span></div>
+<p class="full">修改文件权限</p>
+<p>两种写法：<b>数字</b>（一次设定全部权限）和<b>符号</b>（在现有权限上增减）。符号写法是 <code>谁 操作 权限</code>：谁用 <code>u g o a</code>（a = all，所有人），操作用 <code>+</code> 添加、<code>-</code> 去掉、<code>=</code> 设为。</p>
+<div class="code"><pre class="ex">
+$ chmod +x deploy.sh                 # 加执行权限，之后就能 ./deploy.sh 运行
+$ chmod 755 deploy.sh                # rwxr-xr-x
+$ chmod 644 index.html               # rw-r--r--
+$ chmod 600 ~/.ssh/id_ed25519        # 私钥只能自己读写，权限太宽 ssh 会拒绝使用
+$ chmod u+x,go-w script.sh           # 所有者加执行；组和其他人去掉写
+$ chmod -R 755 public/               # -R = recursive，递归修改整个目录
+$ chmod -R u=rwX,go=rX public/       # 大写 X：只给目录（和本来就可执行的文件）加 x
+</pre></div>
+<div class="note"><b>提示：</b><code>chmod -R 755</code> 会让目录里所有普通文件也变成可执行。想要“目录 755、文件 644”，用最后一条大写 X 的写法。</div>
+</article>
+
+<article class="cmd" id="chown">
+<div class="cmd-h"><h3>chown / chgrp</h3><span class="en">change owner · change group</span><span class="man">man 1</span></div>
+<p class="full">修改文件的所有者和所属组</p>
+<p>修改所有者需要 root 权限，所以通常要加 sudo。</p>
+<div class="code"><pre class="ex">
+$ sudo chown alice notes.txt                   # 所有者改为 alice
+$ sudo chown alice:dev notes.txt               # 同时改所有者和组，格式 用户:组
+$ sudo chown -R www-data:www-data /var/www/site   # 递归：网站文件交给 web 服务器用户
+$ sudo chown :dev report.pdf                   # 只改组
+$ sudo chgrp dev report.pdf                    # 效果同上
+</pre></div>
+</article>
+
+<article class="cmd" id="sudo">
+<div class="cmd-h"><h3>sudo</h3><span class="en">superuser do</span><span class="man">man 8</span></div>
+<p class="full">以超级用户（root）或其他用户的身份执行命令</p>
+<p>日常用普通用户登录，只在需要时用 sudo 临时获得 root 权限，这比一直用 root 安全。第一次使用会要求输入<b>你自己</b>的密码（不是 root 密码），之后一段时间内（默认 15 分钟）不用重复输入。能不能用 sudo 由 <code>/etc/sudoers</code> 决定；Ubuntu 上 <code>sudo</code> 组的成员都可以用，CentOS/Fedora 上是 <code>wheel</code> 组。</p>
+<div class="tbl"><table>
+<tr><th>写法</th><th>含义</th></tr>
+<tr><td><code>sudo 命令</code></td><td>以 root 身份执行一条命令</td></tr>
+<tr><td><code>sudo !!</code></td><td>用 sudo 重新执行上一条命令（忘加 sudo 时最常用）</td></tr>
+<tr><td><code>sudo -i</code></td><td>切换成 root 的登录 shell，<code>exit</code> 返回</td></tr>
+<tr><td><code>sudo -u bob 命令</code></td><td>以 bob 的身份执行</td></tr>
+<tr><td><code>sudo -l</code></td><td>列出（list）自己被允许执行哪些命令</td></tr>
+<tr><td><code>sudo visudo</code></td><td>安全地编辑 sudoers 文件，保存前会检查语法，避免把自己锁在外面</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ apt install nginx
+E: Could not open lock file ... (13: Permission denied)
+$ sudo !!
+sudo apt install nginx
+[sudo] password for alice:
+$ sudo -u postgres psql                   # 以 postgres 用户身份打开数据库
+</pre></div>
+<div class="note"><b>提示：</b>输入密码时屏幕上不会显示任何字符，连星号也没有，这是正常的，输完直接回车。</div>
+</article>
+
+<article class="cmd" id="su">
+<div class="cmd-h"><h3>su</h3><span class="en">substitute user</span><span class="man">man 1</span></div>
+<p class="full">切换到另一个用户（也常被解释为 switch user）</p>
+<p>和 sudo 不同，su 需要输入<b>目标用户</b>的密码。Ubuntu 默认没给 root 设密码，所以 <code>su -</code> 用不了，用 <code>sudo -i</code> 代替。</p>
+<div class="code"><pre class="ex">
+$ su - bob                        # 切换成 bob，"-" 表示同时加载 bob 的环境变量和家目录
+$ su -                            # 切换成 root
+$ sudo su - bob                   # 不知道 bob 的密码时，借 sudo 切换
+$ exit                            # 回到原来的用户
+</pre></div>
+</article>
+
+<article class="cmd" id="id">
+<div class="cmd-h"><h3>whoami / id / who</h3><span class="en">who am I · identity · who</span><span class="man">man 1</span></div>
+<p class="full">查看当前用户身份和登录情况</p>
+<div class="code"><pre class="ex">
+$ whoami                          # 我现在是谁
+alice
+$ id                              # 用户编号、组编号、所在的所有组
+uid=1000(alice) gid=1000(alice) groups=1000(alice),27(sudo),998(docker)
+$ id bob                          # 查看别的用户
+$ groups                          # 只看自己在哪些组
+$ who                             # 当前有谁登录着
+$ w                               # 同上，并显示每人在做什么和系统负载
+$ last | head                     # 最近的登录记录
+</pre></div>
+<p><dfn>UID<small>User ID，用户编号</small></dfn> 和 <dfn>GID<small>Group ID，组编号</small></dfn> 才是系统真正识别用户和组的方式，名字只是方便人看。root 的 UID 是 0，普通用户一般从 1000 开始。</p>
+</article>
+
+<article class="cmd" id="useradd">
+<div class="cmd-h"><h3>useradd / usermod / passwd</h3><span class="en">add · modify user · password</span><span class="man">man 8</span></div>
+<p class="full">创建和管理用户</p>
+<p>用户信息存在 <code>/etc/passwd</code>，加密后的密码在 <code>/etc/shadow</code>，组信息在 <code>/etc/group</code>。Debian/Ubuntu 另有更友好的 <code>adduser</code>，会一步步提示你填写。</p>
+<div class="tbl"><table>
+<tr><th>命令</th><th>作用</th></tr>
+<tr><td><code>useradd -m -s /bin/bash bob</code></td><td>新建用户；<code>-m</code> 同时创建家目录，<code>-s</code> 指定登录 shell</td></tr>
+<tr><td><code>adduser bob</code></td><td>Debian/Ubuntu 交互式创建，自动建家目录、设密码</td></tr>
+<tr><td><code>passwd bob</code></td><td>设置或修改 bob 的密码；不带用户名时修改自己的</td></tr>
+<tr><td><code>usermod -aG sudo bob</code></td><td>把 bob 加入 sudo 组；<code>-a</code> = append，<code>-G</code> = groups</td></tr>
+<tr><td><code>usermod -s /bin/zsh bob</code></td><td>修改默认 shell</td></tr>
+<tr><td><code>userdel -r bob</code></td><td>删除用户，<code>-r</code> 连家目录一起删</td></tr>
+<tr><td><code>groupadd dev</code></td><td>新建组</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sudo useradd -m -s /bin/bash bob
+$ sudo passwd bob
+$ sudo usermod -aG docker $USER           # 让自己不加 sudo 也能用 docker
+$ newgrp docker                           # 只在新开的这个 shell 里生效；想处处生效要重新登录
+$ getent passwd bob                       # 查看用户信息
+bob:x:1001:1001::/home/bob:/bin/bash
+</pre></div>
+<div class="warn"><b>注意：</b><code>usermod -G</code> 不加 <code>-a</code> 会把用户<b>移出</b>所有没列出的组。给自己用时如果漏了 -a，可能会失去 sudo 权限。</div>
+</article>
+</section>
+
+<!-- ============ 进程 ============ -->
+<section class="cat" id="proc">
+<h2>进程与任务<span class="en">Processes</span></h2>
+<div class="intro"><p>每个正在运行的程序都是一个进程，有一个唯一的编号 <dfn>PID<small>Process ID，进程编号</small></dfn>。启动它的进程叫父进程，编号记作 <dfn>PPID<small>Parent Process ID，父进程编号</small></dfn>。</p></div>
+
+<article class="cmd" id="ps">
+<div class="cmd-h"><h3>ps</h3><span class="en">process status</span><span class="man">man 1</span></div>
+<p class="full">查看进程快照</p>
+<p>ps 有两套选项风格，最常用的两种写法效果差不多：<code>ps aux</code>（BSD 风格，不带减号：a = 所有用户，u = 显示用户等详细列，x = 包括没有终端的后台进程）和 <code>ps -ef</code>（标准风格：-e = every 全部，-f = full 完整格式）。</p>
+<div class="code"><pre class="ex">
+$ ps aux
+USER   PID %CPU %MEM    VSZ    RSS TTY   STAT START  TIME COMMAND
+root     1  0.0  0.1 167744  11800 ?     Ss   Sep20  0:04 /sbin/init
+alice 4127  2.3  1.5 912340 121044 pts/0 Sl+  10:02  0:31 python3 app.py
+$ ps aux | grep nginx                     # 找某个程序的进程
+$ ps aux --sort=-%mem | head -6           # 内存占用最多的 5 个（- 表示降序）
+$ ps aux --sort=-%cpu | head -6           # CPU 占用最多的 5 个
+$ ps -ef --forest                         # 以树状显示父子关系（也可以用 pstree）
+$ ps -o pid,ppid,%cpu,%mem,cmd -p 4127    # 只看指定进程的指定列
+</pre></div>
+<div class="tbl"><table>
+<tr><th>列</th><th>含义</th></tr>
+<tr><td><code>%CPU</code> / <code>%MEM</code></td><td>CPU 和内存占用百分比</td></tr>
+<tr><td><code>VSZ</code></td><td>Virtual Memory Size，虚拟内存大小（KB），包括没真正用到的，参考意义不大</td></tr>
+<tr><td><code>RSS</code></td><td>Resident Set Size，常驻内存大小（KB），进程实际占用的物理内存，看这个</td></tr>
+<tr><td><code>TTY</code></td><td>TeleTYpewriter（电传打字机），指进程所在的终端；<code>?</code> 表示没有终端（后台服务）</td></tr>
+<tr><td><code>STAT</code></td><td>状态：<code>R</code> 运行中，<code>S</code> 休眠，<code>D</code> 不可中断（通常在等磁盘），<code>Z</code> 僵尸进程（已结束但父进程没回收），<code>T</code> 已暂停</td></tr>
+</table></div>
+</article>
+
+<article class="cmd" id="top">
+<div class="cmd-h"><h3>top / htop</h3><span class="en">table of processes</span><span class="man">man 1</span></div>
+<p class="full">实时查看系统资源和进程</p>
+<div class="code"><pre class="ex">
+$ top
+top - 10:32:05 up 12 days,  3:41,  2 users,  load average: 0.52, 0.38, 0.30
+Tasks: 213 total,   1 running, 212 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  3.1 us,  1.0 sy,  0.0 ni, 95.6 id,  0.3 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :   7856.4 total,   3264.1 free,   2150.6 used,   2441.7 buff/cache
+$ top -u alice                            # 只看某个用户的进程
+$ htop                                    # 更好用的版本，需安装：sudo apt install htop
+</pre></div>
+<p>CPU 一行：<code>us</code> 用户程序（user），<code>sy</code> 内核（system），<code>id</code> 空闲（idle），<code>wa</code> 等待磁盘读写（I/O wait，I/O 即 Input/Output 输入输出；这个值持续偏高往往说明磁盘是瓶颈），<code>st</code> 被宿主机占用（steal，只在虚拟机里出现）。load average 的含义见 <a href="#uptime">uptime</a>。</p>
+<div class="tbl"><table>
+<tr><th>top 里的按键</th><th>作用</th></tr>
+<tr><td><code>P</code> / <code>M</code></td><td>按 CPU / 内存占用排序</td></tr>
+<tr><td><code>1</code></td><td>分别显示每个 CPU 核心</td></tr>
+<tr><td><code>c</code></td><td>显示完整命令行</td></tr>
+<tr><td><code>k</code></td><td>输入 PID 结束进程（kill）</td></tr>
+<tr><td><code>u</code></td><td>只看某个用户</td></tr>
+<tr><td><code>q</code></td><td>退出</td></tr>
+</table></div>
+<p>htop 可以用鼠标点、上下键选择进程，底部有功能键提示：<code>F3</code> 搜索、<code>F5</code> 树状视图、<code>F6</code> 选择排序列、<code>F9</code> 结束进程、<code>F10</code> 退出。</p>
+</article>
+
+<article class="cmd" id="kill">
+<div class="cmd-h"><h3>kill / pkill / killall</h3><span class="en">kill</span><span class="man">man 1</span></div>
+<p class="full">向进程发送信号，最常用来结束进程</p>
+<p>kill 其实是“发信号”，只是默认发送的信号会让进程结束。<code>kill</code> 按 PID 发送，<code>pkill</code> 按名称匹配，<code>killall</code> 按精确的程序名。</p>
+<div class="tbl"><table>
+<tr><th>信号</th><th>编号</th><th>含义</th></tr>
+<tr><td><code>SIGTERM</code></td><td>15</td><td>terminate，终止。kill 的默认信号，请进程收尾后退出</td></tr>
+<tr><td><code>SIGKILL</code></td><td>9</td><td>kill，强制杀死。进程无法拦截，也来不及保存数据，是最后的手段</td></tr>
+<tr><td><code>SIGINT</code></td><td>2</td><td>interrupt，中断。按 Ctrl+C 就是发这个</td></tr>
+<tr><td><code>SIGHUP</code></td><td>1</td><td>hang up，挂断。终端关闭时发给进程；很多服务收到它会重新加载配置</td></tr>
+<tr><td><code>SIGSTOP</code> / <code>SIGCONT</code></td><td>19 / 18</td><td>stop 暂停 / continue 继续</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ kill 4127                               # 发送 SIGTERM，请它正常退出
+$ kill -9 4127                            # 等几秒还没退出，再强制结束
+$ kill -HUP 812                           # 让进程重新加载配置
+$ pkill -f "python3 app.py"               # -f 按完整命令行匹配
+$ pkill -u bob                            # 结束 bob 的所有进程
+$ killall nginx                           # 结束所有叫 nginx 的进程
+$ kill -l                                 # 列出所有信号
+</pre></div>
+</article>
+
+<article class="cmd" id="pgrep">
+<div class="cmd-h"><h3>pgrep</h3><span class="en">process grep</span><span class="man">man 1</span></div>
+<p class="full">按名称查找进程的 PID</p>
+<p>比 <code>ps aux | grep</code> 干净，不会把 grep 自己也列出来。</p>
+<div class="code"><pre class="ex">
+$ pgrep nginx
+812
+813
+$ pgrep -a python                         # -a 同时显示完整命令行
+4127 python3 app.py
+$ pgrep -u alice                          # alice 的所有进程
+</pre></div>
+</article>
+
+<article class="cmd topic" id="jobs">
+<div class="cmd-h"><h3>前后台任务 &amp; jobs fg bg</h3><span class="en">foreground · background</span></div>
+<p class="full">在一个终端里同时管理多个任务</p>
+<div class="tbl"><table>
+<tr><th>写法</th><th>作用</th></tr>
+<tr><td><code>命令 &amp;</code></td><td>直接在后台启动，终端可以继续用</td></tr>
+<tr><td><code>Ctrl+Z</code></td><td>把正在前台运行的命令暂停（挂起），它会停住不动，直到用 fg 或 bg 恢复</td></tr>
+<tr><td><code>jobs</code></td><td>列出当前终端的后台任务及编号</td></tr>
+<tr><td><code>fg %1</code></td><td>把 1 号任务调回前台（foreground）</td></tr>
+<tr><td><code>bg %1</code></td><td>让暂停的 1 号任务在后台（background）继续运行</td></tr>
+<tr><td><code>disown %1</code></td><td>让任务脱离当前终端，关掉终端也不会结束</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sleep 300 &amp;
+[1] 5120
+$ vim notes.txt                           # 编辑到一半按 Ctrl+Z
+[2]+  Stopped                 vim notes.txt
+$ jobs
+[1]-  Running                 sleep 300 &amp;
+[2]+  Stopped                 vim notes.txt
+$ fg %2                                   # 回到 vim 继续编辑
+</pre></div>
+<div class="note"><b>提示：</b>后台任务仍属于当前终端，关闭终端或 ssh 断开时通常会被一起结束。需要长期运行的任务用 <a href="#nohup">nohup</a> 或 <a href="#tmux">tmux</a>。</div>
+</article>
+
+<article class="cmd" id="nohup">
+<div class="cmd-h"><h3>nohup</h3><span class="en">no hang up</span><span class="man">man 1</span></div>
+<p class="full">让命令在退出终端后继续运行</p>
+<p>关闭终端时，系统会给其中的进程发送 SIGHUP（挂断信号），进程默认就会退出。nohup 让命令忽略这个信号。没有指定输出位置时，输出会写到当前目录的 <code>nohup.out</code>。</p>
+<div class="code"><pre class="ex">
+$ nohup python3 train.py > train.log 2>&amp;1 &amp;   # 后台运行，输出写进日志
+[1] 6231
+$ tail -f train.log                           # 之后随时回来看进度
+$ pgrep -af train.py                          # 确认它还在跑（-f 按完整命令行匹配，否则只比对进程名 python3）
+</pre></div>
+</article>
+
+<article class="cmd" id="tmux">
+<div class="cmd-h"><h3>tmux</h3><span class="en">terminal multiplexer</span><span class="man">man 1</span></div>
+<p class="full">终端复用器：会话常驻、分屏、断线不丢</p>
+<p>在 tmux 里运行的程序不依赖你的 ssh 连接：网络断了，重新连上后 <code>tmux attach</code> 就能回到原来的界面，程序一直在跑。安装：<code>sudo apt install tmux</code>。tmux 里的快捷键都要先按前缀键 <code>Ctrl+b</code>，松开后再按下一个键。</p>
+<div class="tbl"><table>
+<tr><th>命令 / 按键</th><th>作用</th></tr>
+<tr><td><code>tmux new -s work</code></td><td>新建名为 work 的会话（session）</td></tr>
+<tr><td><code>Ctrl+b d</code></td><td>离开（detach）会话，程序在后台继续运行</td></tr>
+<tr><td><code>tmux ls</code></td><td>列出所有会话</td></tr>
+<tr><td><code>tmux attach -t work</code></td><td>回到 work 会话；只有一个会话时直接 <code>tmux a</code></td></tr>
+<tr><td><code>Ctrl+b c</code></td><td>新建窗口（create）；<code>Ctrl+b n</code> / <code>p</code> 下一个 / 上一个窗口</td></tr>
+<tr><td><code>Ctrl+b %</code></td><td>左右分屏</td></tr>
+<tr><td><code>Ctrl+b "</code></td><td>上下分屏</td></tr>
+<tr><td><code>Ctrl+b 方向键</code></td><td>在分屏之间切换</td></tr>
+<tr><td><code>Ctrl+b [</code></td><td>进入滚动模式查看历史输出，<code>q</code> 退出</td></tr>
+<tr><td><code>exit</code></td><td>关闭当前窗格；全部关闭后会话结束</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ ssh web
+$ tmux new -s train
+$ python3 train.py                        # 开始跑，然后按 Ctrl+b d 离开
+[detached (from session train)]
+$ exit                                    # 断开 ssh 也没关系
+# ……第二天……
+$ ssh web
+$ tmux attach -t train                    # 回到原来的界面
+</pre></div>
+</article>
+
+<article class="cmd" id="watch">
+<div class="cmd-h"><h3>watch</h3><span class="en">watch</span><span class="man">man 1</span></div>
+<p class="full">每隔几秒重复执行一条命令，全屏显示结果</p>
+<div class="code"><pre class="ex">
+$ watch -n 2 free -h                      # -n = interval，每 2 秒刷新
+$ watch -d 'ls -l /tmp'                   # -d = differences，高亮变化的地方
+$ watch -n 1 'ss -tn | wc -l'             # 含管道时整条命令用引号括起来
+</pre></div>
+<p>按 <code>Ctrl+C</code> 退出。</p>
+</article>
+
+<article class="cmd" id="time">
+<div class="cmd-h"><h3>time</h3><span class="en">time</span><span class="man">内建</span></div>
+<p class="full">测量一条命令运行了多久</p>
+<div class="code"><pre class="ex">
+$ time python3 script.py
+real    0m2.314s
+user    0m1.980s
+sys     0m0.120s
+</pre></div>
+<p><code>real</code> 是实际经过的时间；<code>user</code> 是程序自身消耗的 CPU 时间；<code>sys</code> 是内核替它干活（读写文件、网络等）的 CPU 时间。real 远大于 user + sys，通常说明大部分时间花在等待磁盘或网络上。</p>
+</article>
+</section>
+
+<!-- ============ 系统信息 ============ -->
+<section class="cat" id="sys">
+<h2>系统信息与环境<span class="en">System</span></h2>
+
+<article class="cmd" id="uname">
+<div class="cmd-h"><h3>uname</h3><span class="en">Unix name</span><span class="man">man 1</span></div>
+<p class="full">查看内核和系统架构信息</p>
+<div class="code"><pre class="ex">
+$ uname -a                                # -a = all，全部信息
+Linux web01 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC x86_64 GNU/Linux
+$ uname -r                                # -r = kernel release，内核版本
+6.8.0-45-generic
+$ uname -m                                # -m = machine，CPU 架构
+x86_64
+$ cat /etc/os-release                     # 发行版名称和版本（比 uname 更常用）
+PRETTY_NAME="Ubuntu 24.04.1 LTS"
+VERSION_ID="24.04"
+$ hostname                                # 主机名
+web01
+$ hostname -I                             # 本机所有 IP 地址
+192.168.1.20
+</pre></div>
+<p>架构 <code>x86_64</code>（也写作 amd64）是常见的 Intel/AMD 64 位；<code>aarch64</code>（也写作 arm64）是 ARM 64 位，如树莓派、苹果 M 系列芯片上的虚拟机。下载软件时要选对应的版本。<dfn>LTS<small>Long Term Support，长期支持版</small></dfn> 表示这个版本会提供多年的安全更新。</p>
+</article>
+
+<article class="cmd" id="uptime">
+<div class="cmd-h"><h3>uptime</h3><span class="en">up time</span><span class="man">man 1</span></div>
+<p class="full">系统已运行多久，以及平均负载</p>
+<div class="code"><pre class="ex">
+$ uptime
+ 10:32:05 up 12 days,  3:41,  2 users,  load average: 0.52, 0.38, 0.30
+$ nproc                                   # 有几个 CPU 核心，用来对照负载
+4
+</pre></div>
+<p><b>load average</b>（平均负载）的三个数字分别是过去 1、5、15 分钟内，平均有多少个进程正在运行或排队等待 CPU（Linux 上还包括正在等待磁盘读写的进程）。拿它和核心数比：4 核机器负载在 4 以下算正常，长期明显超过 4 说明忙不过来了。</p>
+</article>
+
+<article class="cmd" id="free">
+<div class="cmd-h"><h3>free</h3><span class="en">free</span><span class="man">man 1</span></div>
+<p class="full">查看内存使用情况</p>
+<div class="code"><pre class="ex">
+$ free -h                                 # -h = human，用 Gi、Mi 显示
+               total        used        free      shared  buff/cache   available
+Mem:           7.7Gi       2.1Gi       3.2Gi       120Mi       2.4Gi       5.3Gi
+Swap:          2.0Gi          0B       2.0Gi
+</pre></div>
+<p>判断内存够不够，看 <b>available</b>（可用），而不是 free（完全空闲）。Linux 会把暂时没用的内存拿来做磁盘缓存（buff/cache），程序需要时会立刻让出来，所以 free 很小是正常的。</p>
+<p><dfn>Swap<small>交换空间</small></dfn> 是磁盘上充当内存的区域，内存不够时把不常用的数据挪过去。Swap 用量持续增长、系统变卡，说明物理内存确实不够了。</p>
+</article>
+
+<article class="cmd" id="lscpu">
+<div class="cmd-h"><h3>lscpu 等硬件信息</h3><span class="en">list CPU</span><span class="man">man 1</span></div>
+<p class="full">查看 CPU 和其他硬件信息</p>
+<div class="code"><pre class="ex">
+$ lscpu                                   # CPU 型号、核心数、架构、缓存
+$ grep "model name" /proc/cpuinfo | head -1
+model name : Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
+$ lspci                                   # 显卡、网卡等 PCI 设备
+$ lsusb                                   # USB 设备
+$ nvidia-smi                              # NVIDIA 显卡状态和显存占用（需装驱动）
+</pre></div>
+</article>
+
+<article class="cmd" id="date">
+<div class="cmd-h"><h3>date</h3><span class="en">date</span><span class="man">man 1</span></div>
+<p class="full">显示或格式化日期时间</p>
+<div class="code"><pre class="ex">
+$ date
+Sat Sep 26 10:32:05 CST 2026
+$ date +"%Y-%m-%d %H:%M:%S"               # 年-月-日 时:分:秒
+2026-09-26 10:32:05
+$ date +%F                                # 等于 %Y-%m-%d，常用于文件名
+2026-09-26
+$ date +%s                                # Unix 时间戳
+1790389925
+$ date -d @1790389925                     # 时间戳转成日期
+$ date -d "yesterday" +%F                 # 昨天；也可以写 "3 days ago"、"+1 week"
+2026-09-25
+$ timedatectl                             # 查看时区和同步状态
+$ sudo timedatectl set-timezone Asia/Shanghai
+</pre></div>
+<p><b>Unix 时间戳</b>是从 1970-01-01 00:00:00 <dfn>UTC<small>Coordinated Universal Time，协调世界时</small></dfn> 起经过的秒数，程序里记录时间常用它。输出里的 CST 在这里指中国标准时间（China Standard Time，UTC+8）。</p>
+<div class="note"><b>macOS：</b><code>-d</code> 不可用，时间戳转日期写 <code>date -r 1790389925</code>。</div>
+</article>
+
+<article class="cmd topic" id="env">
+<div class="cmd-h"><h3>环境变量 &amp; export</h3><span class="en">environment variables</span></div>
+<p class="full">影响程序行为的全局设置</p>
+<p>普通变量只在当前 shell 里有效；用 <code>export</code> 导出后成为<b>环境变量</b>，由当前 shell 启动的程序也能读到。最重要的环境变量是 <code>PATH</code>：输入命令时，shell 会依次在 PATH 列出的目录里找同名程序。提示“command not found”但程序明明装了，多半是它所在的目录不在 PATH 里。</p>
+<div class="tbl"><table>
+<tr><th>变量</th><th>含义</th></tr>
+<tr><td><code>$HOME</code></td><td>家目录</td></tr>
+<tr><td><code>$USER</code></td><td>当前用户名</td></tr>
+<tr><td><code>$PATH</code></td><td>查找命令的目录列表，用冒号分隔</td></tr>
+<tr><td><code>$PWD</code></td><td>当前目录</td></tr>
+<tr><td><code>$SHELL</code></td><td>登录时的默认 shell（不一定是当前正在用的）</td></tr>
+<tr><td><code>$EDITOR</code></td><td>默认编辑器，<code>crontab -e</code>、<code>git commit</code> 等会用它</td></tr>
+<tr><td><code>$LANG</code></td><td>语言和字符编码，如 <code>zh_CN.UTF-8</code></td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ echo $PATH
+/usr/local/bin:/usr/bin:/bin
+$ env | sort                              # 列出所有环境变量
+$ export API_URL=http://localhost:8000    # 设置环境变量（只在当前终端有效）
+$ export PATH="$HOME/.local/bin:$PATH"    # 把一个目录加到 PATH 最前面
+$ unset API_URL                           # 删除变量
+$ DEBUG=1 python3 app.py                  # 只对这一条命令设置变量
+$ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # 写进配置文件，永久生效
+$ source ~/.bashrc                        # 让配置文件立即生效，不用重开终端
+</pre></div>
+<p><code>~/.bashrc</code>（rc = run commands，启动时要执行的命令）是 bash 每次打开终端时读取的配置文件；zsh 对应的是 <code>~/.zshrc</code>。<code>source 文件</code> 表示在当前 shell 里执行这个文件，也可以简写成 <code>. 文件</code>。</p>
+</article>
+
+<article class="cmd" id="alias">
+<div class="cmd-h"><h3>alias</h3><span class="en">alias</span><span class="man">内建</span></div>
+<p class="full">给命令起别名</p>
+<div class="code"><pre class="ex">
+$ alias ll='ls -alF'
+$ alias gs='git status'
+$ alias ..='cd ..'
+$ alias                                   # 列出所有别名
+$ unalias gs                              # 删除别名
+$ \ls                                     # 前面加 \ 临时绕过别名，执行原始命令
+</pre></div>
+<p>直接在终端里定义的别名，关掉终端就没了。想永久保留，把 <code>alias</code> 那几行写进 <code>~/.bashrc</code>（zsh 是 <code>~/.zshrc</code>），再用 <code>source</code> 加载一次。</p>
+</article>
+
+<article class="cmd" id="history">
+<div class="cmd-h"><h3>history</h3><span class="en">history</span><span class="man">内建</span></div>
+<p class="full">查看和重用执行过的命令</p>
+<div class="code"><pre class="ex">
+$ history | tail -5
+ 1021  cd /var/www
+ 1022  git pull
+ 1023  sudo systemctl reload nginx
+$ history | grep docker                   # 找以前用过的 docker 命令
+$ !1022                                   # 重新执行第 1022 号命令
+$ !!                                      # 重新执行上一条
+$ vim !$                                  # !$ 是上一条命令的最后一个参数
+$ history -c                              # 清空当前会话的历史记录（bash；zsh 没有这个选项）
+</pre></div>
+<div class="note"><b>提示：</b>找历史命令最快的方法是按 <code>Ctrl+R</code> 再输入关键词。在 Ubuntu 的 bash 默认设置下，以空格开头的命令不会被记入历史，输入含密码的命令时可以利用这一点；zsh 需要先在 <code>~/.zshrc</code> 里加上 <code>setopt HIST_IGNORE_SPACE</code>。</div>
+</article>
+</section>
+
+<!-- ============ 磁盘 ============ -->
+<section class="cat" id="disk">
+<h2>磁盘与存储<span class="en">Storage</span></h2>
+
+<article class="cmd" id="df">
+<div class="cmd-h"><h3>df</h3><span class="en">disk free</span><span class="man">man 1</span></div>
+<p class="full">查看各个分区的空间使用情况</p>
+<div class="code"><pre class="ex">
+$ df -h                                   # -h = human-readable
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   21G   27G  44% /
+/dev/sdb1       200G  150G   41G  79% /data
+tmpfs           3.9G     0  3.9G   0% /dev/shm
+$ df -h /home                             # 某个目录所在分区
+$ df -hT                                  # -T 同时显示文件系统类型（ext4、xfs……）
+$ df -i                                   # -i 查看 inode 用量
+</pre></div>
+<div class="note"><b>提示：</b>如果 <code>df -i</code> 显示 inode 用到 100%，即使还有空间也无法新建文件，通常是某个目录里有海量小文件（比如没清理的缓存或会话文件）。</div>
+</article>
+
+<article class="cmd" id="du">
+<div class="cmd-h"><h3>du</h3><span class="en">disk usage</span><span class="man">man 1</span></div>
+<p class="full">统计目录和文件实际占用的空间</p>
+<p><code>df</code> 告诉你哪个分区满了，<code>du</code> 告诉你是哪个目录占的。</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-s</code><span class="mn">summarize</span></td><td>只显示总计，不列出每个子目录</td></tr>
+<tr><td><code>-h</code><span class="mn">human-readable</span></td><td>易读单位</td></tr>
+<tr><td><code>-d 1</code><span class="mn">max-depth</span></td><td>只统计到往下 1 层，等于 <code>--max-depth=1</code></td></tr>
+<tr><td><code>-a</code><span class="mn">all</span></td><td>文件也列出来，不只列目录</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ du -sh ~/Downloads                      # 整个目录多大
+3.4G    /home/alice/Downloads
+$ du -sh * | sort -rh | head              # 当前目录下最大的 10 项
+$ sudo du -h -d 1 /var | sort -rh         # /var 下每个子目录的大小
+$ du -sh .[!.]* *                         # 把隐藏文件和目录也算上
+</pre></div>
+</article>
+
+<article class="cmd" id="lsblk">
+<div class="cmd-h"><h3>lsblk</h3><span class="en">list block devices</span><span class="man">man 8</span></div>
+<p class="full">列出磁盘和分区</p>
+<p>硬盘、U 盘这类按“块”读写的存储设备叫<b>块设备</b>。lsblk 以树状显示磁盘、分区和它们的挂载位置，插了新硬盘或 U 盘后先用它看设备名。</p>
+<div class="code"><pre class="ex">
+$ lsblk
+NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda       8:0    0    50G  0 disk
+├─sda1    8:1    0  49.9G  0 part /
+└─sda15   8:15   0   106M  0 part /boot/efi
+sdb       8:16   1  14.9G  0 disk
+└─sdb1    8:17   1  14.9G  0 part
+nvme0n1 259:0    0 476.9G  0 disk
+$ lsblk -f                                # 显示文件系统类型、UUID、剩余空间
+$ sudo blkid                              # 各分区的 UUID 和类型
+</pre></div>
+<p><code>RM</code> 为 1 表示可移动设备（removable），<code>RO</code> 为 1 表示只读（read-only）。设备名：<code>sda</code>、<code>sdb</code> 是按接入顺序命名的第 1、2 块 SATA/USB 磁盘，<code>sda1</code> 是它的第 1 个分区；<code>nvme0n1</code> 是 <dfn>NVMe<small>Non-Volatile Memory Express，一种高速固态硬盘接口</small></dfn> 固态硬盘。</p>
+</article>
+
+<article class="cmd" id="mount">
+<div class="cmd-h"><h3>mount / umount</h3><span class="en">mount · unmount</span><span class="man">man 8</span></div>
+<p class="full">挂载 / 卸载文件系统</p>
+<p>Linux 里的存储设备必须“挂”到目录树的某个目录（挂载点）上才能访问，之后访问这个目录就是在访问那个设备。卸载的命令是 <code>umount</code>，少一个 n。</p>
+<div class="code"><pre class="ex">
+$ sudo mkdir -p /mnt/usb
+$ sudo mount /dev/sdb1 /mnt/usb           # 把 U 盘分区挂到 /mnt/usb
+$ findmnt /mnt/usb                        # 确认挂载情况
+$ sudo umount /mnt/usb                    # 用完卸载再拔
+umount: /mnt/usb: target is busy.
+$ sudo lsof +D /mnt/usb                   # 看看是谁还在用（常见原因：终端还 cd 在里面）
+$ sudo mount -o loop ubuntu.iso /mnt/iso  # 挂载 ISO 镜像文件（挂载点目录要先建好）
+$ sudo mount -o remount,rw /              # 以可读写方式重新挂载根分区（救援时用）
+$ mount | column -t                       # 列出所有已挂载的文件系统
+</pre></div>
+<h4>开机自动挂载：/etc/fstab</h4>
+<p><dfn>fstab<small>file systems table，文件系统表</small></dfn> 里的每一行描述一个开机时要挂载的设备。建议用 <dfn>UUID<small>Universally Unique Identifier，通用唯一识别码</small></dfn> 而不是 <code>/dev/sdb1</code> 指定设备，因为设备名可能随接入顺序改变。</p>
+<div class="code"><pre class="ex" data-file="/etc/fstab">
+# 设备                                     挂载点  类型  选项              dump  检查顺序
+UUID=3f1c9a2e-5b7d-4e21-9c8a-1d2e3f4a5b6c  /data   ext4  defaults,nofail   0     2
+</pre></div>
+<div class="warn"><b>注意：</b>fstab 写错可能导致系统无法启动。改完后先执行 <code>sudo mount -a</code>（按 fstab 挂载全部），没有报错再重启。选项里加 <code>nofail</code> 可以避免设备不在时卡住开机。</div>
+</article>
+
+<article class="cmd" id="mkfs">
+<div class="cmd-h"><h3>fdisk / mkfs</h3><span class="en">fixed disk · make filesystem</span><span class="man">man 8</span></div>
+<p class="full">分区 / 格式化</p>
+<p>新硬盘的使用流程：<code>fdisk</code> 分区 → <code>mkfs</code> 格式化 → <code>mount</code> 挂载。常见文件系统：<dfn>ext4<small>fourth extended filesystem，第四代扩展文件系统</small></dfn> 是 Linux 最常用的；<dfn>FAT32<small>File Allocation Table 32，32 位文件分配表</small></dfn> 和 exFAT 在 Windows、macOS 上也能读写，适合 U 盘。</p>
+<div class="code"><pre class="ex">
+$ sudo fdisk -l                           # 列出所有磁盘和分区表
+$ sudo fdisk /dev/sdb                     # 交互式分区：n 新建，d 删除，p 查看，w 写入保存，q 不保存退出
+$ sudo mkfs.ext4 /dev/sdb1                # 格式化为 ext4
+$ sudo mkfs.vfat -F 32 /dev/sdb1          # 格式化为 FAT32
+</pre></div>
+<div class="warn"><b>注意：</b>分区和格式化会<b>清空数据</b>。执行前用 <code>lsblk</code> 再三确认设备名，把 <code>/dev/sdb</code> 错写成系统盘 <code>/dev/sda</code> 的后果无法挽回。</div>
+</article>
+</section>
+
+<!-- ============ 服务与日志 ============ -->
+<section class="cat" id="svc">
+<h2>服务、日志与定时任务<span class="en">Services</span></h2>
+<div class="intro"><p>在后台长期运行、提供服务的程序叫 <dfn>daemon<small>守护进程</small></dfn>，名字常以 d 结尾，如 <code>sshd</code>、<code>dockerd</code>。现代 Linux 发行版基本都用 <dfn>systemd<small>system daemon，系统守护进程</small></dfn> 来启动和管理它们，每个服务由一个 <code>.service</code> 配置文件描述，systemd 称之为一个 unit（单元）。</p></div>
+
+<article class="cmd" id="systemctl">
+<div class="cmd-h"><h3>systemctl</h3><span class="en">system control</span><span class="man">man 1</span></div>
+<p class="full">启动、停止、查看 systemd 管理的服务</p>
+<div class="tbl"><table>
+<tr><th>子命令</th><th>作用</th></tr>
+<tr><td><code>status</code></td><td>查看状态：是否在运行、是否开机自启、最近几行日志</td></tr>
+<tr><td><code>start</code> / <code>stop</code></td><td>启动 / 停止</td></tr>
+<tr><td><code>restart</code></td><td>重启（服务会短暂中断）</td></tr>
+<tr><td><code>reload</code></td><td>只重新加载配置，不中断服务（服务需支持）</td></tr>
+<tr><td><code>enable</code> / <code>disable</code></td><td>设置 / 取消开机自启。<code>enable --now</code> 顺便立即启动</td></tr>
+<tr><td><code>is-active</code> / <code>is-enabled</code></td><td>只返回运行状态 / 是否自启，适合在脚本里判断</td></tr>
+<tr><td><code>daemon-reload</code></td><td>修改或新增 .service 文件后，让 systemd 重新读取</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ systemctl status nginx
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Sat 2026-09-26 08:12:40 CST; 2h 19min ago
+$ sudo systemctl restart nginx
+$ sudo systemctl reload nginx                 # 改了配置后用它
+$ sudo systemctl enable --now docker          # 开机自启并立即启动
+$ systemctl list-units --type=service --state=running   # 正在运行的所有服务
+$ systemctl --failed                          # 启动失败的服务
+$ systemctl cat nginx                         # 查看服务的配置文件内容
+</pre></div>
+<p>status 输出里，<code>Loaded</code> 行的 <code>enabled</code> 表示开机自启；<code>Active</code> 行显示 <code>active (running)</code> 为正常运行，<code>failed</code> 为启动失败，这时去看 <a href="#journalctl">journalctl</a> 的日志找原因。</p>
+</article>
+
+<article class="cmd" id="journalctl">
+<div class="cmd-h"><h3>journalctl</h3><span class="en">journal control</span><span class="man">man 1</span></div>
+<p class="full">查看 systemd 收集的系统和服务日志</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-u nginx</code><span class="mn">unit</span></td><td>只看某个服务</td></tr>
+<tr><td><code>-f</code><span class="mn">follow</span></td><td>实时跟踪新日志</td></tr>
+<tr><td><code>-n 100</code><span class="mn">lines</span></td><td>最近 100 行</td></tr>
+<tr><td><code>--since</code> / <code>--until</code></td><td>时间范围，如 <code>"1 hour ago"</code>、<code>"2026-09-25 10:00"</code>、<code>today</code></td></tr>
+<tr><td><code>-p err</code><span class="mn">priority</span></td><td>只看 err 及更严重的级别（emerg、alert、crit、err、warning、notice、info、debug）</td></tr>
+<tr><td><code>-b</code><span class="mn">boot</span></td><td>本次开机以来；<code>-b -1</code> 是上一次开机</td></tr>
+<tr><td><code>--no-pager</code></td><td>直接输出，不进入 less 分页</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ journalctl -u nginx -n 50               # 最近 50 行
+$ journalctl -u nginx -f                  # 实时跟踪
+$ journalctl -u myapp --since "1 hour ago"
+$ journalctl -p err -b                    # 本次开机以来的所有错误
+$ journalctl -b -1 -n 100                 # 上次开机最后 100 行，排查意外重启
+$ journalctl --disk-usage                 # 日志占了多少空间
+$ sudo journalctl --vacuum-time=7d        # 只保留最近 7 天的日志
+</pre></div>
+<div class="note"><b>传统日志文件：</b>很多程序仍然把日志写在 <code>/var/log/</code> 下，例如 <code>/var/log/syslog</code>（系统日志）、<code>/var/log/auth.log</code>（登录和 sudo 记录）、<code>/var/log/nginx/</code>。可以用 <code>less</code>、<code>tail -f</code>、<code>grep</code> 查看。</div>
+</article>
+
+<article class="cmd" id="dmesg">
+<div class="cmd-h"><h3>dmesg</h3><span class="en">display message / diagnostic message</span><span class="man">man 1</span></div>
+<p class="full">查看内核消息</p>
+<p>硬件识别、驱动加载、磁盘错误、内存耗尽杀进程等内核层面的事件都记录在这里。</p>
+<div class="code"><pre class="ex">
+$ sudo dmesg -T | tail -20                # -T 显示人能看懂的时间
+$ sudo dmesg -w                           # -w = follow，持续输出新消息，插拔 U 盘时很有用
+$ sudo dmesg -T | grep -i "out of memory" # 程序莫名消失时，查是否被 OOM 杀掉
+</pre></div>
+<p><dfn>OOM<small>Out Of Memory，内存耗尽</small></dfn>：内存不够时，内核的 OOM Killer 会挑一个占内存多的进程强制结束，以保住整个系统。</p>
+</article>
+
+<article class="cmd" id="crontab">
+<div class="cmd-h"><h3>crontab</h3><span class="en">cron table</span><span class="man">man 1</span></div>
+<p class="full">设置定时任务</p>
+<p><code>cron</code> 是负责按时间执行任务的后台服务，名字来自希腊语 chronos（时间）；crontab 是它的任务表，每个用户各有一份。</p>
+<div class="code"><pre class="ex">
+$ crontab -e                              # 编辑自己的定时任务（第一次会让你选编辑器，新手选 nano）
+$ crontab -l                              # 查看
+$ sudo crontab -u bob -l                  # 查看别人的
+$ crontab -r                              # 删除全部任务，没有确认！和 -e 只差一个键，小心
+</pre></div>
+<p>每行一个任务，前 5 个字段是时间，后面是要执行的命令：</p>
+<div class="split" aria-label="crontab 时间字段">
+  <div><code>*</code><span>分<br>0–59</span></div>
+  <div><code>*</code><span>时<br>0–23</span></div>
+  <div><code>*</code><span>日<br>1–31</span></div>
+  <div><code>*</code><span>月<br>1–12</span></div>
+  <div><code>*</code><span>星期<br>0–7</span></div>
+</div>
+<p><code>*</code> 表示“每”，<code>,</code> 列举多个值，<code>-</code> 表示范围，<code>*/n</code> 表示每隔 n。星期里 0 和 7 都是周日。</p>
+<div class="code"><pre class="ex" data-file="crontab -e">
+# 分  时  日  月  周   命令
+0     3   *   *   *    /home/alice/bin/backup.sh >> /home/alice/backup.log 2>&amp;1
+*/5   *   *   *   *    /usr/bin/python3 /home/alice/check.py
+30    9   *   *   1-5  /home/alice/bin/report.sh
+0     0   1   *   *    /home/alice/bin/monthly.sh
+0     */2 *   *   *    /home/alice/bin/sync.sh
+@reboot                /home/alice/bin/start-worker.sh
+</pre></div>
+<p>上面依次是：每天 3:00；每 5 分钟；周一到周五 9:30；每月 1 号零点；每 2 小时整点；每次开机时。拿不准时可以到 <a href="https://crontab.guru" target="_blank" rel="noopener">crontab.guru</a> 把表达式翻译成人话。</p>
+<div class="warn"><b>cron 任务不执行的常见原因：</b>cron 运行时的环境变量很少（PATH 通常只有 <code>/usr/bin:/bin</code>），所以命令和文件都要写<b>绝对路径</b>；在命令末尾加 <code>>> 日志 2>&amp;1</code> 才能看到报错；命令里的 <code>%</code> 有特殊含义，要写成 <code>\%</code>（比如 <code>date +\%F</code>）。</div>
+</article>
+</section>
+
+<!-- ============ 网络 ============ -->
+<section class="cat" id="net">
+<h2>网络<span class="en">Network</span></h2>
+<div class="intro"><p>常见缩写：<dfn>IP<small>Internet Protocol，网际协议；IP 地址就是网络上的门牌号</small></dfn>、<dfn>TCP<small>Transmission Control Protocol，传输控制协议，可靠传输，网页、SSH 都用它</small></dfn>、<dfn>UDP<small>User Datagram Protocol，用户数据报协议，不保证送达但快，DNS、视频通话常用</small></dfn>、<dfn>DNS<small>Domain Name System，域名系统，把域名翻译成 IP</small></dfn>。<b>端口</b>是一台机器上区分不同服务的编号，如 SSH 用 22，HTTP 用 80，HTTPS 用 443。</p></div>
+
+<article class="cmd" id="ip">
+<div class="cmd-h"><h3>ip</h3><span class="en">ip</span><span class="man">man 8</span></div>
+<p class="full">查看和配置网卡、IP 地址、路由</p>
+<p>老教程里的 <code>ifconfig</code>、<code>route</code> 来自已停止维护的 net-tools 包，新系统可能没装，用 ip 替代。</p>
+<div class="code"><pre class="ex">
+$ ip a                                    # = ip addr show，查看所有网卡和 IP
+1: lo: &lt;LOOPBACK,UP,LOWER_UP> mtu 65536 ...
+    inet 127.0.0.1/8 scope host lo
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 ...
+    inet 192.168.1.20/24 brd 192.168.1.255 scope global dynamic eth0
+$ ip -br a                                # -br = brief，每个网卡一行
+lo      UNKNOWN  127.0.0.1/8
+eth0    UP       192.168.1.20/24
+$ ip -4 a                                 # 只看 IPv4
+$ ip route                                # 路由表，default via 后面是网关
+default via 192.168.1.1 dev eth0
+$ sudo ip link set eth0 up                # 启用网卡（down 为禁用）
+</pre></div>
+<p><code>lo</code> 是本机回环网卡，<code>127.0.0.1</code>（也叫 localhost）永远指向自己。<code>/24</code> 是 <dfn>CIDR<small>Classless Inter-Domain Routing，无类别域间路由</small></dfn> 写法，表示前 24 位是网络号，相当于子网掩码 255.255.255.0，即 192.168.1.0～192.168.1.255 属于同一个局域网。<dfn>MTU<small>Maximum Transmission Unit，最大传输单元</small></dfn> 是一个数据包的最大字节数。</p>
+</article>
+
+<article class="cmd" id="ping">
+<div class="cmd-h"><h3>ping</h3><span class="en">ping</span><span class="man">man 8</span></div>
+<p class="full">测试能否连通某台主机，以及延迟多少</p>
+<p>名字取自声呐探测的“砰”声。它发送 <dfn>ICMP<small>Internet Control Message Protocol，互联网控制报文协议</small></dfn> 回显请求，对方回应就说明网络是通的。</p>
+<div class="code"><pre class="ex">
+$ ping -c 4 example.com                   # -c = count，只发 4 次；不加会一直发，Ctrl+C 停
+PING example.com (93.184.215.14) 56(84) bytes of data.
+64 bytes from 93.184.215.14: icmp_seq=1 ttl=56 time=12.3 ms
+64 bytes from 93.184.215.14: icmp_seq=2 ttl=56 time=12.1 ms
+--- example.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+$ ping -i 0.5 192.168.1.1                 # -i = interval，每 0.5 秒一次
+</pre></div>
+<p>主要看 <code>time</code>（往返延迟）和 <code>packet loss</code>（丢包率）。<dfn>TTL<small>Time To Live，生存时间，每经过一个路由器减 1</small></dfn> 用来防止数据包在网络里无限绕圈。注意：有些服务器出于安全考虑禁止响应 ping，ping 不通不代表网站打不开。</p>
+</article>
+
+<article class="cmd" id="ss">
+<div class="cmd-h"><h3>ss</h3><span class="en">socket statistics</span><span class="man">man 8</span></div>
+<p class="full">查看端口监听和网络连接</p>
+<p><dfn>socket<small>套接字，程序进行网络通信的端点</small></dfn>。ss 是老命令 <code>netstat</code> 的替代品，选项基本通用。</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-t</code> / <code>-u</code><span class="mn">tcp / udp</span></td><td>只看 TCP / UDP</td></tr>
+<tr><td><code>-l</code><span class="mn">listening</span></td><td>只看正在监听（等待连接）的端口</td></tr>
+<tr><td><code>-n</code><span class="mn">numeric</span></td><td>显示数字端口，不把 80 翻译成 http</td></tr>
+<tr><td><code>-p</code><span class="mn">processes</span></td><td>显示是哪个进程，看别人的进程需要 sudo</td></tr>
+<tr><td><code>-a</code><span class="mn">all</span></td><td>监听的和已建立的连接都显示</td></tr>
+<tr><td><code>-s</code><span class="mn">summary</span></td><td>各类连接的统计数</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sudo ss -tulnp                          # 最常用：所有监听中的端口及对应程序
+Netid State  Recv-Q Send-Q Local Address:Port Peer Address:Port Process
+tcp   LISTEN 0      511          0.0.0.0:80        0.0.0.0:*    users:(("nginx",pid=812,fd=6))
+tcp   LISTEN 0      128          0.0.0.0:22        0.0.0.0:*    users:(("sshd",pid=640,fd=3))
+tcp   LISTEN 0      4096       127.0.0.1:5432      0.0.0.0:*    users:(("postgres",pid=901,fd=5))
+$ sudo ss -tlnp | grep :8080              # 8080 端口被谁占了
+$ ss -tn                                  # 当前已建立的 TCP 连接
+</pre></div>
+<p>监听地址是 <code>0.0.0.0</code>（IPv6 写作 <code>[::]</code>）表示所有网卡都能访问，防火墙放行的话外网也能连；<code>127.0.0.1</code> 表示只有本机能访问。服务启动了但外面连不上，先看这里是不是只监听了 127.0.0.1。</p>
+</article>
+
+<article class="cmd" id="lsof">
+<div class="cmd-h"><h3>lsof</h3><span class="en">list open files</span><span class="man">man 8</span></div>
+<p class="full">列出进程打开的文件</p>
+<p>在 Linux 里“一切皆文件”，网络连接、设备也算文件，所以 lsof 能回答“谁在用这个端口/文件”。</p>
+<div class="code"><pre class="ex">
+$ sudo lsof -i :8080                      # 谁在用 8080 端口
+COMMAND  PID  USER  FD  TYPE DEVICE SIZE/OFF NODE NAME
+node    4410 alice  23u IPv4  61234      0t0  TCP *:8080 (LISTEN)
+$ sudo lsof -p 4127                       # 某个进程打开了哪些文件
+$ sudo lsof /var/log/syslog               # 谁打开了这个文件
+$ sudo lsof +L1                           # 已被删除但仍被进程占用的文件
+</pre></div>
+<div class="note"><b>提示：</b><code>df</code> 显示磁盘满了，<code>du</code> 却找不到大文件？多半是某个大日志被删了，但程序还开着它，空间没有释放。用 <code>lsof +L1</code> 找到这个进程，重启它就能释放空间。</div>
+</article>
+
+<article class="cmd" id="curl">
+<div class="cmd-h"><h3>curl</h3><span class="en">client URL</span><span class="man">man 1</span></div>
+<p class="full">发送网络请求：下载文件、调试接口</p>
+<p><dfn>URL<small>Uniform Resource Locator，统一资源定位符，即网址</small></dfn>。curl 默认把响应内容直接打印到屏幕，支持 <dfn>HTTP<small>HyperText Transfer Protocol，超文本传输协议</small></dfn>、HTTPS、FTP 等多种协议，是调试 <dfn>API<small>Application Programming Interface，应用程序编程接口</small></dfn> 的首选工具。</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-o 文件</code><span class="mn">output</span></td><td>保存到指定文件</td></tr>
+<tr><td><code>-O</code><span class="mn">remote-name</span></td><td>用网址里的文件名保存</td></tr>
+<tr><td><code>-L</code><span class="mn">location</span></td><td>跟随重定向。很多下载链接会先跳转，不加 -L 只会拿到一个跳转提示，而不是真正的文件</td></tr>
+<tr><td><code>-I</code><span class="mn">head</span></td><td>只获取响应头</td></tr>
+<tr><td><code>-s</code> / <code>-S</code><span class="mn">silent / show-error</span></td><td>不显示进度条 / 但仍显示错误</td></tr>
+<tr><td><code>-f</code><span class="mn">fail</span></td><td>服务器返回错误（如 404）时不输出页面内容，直接以失败退出</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示完整的请求和响应过程</td></tr>
+<tr><td><code>-X POST</code><span class="mn">request</span></td><td>指定请求方法</td></tr>
+<tr><td><code>-H</code><span class="mn">header</span></td><td>添加请求头</td></tr>
+<tr><td><code>-d</code><span class="mn">data</span></td><td>发送请求体（会自动使用 POST）</td></tr>
+<tr><td><code>-u 用户:密码</code><span class="mn">user</span></td><td>基本认证</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ curl https://example.com                        # 打印网页内容
+$ curl -I https://example.com                     # 只看响应头：状态码、服务器类型等
+HTTP/2 200
+content-type: text/html
+$ curl -LO https://example.com/files/app.tar.gz   # 下载，保持原文件名
+$ curl -L -o app.tgz "https://example.com/download?id=42"   # 网址含 ? &amp; 时加引号
+$ curl -s https://api.github.com/users/octocat | jq .name
+$ curl -X POST http://localhost:8000/users \
+    -H "Content-Type: application/json" \
+    -d '{"name": "alice"}'                        # 发送 JSON
+$ curl -v https://example.com 2>&amp;1 | less        # 排查 HTTPS 证书、重定向等问题
+$ curl ifconfig.me                                # 查看本机的公网 IP
+$ curl -fsSL https://example.com/install.sh | sh  # 常见的一键安装写法，执行前最好先看看脚本内容
+</pre></div>
+</article>
+
+<article class="cmd" id="wget">
+<div class="cmd-h"><h3>wget</h3><span class="en">World Wide Web get</span><span class="man">man 1</span></div>
+<p class="full">从网上下载文件</p>
+<p>和 curl 相比，wget 专注下载：默认就把内容存成文件、自动跟随重定向，还支持断点续传和递归下载整个站点。</p>
+<div class="code"><pre class="ex">
+$ wget https://example.com/files/big.iso
+$ wget -O app.tgz "https://example.com/download?id=42"  # -O 指定保存的文件名
+$ wget -c https://example.com/files/big.iso             # -c = continue，断点续传
+$ wget -q -O - https://example.com | head               # -q 安静模式，-O - 输出到屏幕
+$ wget -r -np -k https://example.com/docs/              # 递归下载，不往上级目录走，并把链接改成本地可用
+</pre></div>
+</article>
+
+<article class="cmd" id="dig">
+<div class="cmd-h"><h3>dig / nslookup</h3><span class="en">domain information groper</span><span class="man">man 1</span></div>
+<p class="full">查询 DNS 解析记录</p>
+<p>域名解析不对、改了 DNS 不知道生效没，用 dig 查。Ubuntu 上在 <code>dnsutils</code> 包里，CentOS/Fedora 在 <code>bind-utils</code> 包里。</p>
+<div class="tbl"><table>
+<tr><th>记录类型</th><th>含义</th></tr>
+<tr><td><code>A</code></td><td>Address，域名对应的 IPv4 地址</td></tr>
+<tr><td><code>AAAA</code></td><td>域名对应的 IPv6 地址（IPv6 地址长度是 IPv4 的 4 倍，所以是 4 个 A）</td></tr>
+<tr><td><code>CNAME</code></td><td>Canonical Name，规范名称，即别名：把一个域名指向另一个域名</td></tr>
+<tr><td><code>MX</code></td><td>Mail Exchanger，邮件交换，负责收这个域名邮件的服务器</td></tr>
+<tr><td><code>NS</code></td><td>Name Server，负责这个域名解析的 DNS 服务器</td></tr>
+<tr><td><code>TXT</code></td><td>Text，文本记录，常用于验证域名所有权</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ dig example.com +short                  # 只要结果
+93.184.215.14
+$ dig example.com MX +short               # 查邮件服务器
+$ dig @8.8.8.8 example.com                # 指定用 8.8.8.8（Google 的公共 DNS）查询
+$ dig -x 8.8.8.8 +short                   # 反向解析：由 IP 查域名
+dns.google.
+$ nslookup example.com                    # 更老更简单的替代品，Windows 上也有
+$ cat /etc/resolv.conf                    # 本机正在用哪个 DNS 服务器
+</pre></div>
+</article>
+
+<article class="cmd" id="traceroute">
+<div class="cmd-h"><h3>traceroute / mtr</h3><span class="en">trace route</span><span class="man">man 8</span></div>
+<p class="full">显示数据包到达目标经过的每一跳路由器</p>
+<p>ping 只能告诉你通不通，traceroute 能看出卡在哪一段。<dfn>mtr<small>My TraceRoute，最早叫 Matt's traceroute</small></dfn> 把 ping 和 traceroute 结合起来，持续刷新每一跳的丢包率和延迟。</p>
+<div class="code"><pre class="ex">
+$ traceroute example.com                  # 需安装：sudo apt install traceroute
+$ tracepath example.com                   # 通常预装，不需要 root
+$ mtr example.com                         # 实时版，q 退出
+$ mtr -rw -c 10 example.com               # 发 10 轮后输出报告，适合贴给别人看
+</pre></div>
+<p>某一跳之后全是 <code>* * *</code>，可能是那台路由器不回应探测包，不一定是故障；要看后续的跳和最终目标是否正常。</p>
+</article>
+
+<article class="cmd" id="ssh">
+<div class="cmd-h"><h3>ssh</h3><span class="en">Secure Shell</span><span class="man">man 1</span></div>
+<p class="full">安全外壳协议：加密地远程登录另一台机器</p>
+<p class="syn">ssh [选项] <var>用户</var>@<var>主机</var> [<var>要执行的命令</var>]</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-p 2222</code><span class="mn">port</span></td><td>指定端口，默认 22</td></tr>
+<tr><td><code>-i 私钥文件</code><span class="mn">identity</span></td><td>指定用哪个私钥登录</td></tr>
+<tr><td><code>-L 本地端口:目标:目标端口</code><span class="mn">local forward</span></td><td>本地端口转发：把本机端口经 ssh 隧道转到远端。“目标”是从服务器那边看的，写 localhost 就是服务器自己</td></tr>
+<tr><td><code>-J 跳板机</code><span class="mn">jump</span></td><td>先登录跳板机再跳到目标机</td></tr>
+<tr><td><code>-N</code></td><td>不执行远程命令，只做端口转发</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示连接过程，排查登录失败用</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ ssh alice@203.0.113.10
+$ ssh -p 2222 alice@203.0.113.10
+$ ssh -i ~/.ssh/work_key alice@203.0.113.10
+$ ssh web "df -h /"                       # 不进入交互界面，只执行一条命令并返回结果
+$ ssh -N -L 8080:localhost:80 web         # 浏览器打开本机 localhost:8080 就等于访问服务器上的 80 端口
+$ ssh -J bastion alice@10.0.0.5           # 通过跳板机 bastion 登录内网机器
+$ exit                                    # 退出登录，或按 Ctrl+D
+</pre></div>
+<h4>用配置文件起别名</h4>
+<p>把常用的服务器写进 <code>~/.ssh/config</code>，之后 <code>ssh web</code> 就能登录，<code>scp</code>、<code>rsync</code>、<code>git</code> 也都认这个别名。</p>
+<div class="code"><pre class="ex" data-file="~/.ssh/config">
+Host web
+    HostName 203.0.113.10
+    User alice
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+
+Host bastion
+    HostName bastion.example.com
+    User alice
+</pre></div>
+<div class="note"><b>第一次连接</b>会问 <code>Are you sure you want to continue connecting</code>，输入 yes 后，对方的主机指纹会记在 <code>~/.ssh/known_hosts</code>。如果服务器重装过，再连会出现 <code>REMOTE HOST IDENTIFICATION HAS CHANGED</code> 警告；确认是自己重装的，执行 <code>ssh-keygen -R 主机</code> 删除旧指纹即可。</div>
+</article>
+
+<article class="cmd" id="ssh-keygen">
+<div class="cmd-h"><h3>ssh-keygen</h3><span class="en">SSH key generator</span><span class="man">man 1</span></div>
+<p class="full">生成 SSH 密钥对，实现免密码登录</p>
+<p>密钥成对出现：<b>私钥</b>（如 <code>id_ed25519</code>）留在自己电脑上，绝不外传；<b>公钥</b>（<code>id_ed25519.pub</code>）放到服务器的 <code>~/.ssh/authorized_keys</code> 里，或者贴到 GitHub。登录时服务器用公钥验证你持有对应的私钥，不再需要密码。</p>
+<div class="code"><pre class="ex">
+$ ssh-keygen -t ed25519 -C "alice@laptop" # -t 算法类型，-C 备注；一路回车即可
+$ ls ~/.ssh
+id_ed25519  id_ed25519.pub  known_hosts
+$ ssh-copy-id alice@203.0.113.10          # 把公钥装到服务器上（这一次还要输入密码）
+$ cat ~/.ssh/id_ed25519.pub               # 查看公钥，复制到 GitHub 等网站
+$ ssh-keygen -R 203.0.113.10              # 删除某台主机的旧指纹
+</pre></div>
+<p><dfn>Ed25519<small>基于 Curve25519 椭圆曲线的 EdDSA 签名算法</small></dfn> 是目前推荐的密钥类型，比老的 <dfn>RSA<small>Rivest–Shamir–Adleman，取自三位发明者姓氏</small></dfn> 更短更快。遇到只支持 RSA 的老系统时，用 <code>ssh-keygen -t rsa -b 4096</code>。</p>
+</article>
+
+<article class="cmd" id="scp">
+<div class="cmd-h"><h3>scp</h3><span class="en">secure copy</span><span class="man">man 1</span></div>
+<p class="full">通过 SSH 在机器之间复制文件</p>
+<p class="syn">scp [选项] <var>源</var> <var>目标</var></p>
+<p>远程路径写成 <code>用户@主机:路径</code>，本地路径照常写。</p>
+<div class="code"><pre class="ex">
+$ scp report.pdf alice@203.0.113.10:~/docs/     # 本地 → 远程
+$ scp alice@203.0.113.10:/var/log/app.log .     # 远程 → 本地当前目录
+$ scp -r project/ web:~/                        # -r 复制整个目录；web 是 ssh config 里的别名
+$ scp -P 2222 file.txt alice@203.0.113.10:/tmp/ # 端口用大写 -P（ssh 是小写 -p）
+</pre></div>
+<div class="note"><b>提示：</b>文件多、文件大，或者需要反复同步时，用 <a href="#rsync">rsync</a>：只传有变化的部分，加 <code>-P</code> 后中断了还能续传。</div>
+</article>
+
+<article class="cmd" id="rsync">
+<div class="cmd-h"><h3>rsync</h3><span class="en">remote sync</span><span class="man">man 1</span></div>
+<p class="full">增量同步文件和目录，本地或远程都行</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-a</code><span class="mn">archive</span></td><td>归档模式：递归，保留权限、时间、符号链接等。几乎总是要加</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示传输了哪些文件</td></tr>
+<tr><td><code>-z</code><span class="mn">compress</span></td><td>传输时压缩，适合网络慢的时候</td></tr>
+<tr><td><code>-P</code></td><td>= <code>--partial --progress</code>：显示进度，保留传了一半的文件以便续传</td></tr>
+<tr><td><code>-n</code><span class="mn">dry-run</span></td><td>演习：只显示会做什么，不真的执行</td></tr>
+<tr><td><code>--delete</code></td><td>删除目标里有、源里没有的文件，让两边完全一致</td></tr>
+<tr><td><code>--exclude</code></td><td>排除文件或目录</td></tr>
+<tr><td><code>-e "ssh -p 2222"</code></td><td>指定 ssh 参数，比如非默认端口</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ rsync -av src/ backup/                          # 本地同步
+$ rsync -avz src/ web:/srv/app/                   # 推送到远程服务器
+$ rsync -avzP web:/var/backups/ ./backups/        # 从远程拉取，显示进度
+$ rsync -avn --delete src/ backup/                # 先演习，看看会删哪些文件
+$ rsync -av --delete src/ backup/                 # 确认后再执行
+$ rsync -av --exclude node_modules --exclude .git ./ web:/srv/app/
+$ rsync -av -e "ssh -p 2222" src/ alice@203.0.113.10:/srv/app/
+</pre></div>
+<div class="warn"><b>源路径末尾的斜杠有区别：</b><code>rsync -a src/ dest/</code> 把 src <b>里面的内容</b>同步到 dest；<code>rsync -a src dest/</code> 会在 dest 里再建一个 src 目录。配合 <code>--delete</code> 时写错会删掉不该删的文件，所以先用 <code>-n</code> 演习。</div>
+</article>
+</section>
+
+<!-- ============ 压缩 ============ -->
+<section class="cat" id="archive">
+<h2>压缩与归档<span class="en">Archives</span></h2>
+<div class="intro"><p>Linux 里“打包”和“压缩”是两步：<code>tar</code> 把多个文件打包成一个 .tar 文件，<code>gzip</code>、<code>xz</code> 等负责压缩单个文件。所以常见的 <code>.tar.gz</code>（也写作 <code>.tgz</code>）就是先打包再用 gzip 压缩，tar 可以一步完成这两件事。</p></div>
+
+<article class="cmd" id="tar">
+<div class="cmd-h"><h3>tar</h3><span class="en">tape archive</span><span class="man">man 1</span></div>
+<p class="full">打包和解包，名字来自早期用磁带备份的年代</p>
+<div class="tbl"><table>
+<tr><th>选项</th><th>含义</th></tr>
+<tr><td><code>-c</code><span class="mn">create</span></td><td>创建归档</td></tr>
+<tr><td><code>-x</code><span class="mn">extract</span></td><td>解开归档</td></tr>
+<tr><td><code>-t</code><span class="mn">list</span></td><td>只列出内容，不解开</td></tr>
+<tr><td><code>-v</code><span class="mn">verbose</span></td><td>显示处理的每个文件</td></tr>
+<tr><td><code>-f 文件名</code><span class="mn">file</span></td><td>指定归档文件名，必须紧跟文件名，所以总是放在选项最后</td></tr>
+<tr><td><code>-z</code> / <code>-j</code> / <code>-J</code></td><td>用 gzip（.gz）/ bzip2（.bz2）/ xz（.xz）压缩或解压</td></tr>
+<tr><td><code>-C 目录</code><span class="mn">directory</span></td><td>解压到指定目录；打包时表示先进入这个目录再打包</td></tr>
+<tr><td><code>--exclude</code></td><td>打包时排除某些文件</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ tar -czvf backup.tar.gz project/        # 打包并压缩：c 创建、z 用 gzip、v 显示、f 文件名
+$ tar -xzvf backup.tar.gz                 # 解压到当前目录
+$ tar -xf backup.tar.gz                   # 解压时可以不写 z，tar 会自动识别压缩格式
+$ tar -xf backup.tar.gz -C /tmp/restore   # 解压到指定目录（目录要先存在）
+$ tar -tf backup.tar.gz                   # 先看看里面有什么
+$ tar -cJf logs.tar.xz logs/              # 用 xz 压缩，体积更小但更慢
+$ tar -czf site.tgz --exclude='*.log' --exclude=node_modules site/
+$ tar -xf backup.tar.gz project/README.md # 只解出其中一个文件
+</pre></div>
+<div class="note"><b>记法：</b>压缩 <code>czvf</code>，解压 <code>xzvf</code>，看内容 <code>tzvf</code>，只有第一个字母不同：c 创建、x 解开、t 列表。</div>
+</article>
+
+<article class="cmd" id="gzip">
+<div class="cmd-h"><h3>gzip / gunzip</h3><span class="en">GNU zip</span><span class="man">man 1</span></div>
+<p class="full">压缩或解压单个文件</p>
+<p><dfn>GNU<small>GNU's Not Unix，“GNU 不是 Unix”，一个递归缩写；Linux 上大部分基础命令都来自 GNU 项目</small></dfn>。gzip 默认会<b>替换</b>原文件：压缩后原文件消失，只剩 .gz。</p>
+<div class="code"><pre class="ex">
+$ gzip access.log                         # 生成 access.log.gz，原文件被删除
+$ gzip -k access.log                      # -k = keep，保留原文件
+$ gunzip access.log.gz                    # 解压，等于 gzip -d
+$ zcat access.log.gz | grep 404           # 不解压直接看内容；还有 zgrep、zless
+$ gzip -9 dump.sql                        # 压缩级别 1（最快）～9（最小），默认 6
+$ xz -k big.csv                           # xz 压缩率更高；解压用 unxz
+</pre></div>
+</article>
+
+<article class="cmd" id="zip">
+<div class="cmd-h"><h3>zip / unzip</h3><span class="en">zip</span><span class="man">man 1</span></div>
+<p class="full">与 Windows、macOS 通用的 .zip 格式</p>
+<p>要发给用 Windows 的人时选 zip。可能需要安装：<code>sudo apt install zip unzip</code>。</p>
+<div class="code"><pre class="ex">
+$ zip -r site.zip site/                   # -r 递归压缩整个目录
+$ zip -r site.zip site/ -x "*.git*"       # -x 排除
+$ zip -er secret.zip docs/                # -e 加密，会提示输入密码
+$ unzip site.zip                          # 解压到当前目录
+$ unzip site.zip -d /tmp/site             # -d 解压到指定目录
+$ unzip -l site.zip                       # -l 只列出内容
+$ unzip -O GBK windows.zip                # Windows 上压缩的中文文件名乱码时用（Ubuntu 版 unzip 支持）
+</pre></div>
+<p><dfn>GBK<small>国标扩展，Windows 中文版默认的汉字编码</small></dfn>。Linux 用的是 UTF-8，所以 Windows 打包的 zip 解压出来中文名可能乱码。</p>
+</article>
+</section>
+
+<!-- ============ 软件包 ============ -->
+<section class="cat" id="pkg">
+<h2>软件包管理<span class="en">Packages</span></h2>
+<div class="intro"><p>Linux 装软件一般不去网站下载安装包，而是用包管理器从<b>软件源</b>（repository，官方维护的软件仓库）安装，它会自动处理依赖。不同发行版的包管理器不同：Debian/Ubuntu 用 apt，Fedora/RHEL/Rocky 等用 dnf。</p></div>
+
+<article class="cmd" id="apt">
+<div class="cmd-h"><h3>apt</h3><span class="en">Advanced Package Tool</span><span class="man">man 8</span></div>
+<p class="full">高级包管理工具，用于 Debian / Ubuntu</p>
+<div class="tbl"><table>
+<tr><th>命令</th><th>作用</th></tr>
+<tr><td><code>apt update</code></td><td>刷新软件源的索引，知道有哪些新版本。<b>不会</b>升级任何软件</td></tr>
+<tr><td><code>apt upgrade</code></td><td>升级所有可升级的软件</td></tr>
+<tr><td><code>apt install 包名</code></td><td>安装，可以一次写多个</td></tr>
+<tr><td><code>apt remove 包名</code></td><td>卸载，保留配置文件</td></tr>
+<tr><td><code>apt purge 包名</code></td><td>卸载并删除配置文件</td></tr>
+<tr><td><code>apt autoremove</code></td><td>清理当初作为依赖装上、现在已经没人需要的包</td></tr>
+<tr><td><code>apt search 关键词</code></td><td>搜索</td></tr>
+<tr><td><code>apt show 包名</code></td><td>查看版本、大小、依赖、描述</td></tr>
+<tr><td><code>apt list --installed</code></td><td>列出已安装的包</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ sudo apt update &amp;&amp; sudo apt upgrade -y  # 系统更新的标准写法，-y 自动回答 yes
+$ sudo apt install nginx git curl
+$ sudo apt install ./google-chrome.deb    # 安装本地 .deb 文件，注意要写 ./
+$ sudo apt purge nginx &amp;&amp; sudo apt autoremove
+$ apt search markdown
+$ apt list --installed | grep python
+$ dpkg -L nginx                           # 这个包往系统里装了哪些文件
+$ dpkg -S /usr/bin/curl                   # 这个文件是哪个包装的
+curl: /usr/bin/curl
+</pre></div>
+<p><code>.deb</code> 是 Debian 系的安装包格式，<code>dpkg</code>（Debian package）是更底层的工具，apt 在它之上负责下载和解决依赖。写脚本时常用 <code>apt-get</code>，它的输出格式更稳定，用法和 apt 基本一样。软件源的配置在 <code>/etc/apt/sources.list</code> 和 <code>/etc/apt/sources.list.d/</code>。</p>
+</article>
+
+<article class="cmd" id="dnf">
+<div class="cmd-h"><h3>dnf / yum</h3><span class="en">Dandified YUM</span><span class="man">man 8</span></div>
+<p class="full">用于 Fedora、RHEL、Rocky Linux、AlmaLinux、CentOS</p>
+<p><dfn>yum<small>Yellowdog Updater, Modified，改进版 Yellowdog 更新器</small></dfn> 是老版本系统（如 CentOS 7）上的工具，dnf 是它的继任者，用法几乎相同，在新系统上 <code>yum</code> 命令通常直接指向 dnf。安装包格式是 <dfn>RPM<small>RPM Package Manager，最早叫 Red Hat Package Manager</small></dfn>。</p>
+<div class="code"><pre class="ex">
+$ sudo dnf install nginx
+$ sudo dnf remove nginx
+$ sudo dnf upgrade                        # 刷新索引并升级全部，相当于 apt update + upgrade
+$ dnf search markdown
+$ dnf info nginx
+$ dnf list installed | grep python
+$ dnf provides /usr/bin/dig               # 哪个包提供这个文件
+$ rpm -qa | grep kernel                   # query all：所有已安装的 rpm 包
+$ rpm -ql nginx                           # query list：包里有哪些文件
+</pre></div>
+</article>
+</section>
+
+<!-- ============ 编辑器 ============ -->
+<section class="cat" id="edit">
+<h2>终端编辑器<span class="en">Editors</span></h2>
+<div class="intro"><p>在服务器上改配置文件离不开终端编辑器。新手用 nano，上手没有门槛；vim 几乎所有 Linux 都预装，至少要会打开、修改、保存、退出。</p></div>
+
+<article class="cmd" id="nano">
+<div class="cmd-h"><h3>nano</h3><span class="en">nano</span><span class="man">man 1</span></div>
+<p class="full">简单直观的终端文本编辑器</p>
+<p>打开后直接就能打字，快捷键列在屏幕底部，<code>^</code> 表示 Ctrl，<code>M-</code> 表示 Alt。</p>
+<div class="tbl"><table>
+<tr><th>按键</th><th>作用</th></tr>
+<tr><td><code>Ctrl+O</code> 然后回车</td><td>保存（Write Out）</td></tr>
+<tr><td><code>Ctrl+X</code></td><td>退出，有未保存的修改时会问要不要保存（Y / N）</td></tr>
+<tr><td><code>Ctrl+W</code></td><td>搜索（Where is）</td></tr>
+<tr><td><code>Ctrl+K</code> / <code>Ctrl+U</code></td><td>剪切整行 / 粘贴</td></tr>
+<tr><td><code>Ctrl+_</code></td><td>跳到指定行号</td></tr>
+<tr><td><code>Alt+U</code></td><td>撤销</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ nano ~/.bashrc
+$ sudo nano /etc/hosts                    # 改系统文件要加 sudo，否则无法保存
+$ nano -l app.conf                        # -l 显示行号
+</pre></div>
+</article>
+
+<article class="cmd" id="vim">
+<div class="cmd-h"><h3>vim</h3><span class="en">Vi IMproved</span><span class="man">man 1</span></div>
+<p class="full">vi 的增强版，功能强大的模式编辑器</p>
+<p>vim 有几种<b>模式</b>，新手卡住通常是因为不知道自己在哪个模式：</p>
+<ul>
+<li><b>普通模式</b>（打开时的默认模式）：按键是命令，不是输入文字。任何时候按 <code>Esc</code> 都回到这里。</li>
+<li><b>插入模式</b>：按 <code>i</code> 进入，这时才能像普通编辑器一样打字，左下角显示 <code>-- INSERT --</code>。</li>
+<li><b>命令行模式</b>：在普通模式下按 <code>:</code> 进入，用来保存、退出、替换。</li>
+</ul>
+<div class="tbl"><table>
+<tr><th>按键（普通模式下）</th><th>作用</th></tr>
+<tr><td><code>i</code> / <code>a</code> / <code>o</code></td><td>在光标前插入 / 光标后插入（append）/ 在下方新开一行（open）</td></tr>
+<tr><td><code>Esc</code></td><td>回到普通模式</td></tr>
+<tr><td><code>:w</code></td><td>保存（write）</td></tr>
+<tr><td><code>:q</code></td><td>退出（quit）</td></tr>
+<tr><td><code>:wq</code> 或 <code>:x</code></td><td>保存并退出</td></tr>
+<tr><td><code>:q!</code></td><td>不保存，强制退出</td></tr>
+<tr><td><code>dd</code> / <code>yy</code> / <code>p</code></td><td>剪切（delete）当前行 / 复制（yank）当前行 / 粘贴（paste）</td></tr>
+<tr><td><code>x</code></td><td>删除光标处的字符</td></tr>
+<tr><td><code>u</code> / <code>Ctrl+r</code></td><td>撤销（undo）/ 重做（redo）</td></tr>
+<tr><td><code>gg</code> / <code>G</code></td><td>跳到第一行 / 最后一行；<code>:42</code> 跳到第 42 行</td></tr>
+<tr><td><code>0</code> / <code>$</code></td><td>行首 / 行尾</td></tr>
+<tr><td><code>w</code> / <code>b</code></td><td>下一个单词（word）/ 上一个单词（back）</td></tr>
+<tr><td><code>/关键词</code></td><td>搜索，<code>n</code> 下一个，<code>N</code> 上一个</td></tr>
+<tr><td><code>:%s/旧/新/g</code></td><td>全文替换（% 表示所有行，和 sed 语法相同）</td></tr>
+<tr><td><code>v</code></td><td>进入可视模式（visual）选择文字，再按 <code>y</code> 复制或 <code>d</code> 删除</td></tr>
+<tr><td><code>:set nu</code></td><td>显示行号（number）</td></tr>
+</table></div>
+<div class="code"><pre class="ex">
+$ vim notes.txt
+# 1. 按 i 进入插入模式，输入内容
+# 2. 按 Esc 回到普通模式
+# 3. 输入 :wq 回车，保存并退出
+$ sudo vim /etc/nginx/nginx.conf
+$ vim +42 app.py                          # 打开并直接跳到第 42 行
+$ vimtutor                                # vim 自带的交互式教程，30 分钟学会基础操作
+</pre></div>
+<div class="note"><b>不小心进了 vim 又出不来：</b>按 <code>Esc</code>，输入 <code>:q!</code>，回车。</div>
+</article>
+</section>
+
+<!-- ============ 常用组合 ============ -->
+<section class="cat" id="recipes" data-flat>
+<h2>常用组合<span class="en">Recipes</span></h2>
+<div class="intro"><p>把前面的命令串起来，解决日常真正会遇到的问题。</p></div>
+
+<article class="cmd topic" id="r-disk">
+<div class="cmd-h"><h3>磁盘满了，找出是什么占的空间</h3></div>
+<div class="code"><pre class="ex">
+$ df -h                                   # 1. 先确认是哪个分区满了
+$ sudo du -h -d 1 / 2>/dev/null | sort -rh | head   # 2. 从根目录逐层往下找
+$ sudo du -h -d 1 /var | sort -rh | head  # 3. 进入最大的目录继续找
+$ sudo find / -xdev -type f -size +500M -exec ls -lh {} + 2>/dev/null   # 或者直接找大于 500M 的文件
+$ sudo journalctl --vacuum-size=200M      # 常见元凶之一：systemd 日志
+</pre></div>
+<p><code>-xdev</code> 表示不跨越到其他分区，避免把挂载的数据盘也扫进来。</p>
+</article>
+
+<article class="cmd topic" id="r-port">
+<div class="cmd-h"><h3>端口被占用，找出并结束对应进程</h3></div>
+<div class="code"><pre class="ex">
+$ sudo ss -tlnp | grep :8080
+LISTEN 0 511 0.0.0.0:8080 0.0.0.0:* users:(("node",pid=4410,fd=23))
+$ kill 4410                               # 先礼后兵
+$ kill -9 4410                            # 仍然不退出再强制
+$ sudo fuser -k 8080/tcp                  # 或者一步到位（fuser = file user，-k = kill；在 psmisc 包里）
+</pre></div>
+</article>
+
+<article class="cmd topic" id="r-log">
+<div class="cmd-h"><h3>分析访问日志</h3></div>
+<div class="code"><pre class="ex">
+$ awk '{print $1}' access.log | sort | uniq -c | sort -rn | head      # 访问最多的 IP
+$ awk '{print $9}' access.log | sort | uniq -c | sort -rn             # 各 HTTP 状态码的数量
+$ awk '$9 == 500' access.log | tail -20                              # 最近 20 条 500 错误
+$ awk '{print $7}' access.log | sort | uniq -c | sort -rn | head      # 访问最多的路径
+$ tail -f app.log | grep --line-buffered -i error                    # 实时只看错误
+</pre></div>
+<p>这里按 nginx 默认日志格式取列：第 1 列是 IP，第 7 列是请求路径，第 9 列是状态码。其他格式先用 <code>head -3 access.log</code> 数一下是第几列。</p>
+</article>
+
+<article class="cmd topic" id="r-replace">
+<div class="cmd-h"><h3>在整个项目里批量替换文字</h3></div>
+<div class="code"><pre class="ex">
+$ grep -rl "old_name" --include="*.py" .                  # 1. 先看看有哪些文件会被改
+$ grep -rlZ "old_name" --include="*.py" . | xargs -0 sed -i 's/old_name/new_name/g'   # 2. 执行替换（-Z 配合 -0，文件名带空格也不出错）
+$ git diff                                                # 3. 在 git 仓库里的话，检查改动
+</pre></div>
+</article>
+
+<article class="cmd topic" id="r-rename">
+<div class="cmd-h"><h3>批量重命名文件</h3></div>
+<div class="code"><pre class="ex">
+$ for f in *.txt; do mv -- "$f" "${f%.txt}.md"; done      # 所有 .txt 改成 .md
+$ for f in *.JPG; do mv -- "$f" "${f,,}"; done            # 文件名转成小写（bash 4+）
+$ i=1; for f in *.jpg; do mv -- "$f" "photo_$(printf %03d $i).jpg"; i=$((i+1)); done   # 按序号命名 photo_001.jpg……
+</pre></div>
+<p><code>${f%.txt}</code> 表示去掉变量末尾的 <code>.txt</code>；<code>${f,,}</code> 把变量转成小写（macOS 自带的 bash 太旧不支持，zsh 里写 <code>${f:l}</code>）。先把 <code>mv</code> 换成 <code>echo mv</code> 跑一遍，确认输出无误再真正执行。</p>
+</article>
+
+<article class="cmd topic" id="r-clean">
+<div class="cmd-h"><h3>定期清理旧文件</h3></div>
+<div class="code"><pre class="ex">
+$ find /var/log/myapp -name "*.log" -mtime +7             # 先看 7 天前的日志有哪些
+$ find /var/log/myapp -name "*.log" -mtime +7 -delete     # 确认后删除
+$ find ~/backups -name "*.tar.gz" -mtime +30 -delete      # 只保留 30 天内的备份
+</pre></div>
+<p>放进 <a href="#crontab">crontab</a> 就能每天自动执行，例如 <code>0 4 * * * find /var/log/myapp -name "*.log" -mtime +7 -delete</code>。</p>
+</article>
+
+<article class="cmd topic" id="r-backup">
+<div class="cmd-h"><h3>带日期的备份</h3></div>
+<div class="code"><pre class="ex">
+$ tar -czf ~/backups/site-$(date +%F).tar.gz -C /var/www site   # 生成 site-2026-09-26.tar.gz
+$ rsync -avz ~/backups/ web:/data/backups/                      # 再同步一份到另一台机器
+$ pg_dump mydb | gzip > mydb-$(date +%F).sql.gz                 # 导出 PostgreSQL 数据库并压缩
+</pre></div>
+</article>
+
+<article class="cmd topic" id="r-longrun">
+<div class="cmd-h"><h3>让程序在断开 SSH 后继续运行</h3></div>
+<div class="code"><pre class="ex">
+$ nohup python3 train.py > train.log 2>&amp;1 &amp;      # 方法一：nohup，简单
+$ tmux new -s train                            # 方法二：tmux，之后还能回到原界面
+$ systemd-run --user --unit=train python3 train.py   # 方法三：交给 systemd 托管（退出登录后还要运行，先执行一次 loginctl enable-linger）
+</pre></div>
+<p>一次性任务用 nohup 或 tmux 就够了；需要开机自启、崩溃自动重启的长期服务，给它写一个 systemd 的 .service 文件，用 <a href="#systemctl">systemctl</a> 管理。</p>
+</article>
+
+<article class="cmd topic" id="r-misc">
+<div class="cmd-h"><h3>其他随手用得上的</h3></div>
+<div class="code"><pre class="ex">
+$ python3 -m http.server 8000             # 把当前目录共享成网页，局域网里用浏览器访问 IP:8000 下载；用完按 Ctrl+C 关掉
+$ openssl rand -base64 18                 # 生成一个随机密码
+$ ps aux --sort=-%mem | head -6           # 最占内存的 5 个进程
+$ ls -t ~/Downloads | head                # 最近下载的 10 个文件
+$ find . -name "*.py" -print0 | xargs -0 cat | wc -l   # 统计 Python 代码总行数
+$ cat /proc/loadavg; nproc                # 快速查看负载和核心数
+$ curl -s "wttr.in/Beijing?0"             # 在终端看天气（网址含 ? 要加引号，否则 zsh 会报错）
+</pre></div>
+</article>
+</section>
+
+<p class="empty" id="empty" hidden>没有找到匹配的命令。试试换个说法，比如用英文命令名或者中文用途。</p>
+
+<footer class="foot">整理于 2026 年 9 月。命令以 Ubuntu 24.04、bash 5 为准；遇到行为和这里不一致时，以本机的 <code>man 命令</code> 为准。</footer>
+</main>
+</div>
+<button class="totop" id="totop" type="button" aria-label="回到顶部"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
+<script>
+(function(){
+  var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+
+  /* 搜索索引要在加复制按钮之前建立，否则按钮上的“复制”二字会被算进每一条 */
+  var hay=new Map();
+  document.querySelectorAll('.cmd').forEach(function(a){hay.set(a,(a.id+' '+a.textContent).toLowerCase());});
+
+  /* 示例代码着色：$ 开头是命令，# 开头是注释，其余是输出；行尾两个空格后的 # 是注释 */
+  document.querySelectorAll('pre.ex').forEach(function(pre){
+    var isFile=pre.hasAttribute('data-file');
+    var raw=pre.textContent.replace(/^\n/,'').replace(/\s+$/,'');
+    var cmds=[], cont=false;
+    var html=raw.split('\n').map(function(line){
+      if(isFile){
+        return /^\s*#/.test(line)?'<span class="c">'+esc(line)+'</span>':esc(line);
+      }
+      var isCmd=line.indexOf('$ ')===0||line.indexOf('> ')===0;
+      if(isCmd||cont){
+        var pfx='', body=line;
+        if(isCmd){pfx=line[0];body=line.slice(2);}
+        var i=body.search(/\s{2,}# /), cmd=body, cm='';
+        if(i>=0){cmd=body.slice(0,i);cm=body.slice(i);}
+        cont=/\\\s*$/.test(cmd);
+        cmds.push(cmd.replace(/\s+$/,''));
+        return (pfx?'<span class="p">'+pfx+'</span> ':'')+esc(cmd)+(cm?'<span class="c">'+esc(cm)+'</span>':'');
+      }
+      if(line.indexOf('# ')===0) return '<span class="c">'+esc(line)+'</span>';
+      return line?'<span class="o">'+esc(line)+'</span>':'';
+    }).join('\n');
+    pre.innerHTML=html;
+    var copyText=isFile?raw:cmds.join('\n');
+    var wrap=pre.parentNode;
+    if(!wrap.classList.contains('code')) return;
+    var btn=document.createElement('button');
+    btn.type='button';btn.className='copy';btn.textContent='复制';
+    btn.setAttribute('aria-label','复制命令');
+    btn.addEventListener('click',function(){
+      var done=function(){btn.textContent='已复制';btn.classList.add('done');setTimeout(function(){btn.textContent='复制';btn.classList.remove('done');},1400);};
+      var fallback=function(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='已选中，按 Ctrl+C';setTimeout(function(){btn.textContent='复制';},2500);};
+      try{navigator.clipboard.writeText(copyText).then(done,fallback);}catch(e){fallback();}
+    });
+    wrap.appendChild(btn);
+  });
+
+  /* 手册章节标签的悬停提示 */
+  var manTips={'man 1':'系统手册第 1 节：普通用户命令，用 man 命令名 查看','man 8':'系统手册第 8 节：系统管理命令，通常需要 root，用 man 命令名 查看','内建':'shell 内建命令，没有单独的手册，用 help 命令名 查看'};
+  document.querySelectorAll('.cmd-h .man').forEach(function(t){var k=t.textContent.trim();if(manTips[k]) t.title=manTips[k];});
+
+  /* 目录：从页面结构生成，每个分类一组，当前分类展开 */
+  var sections=[].slice.call(document.querySelectorAll('.cat'));
+  var tocBody=document.getElementById('tocBody');
+  var groups={}, itemLinks={};
+  sections.forEach(function(sec){
+    var flat=sec.hasAttribute('data-flat');
+    var g=document.createElement('div');g.className='toc-g'+(flat?' flat':'');
+    var h=document.createElement('a');h.className='toc-h';h.href='#'+sec.id;
+    var name=document.createElement('span');name.textContent=sec.querySelector('h2').firstChild.textContent.trim();
+    var n=document.createElement('span');n.className='n';
+    var arts=sec.querySelectorAll('.cmd');
+    n.textContent=arts.length;
+    h.appendChild(name);h.appendChild(n);g.appendChild(h);
+    groups[sec.id]={el:g,head:h,count:n,total:arts.length,items:{}};
+    if(!flat){
+      var ul=document.createElement('ul');ul.className='toc-l';
+      arts.forEach(function(a){
+        var li=document.createElement('li');var l=document.createElement('a');
+        l.href='#'+a.id;l.textContent=a.querySelector('h3').textContent.replace(/ &.*$/,'');
+        if(a.classList.contains('topic')) l.className='zh';
+        li.appendChild(l);ul.appendChild(li);
+        groups[sec.id].items[a.id]=li;itemLinks[a.id]=l;
+      });
+      g.appendChild(ul);
+    }
+    h.addEventListener('click',function(){setGroup(sec.id);});
+    tocBody.appendChild(g);
+  });
+
+  var activeGroup=null, activeItem=null;
+  function reveal(el){
+    if(!mq.matches) return;
+    var r=el.getBoundingClientRect(), b=tocBody.getBoundingClientRect();
+    if(r.top<b.top+8) tocBody.scrollTop-=b.top+8-r.top;
+    else if(r.bottom>b.bottom-24) tocBody.scrollTop+=r.bottom-b.bottom+24;
+  }
+  function setGroup(id){
+    if(activeGroup===id) return;
+    if(activeGroup){groups[activeGroup].el.classList.remove('open');groups[activeGroup].head.classList.remove('on');}
+    activeGroup=id;
+    groups[id].el.classList.add('open');groups[id].head.classList.add('on');
+    reveal(groups[id].head);
+  }
+  function setItem(id){
+    if(activeItem===id) return;
+    if(activeItem&&itemLinks[activeItem]) itemLinks[activeItem].classList.remove('on');
+    activeItem=id;
+    if(id&&itemLinks[id]){itemLinks[id].classList.add('on');reveal(itemLinks[id]);}
+  }
+
+  /* 桌面端目录常开，手机端折叠成下拉 */
+  var toc=document.getElementById('toc');
+  var mq=window.matchMedia('(min-width: 901px)');
+  var syncToc=function(){toc.open=mq.matches;};
+  /* 桌面端：目录高度 = 屏幕剩余高度，超出部分在目录内滚动 */
+  var fitToc=function(){
+    var v=mq.matches?Math.max(160,Math.round(window.innerHeight-tocBody.getBoundingClientRect().top))+'px':'';
+    if(tocBody.style.maxHeight!==v) tocBody.style.maxHeight=v;
+  };
+  syncToc();fitToc();
+  if(mq.addEventListener) mq.addEventListener('change',function(){syncToc();fitToc();});
+  window.addEventListener('resize',fitToc);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitToc);
+
+  /* 滚动时高亮当前分类和命令：取顶端已越过视口 25% 位置的最后一条；跳转校正期间固定为跳转目标 */
+  var allCmds=[].slice.call(document.querySelectorAll('.cmd')), pinned=null, spyQueued=false;
+  function spy(){
+    spyQueued=false;
+    fitToc();
+    var sec=null, item=null, i;
+    if(pinned){
+      sec=pinned.classList.contains('cat')?pinned:pinned.closest('.cat');
+      item=pinned.classList.contains('cmd')?pinned:null;
+    }else{
+      var line=window.innerHeight*0.25;
+      var atBottom=window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-2;
+      for(i=0;i<sections.length;i++){
+        if(sections[i].hidden) continue;
+        if(!sec||atBottom||sections[i].getBoundingClientRect().top<=line) sec=sections[i]; else break;
+      }
+      if(!sec) return;
+      var cs=sec.querySelectorAll('.cmd');
+      for(i=0;i<cs.length;i++){
+        if(cs[i].hidden) continue;
+        if(cs[i].getBoundingClientRect().top<=line) item=cs[i]; else break;
+      }
+    }
+    setGroup(sec.id);
+    setItem(item?item.id:null);
+  }
+  window.addEventListener('scroll',function(){if(!spyQueued){spyQueued=true;requestAnimationFrame(spy);}},{passive:true});
+  window.addEventListener('resize',function(){if(!spyQueued){spyQueued=true;requestAnimationFrame(spy);}});
+  setGroup(sections[0].id);
+  spy();
+
+  /* 搜索 */
+  var q=document.getElementById('q'), hits=document.getElementById('hits'), empty=document.getElementById('empty');
+  var cmdCount=document.querySelectorAll('.cat:not([data-flat]) .cmd:not(.topic)').length;
+  var idle='收录 '+cmdCount+' 个命令 · '+(document.querySelectorAll('.cmd').length-cmdCount)+' 篇专题与组合';
+  hits.textContent=idle;
+  var filter=function(){
+    var terms=q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    var total=0;
+    sections.forEach(function(sec){
+      var n=0, G=groups[sec.id];
+      sec.querySelectorAll('.cmd').forEach(function(a){
+        var t=hay.get(a), ok=terms.every(function(x){return t.indexOf(x)>-1;});
+        a.hidden=!ok;
+        if(G.items[a.id]) G.items[a.id].hidden=!ok;
+        if(ok) n++;
+      });
+      sec.querySelectorAll('.intro').forEach(function(el){el.hidden=terms.length>0;});
+      sec.hidden=!n;G.el.hidden=!n;
+      G.count.textContent=terms.length?n:G.total;
+      total+=n;
+    });
+    tocBody.classList.toggle('searching',terms.length>0);
+    empty.hidden=total>0;
+    hits.textContent=terms.length?('找到 '+total+' 条结果'):idle;
+    spy();
+  };
+  var qclear=document.getElementById('qclear'), qkbd=document.getElementById('qkbd');
+  var syncClear=function(){qclear.hidden=!q.value;qkbd.hidden=!!q.value;};
+  qclear.addEventListener('click',function(){q.value='';filter();syncClear();q.focus();});
+  q.addEventListener('input',function(){
+    syncClear();
+    filter();
+    var top=document.querySelector('.hero').getBoundingClientRect().bottom+window.scrollY;
+    if(q.value.trim()&&window.scrollY>top) window.scrollTo(0,top-10);
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='/'&&document.activeElement!==q&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();q.focus();}
+    else if(e.key==='Escape'&&document.activeElement===q){q.value='';filter();syncClear();q.blur();}
+  });
+
+  /* 回到顶部 */
+  var totop=document.getElementById('totop'), ticking=false;
+  window.addEventListener('scroll',function(){
+    if(ticking) return;ticking=true;
+    requestAnimationFrame(function(){totop.classList.toggle('show',window.scrollY>900);ticking=false;});
+  },{passive:true});
+  totop.addEventListener('click',function(){window.scrollTo(0,0);});
+
+  /* 页内跳转：直接定位，不做平滑滚动。
+     中文字体分块加载，加载完成前排版可能变化，定位后持续校正，直到字体加载完；
+     用户一旦自己滚动或按键就停止校正。 */
+  var stopSettle=null, hitEl=null, userEvents=['wheel','touchstart','keydown','mousedown'];
+  function jumpTo(el){
+    if(stopSettle) stopSettle();
+    if(hitEl) hitEl.classList.remove('hit');
+    if(el.classList.contains('cmd')){hitEl=el;el.classList.add('hit');}
+    if(el.classList.contains('cmd')||el.classList.contains('cat')) pinned=el;
+    var anchor=el.classList.contains('cat')?el.querySelector('h2'):el;
+    var align=function(){
+      var d=anchor.getBoundingClientRect().top-(parseFloat(getComputedStyle(el).scrollMarginTop)||0)-(anchor===el?0:16);
+      if(Math.abs(d)>1) window.scrollBy(0,d);
+    };
+    var raf=0, t0=performance.now();
+    var fontsDone=!document.fonts||document.fonts.status==='loaded';
+    if(!fontsDone) document.fonts.ready.then(function(){fontsDone=true;});
+    var stop=function(){
+      cancelAnimationFrame(raf);
+      userEvents.forEach(function(ev){window.removeEventListener(ev,stop,true);});
+      stopSettle=null;pinned=null;
+    };
+    var loop=function(){
+      align();
+      var t=performance.now()-t0;
+      if(t<600||(!fontsDone&&t<6000)) raf=requestAnimationFrame(loop); else stop();
+    };
+    align();spy();
+    userEvents.forEach(function(ev){window.addEventListener(ev,stop,{capture:true,passive:true});});
+    stopSettle=stop;
+    raf=requestAnimationFrame(loop);
+  }
+  document.addEventListener('click',function(e){
+    if(toc.open&&!mq.matches&&!toc.contains(e.target)) toc.open=false;
+    var a=e.target.closest('a[href^="#"]');
+    if(!a||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+    var id=a.getAttribute('href').slice(1);
+    var el=document.getElementById(id);
+    if(!el) return;
+    e.preventDefault();
+    if(!mq.matches) toc.open=false;
+    try{history.pushState(null,'','#'+id);}catch(err){}
+    if(id==='top'){if(stopSettle) stopSettle();window.scrollTo(0,0);return;}
+    if(el.closest('[hidden]')){q.value='';filter();syncClear();}   /* 目标被搜索结果隐藏时，先清空搜索 */
+    jumpTo(el);
+  });
+  if(location.hash.length>1){
+    var first=document.getElementById(location.hash.slice(1));
+    if(first) jumpTo(first);
+  }
+})();
+</script>
+</body>
+</html>
